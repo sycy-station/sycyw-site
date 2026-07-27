@@ -499,6 +499,51 @@
     current.insertBefore(holder, current.firstChild);
   };
 
+  /* ---------------- 横条上的当前项下划线 ---------------- */
+  /* 原先是 .is-current::after，伪元素长在各自的项上，跨页时只能「这边消失、
+     那边出现」。改成横条里唯一一条实体线，位置由这里量出来写进 --mx / --mw，
+     于是子页之间切换时它能从旧项滑到新项。
+
+     为什么坐标可以不跨文档传递：六页的横条 HTML 逐字节相同，
+     所以旧页算得出新项的位置、新页也算得出旧项的位置。
+     与 --title-* 共享接缝坐标是同一个手法。 */
+  let barMarker = null;
+
+  // 把标记摆到某一项下方。offsetLeft 是相对 .ib-track 内容盒的，
+  // 不受横向滚动影响——用 getBoundingClientRect 反而要再减去滚动量。
+  const placeMarker = (item) => {
+    if (!barMarker || !item) return;
+    barMarker.style.setProperty("--mx", item.offsetLeft + "px");
+    barMarker.style.setProperty("--mw", item.offsetWidth + "px");
+  };
+
+  const initBarMarker = () => {
+    const track = document.querySelector(".ib-track");
+    const current = document.querySelector(".ib-item.is-current");
+    if (!track || !current) return;
+
+    barMarker = document.createElement("i");
+    barMarker.className = "ib-marker";
+    barMarker.setAttribute("aria-hidden", "true");
+    track.appendChild(barMarker);
+
+    // 星球是 initBarPlanet 插进当前项的，会让该项变宽 16px。
+    // 必须等它插完再量，否则线短一截。两者的调用顺序在 init 里保证。
+    placeMarker(current);
+
+    // 双 rAF 后才显形：首帧还没量到坐标，先亮着会在 left:0 闪一下
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => barMarker.classList.add("is-ready"));
+    });
+
+    // 视口变化后重量。此刻没有 body.bar-slide，所以是瞬时归位、不带过渡。
+    let rt = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => placeMarker(document.querySelector(".ib-item.is-current")), 120);
+    });
+  };
+
   /* ---------------- 横条随滚动隐去 ---------------- */
   /* 向下滚隐去、向上滚回来。阈值与顶部豁免区避免抖动：
      刚好在临界点附近的微小滚动不该让横条反复进出。 */
@@ -623,95 +668,116 @@
       location.href = href;
     };
 
+    // 抽成命名函数：覆盖菜单里的六个链接也要走同一套旅行，
+    // 否则从菜单进子页是硬跳、从轨道进是形变，同一目的地两种手感。
+    const travelFrom = (item) => {
+      const href = item.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+
+      if (leaving) return;
+      leaving = true;
+
+      // 写入页间信号，供新页 <head> 的内联脚本在首帧前读取
+      try {
+        sessionStorage.setItem(
+          "ces-nav",
+          JSON.stringify({
+            from: "stage",
+            slug: href.replace(/\.html$/, ""),
+            no: item.getAttribute("data-no") || "",
+            ts: Date.now()
+          })
+        );
+      } catch (err) {
+        // 存不进去也要能跳转，只是新页走冷启动入场
+      }
+
+      // 减弱动效：不做旅行，直接走
+      if (prefersReducedMotion) {
+        go(href);
+        return;
+      }
+
+      const inner = item.querySelector(".orbit-inner");
+      if (!inner) {
+        go(href);
+        return;
+      }
+
+      // 三个量都必须在加 .leaving 之前做：加类之后原位块被 visibility:hidden，
+      // rect 仍有效，但淡出中的兄弟元素可能已影响布局。
+      const lines = [...inner.children];
+
+      // 每行的局部横向偏移。左列三项是右对齐的，这个值就是它相对左缘推开多远；
+      // 右列三项本就左对齐，为 0。旅行块起飞时按这个值摆好、飞行中过渡到 0，
+      // 读成「逐行左收」，落地正好是子页那个左对齐的标题块。
+      const shifts = localOffsets(item, inner, lines);
+
+      // 起点：局部原点的屏幕位置，配 .travel 的 transform-origin: 0 0。
+      // 不用 inner.getBoundingClientRect()——斜项量到的是胀开的外接框。
+      const start = originPoint(inner);
+      const tilt = tiltOf(item);
+
+      // 两层结构：外层管整块位移与倾斜，内层管每行的横向收拢。
+      // 起点写成 --sx0/--sy0 而不是 left/top —— 行内 left/top 会赢过
+      // .travel.go 的类规则，终点就永远不生效。
+      const travelInner = inner.cloneNode(true);
+      travelInner.className = "travel-inner";
+      [...travelInner.children].forEach((el, i) => {
+        el.style.setProperty("--sx", shifts[i].toFixed(2) + "px");
+      });
+
+      const travel = document.createElement("div");
+      travel.className = "travel";
+      travel.setAttribute("aria-hidden", "true");
+      travel.style.setProperty("--sx0", start.left.toFixed(2) + "px");
+      travel.style.setProperty("--sy0", start.top.toFixed(2) + "px");
+      // 带上该项的倾斜起飞，.go 那一帧连同位移一起收平
+      travel.style.setProperty("--t0", tilt + "deg");
+      travel.appendChild(travelInner);
+
+      item.classList.add("is-travelling");
+      document.body.appendChild(travel);
+      document.body.classList.add("leaving");
+
+      // 星球先吸附到该项方向，再随退场淡出。aimAt 由 initPlanet 挂在 window 上。
+      if (typeof window.__cesAimPlanet === "function") {
+        window.__cesAimPlanet(items.indexOf(item));
+      }
+
+      // 下一帧再加 .go：同帧设起点与终点不会插值
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => travel.classList.add("go"));
+      });
+
+      // 不等动画结束就发起跳转。新页可绘制前浏览器仍显示旧页，
+      // 剩余约 120ms 的动画在请求期间照常播；若新页来得慢，
+      // 动画播完停在最后一帧——而那一帧正是约定的接缝状态。
+      setTimeout(() => go(href), 300);
+    };
+
     items.forEach((item) => {
       item.addEventListener("click", (e) => {
         // 修饰键与中键必须放行，否则「新标签页打开」会被退场动画劫持
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-
-        const href = item.getAttribute("href");
-        if (!href || href.charAt(0) === "#") return;
-
+        if (!item.getAttribute("href")) return;
         e.preventDefault();
-        if (leaving) return;
-        leaving = true;
+        travelFrom(item);
+      });
+    });
 
-        // 写入页间信号，供新页 <head> 的内联脚本在首帧前读取
-        try {
-          sessionStorage.setItem(
-            "ces-nav",
-            JSON.stringify({
-              from: "stage",
-              slug: href.replace(/\.html$/, ""),
-              no: item.getAttribute("data-no") || "",
-              ts: Date.now()
-            })
-          );
-        } catch (err) {
-          // 存不进去也要能跳转，只是新页走冷启动入场
-        }
-
-        // 减弱动效：不做旅行，直接走
-        if (prefersReducedMotion) {
-          go(href);
-          return;
-        }
-
-        const inner = item.querySelector(".orbit-inner");
-        if (!inner) {
-          go(href);
-          return;
-        }
-
-        // 三个量都必须在加 .leaving 之前做：加类之后原位块被 visibility:hidden，
-        // rect 仍有效，但淡出中的兄弟元素可能已影响布局。
-        const lines = [...inner.children];
-
-        // 每行的局部横向偏移。左列三项是右对齐的，这个值就是它相对左缘推开多远；
-        // 右列三项本就左对齐，为 0。旅行块起飞时按这个值摆好、飞行中过渡到 0，
-        // 读成「逐行左收」，落地正好是子页那个左对齐的标题块。
-        const shifts = localOffsets(item, inner, lines);
-
-        // 起点：局部原点的屏幕位置，配 .travel 的 transform-origin: 0 0。
-        // 不用 inner.getBoundingClientRect()——斜项量到的是胀开的外接框。
-        const start = originPoint(inner);
-        const tilt = tiltOf(item);
-
-        // 两层结构：外层管整块位移与倾斜，内层管每行的横向收拢。
-        // 起点写成 --sx0/--sy0 而不是 left/top —— 行内 left/top 会赢过
-        // .travel.go 的类规则，终点就永远不生效。
-        const travelInner = inner.cloneNode(true);
-        travelInner.className = "travel-inner";
-        [...travelInner.children].forEach((el, i) => {
-          el.style.setProperty("--sx", shifts[i].toFixed(2) + "px");
-        });
-
-        const travel = document.createElement("div");
-        travel.className = "travel";
-        travel.setAttribute("aria-hidden", "true");
-        travel.style.setProperty("--sx0", start.left.toFixed(2) + "px");
-        travel.style.setProperty("--sy0", start.top.toFixed(2) + "px");
-        // 带上该项的倾斜起飞，.go 那一帧连同位移一起收平
-        travel.style.setProperty("--t0", tilt + "deg");
-        travel.appendChild(travelInner);
-
-        item.classList.add("is-travelling");
-        document.body.appendChild(travel);
-        document.body.classList.add("leaving");
-
-        // 星球先吸附到该项方向，再随退场淡出。aimAt 由 initPlanet 挂在 window 上。
-        if (typeof window.__cesAimPlanet === "function") {
-          window.__cesAimPlanet(items.indexOf(item));
-        }
-
-        // 下一帧再加 .go：同帧设起点与终点不会插值
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => travel.classList.add("go"));
-        });
-
-        // 不等动画结束就发起跳转。新页可绘制前浏览器仍显示旧页，
-        // 剩余约 120ms 的动画在请求期间照常播；若新页来得慢，
-        // 动画播完停在最后一帧——而那一帧正是约定的接缝状态。
-        setTimeout(() => go(href), 300);
+    // 覆盖菜单：转交给对应的轨道项，让它按同一套形变退场。
+    // 必须先收起菜单——覆盖层在旅行块之上，不收起就看不到飞行。
+    document.querySelectorAll(".overlay-list a").forEach((a) => {
+      a.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        const href = a.getAttribute("href");
+        const item = items.find((it) => it.getAttribute("href") === href);
+        if (!item) return;          // 菜单里出现了轨道上没有的目标，交给默认行为
+        e.preventDefault();
+        setMenu(false);
+        // 等覆盖层的退场过渡（0.4s）走掉大半再起飞，否则前半段被挡住
+        setTimeout(() => travelFrom(item), 260);
       });
     });
   };
@@ -764,6 +830,94 @@
         location.href = href;
       }, 300);
     });
+  };
+
+  /* ================================================================
+     子页面之间的退场：点横条某一项，或覆盖菜单里的另一个子页
+     ----------------------------------------------------------------
+     改动前这条路径上一个处理器都没有——.ib-item 与 .overlay-list a 都是
+     裸 href，点下去浏览器硬跳。后果是三层叠加：
+       1) 没有任何退场，硬切
+       2) 落地页找不到 ces-nav 信号，于是走 :not(.nav-enter) 那条冷启动入场
+          （0.06/0.18/0.28/0.34s 延迟配 0.6s 过渡，合计约 940ms）
+       3) 横条跟着整条淡出再淡入，尽管六页的横条 HTML 逐字节相同
+     实测落地第 0ms 是一整屏空白（上半屏墨迹占比 0.0016，
+     而首页→子页同一时刻是 0.0715，因为旅行块还停在画面上）。
+
+     这里只做三件事：横条不动、标记滑向新项、标题与正文快速淡出。
+     ================================================================ */
+  const initLeaveSub = () => {
+    const root = document.documentElement;
+    if (root.getAttribute("data-page") !== "sub") return;
+
+    const here = root.getAttribute("data-slug") || "";
+    let leaving = false;
+
+    const goSub = (href, targetItem) => {
+      if (leaving) return true;
+      leaving = true;
+
+      try {
+        sessionStorage.setItem(
+          "ces-nav",
+          JSON.stringify({
+            from: "sub-sub",
+            slug: href.replace(/\.html$/, ""),
+            ts: Date.now()
+          })
+        );
+      } catch (err) {
+        // 存不进去也要能跳转，只是落地页走冷启动入场
+      }
+
+      if (prefersReducedMotion) {
+        location.href = href;
+        return true;
+      }
+
+      // 标记滑向新项。加 .bar-slide 才有过渡——平时（如 resize 重量）是瞬时归位。
+      if (targetItem && barMarker) {
+        document.body.classList.add("bar-slide");
+        // 下一帧再改坐标：同帧设起点终点不会插值
+        requestAnimationFrame(() => placeMarker(targetItem));
+      }
+
+      document.body.classList.add("leaving-sub");
+
+      // 200ms 后发起跳转。标记的滑移是 --travel(380ms)，跳不完也无妨：
+      // 新页首帧会把标记直接摆在落点，而那正是滑移的终点。
+      setTimeout(() => {
+        location.href = href;
+      }, 200);
+      return true;
+    };
+
+    // 判定：这个 href 是否指向另一个子页（不是当前页、不是首页、不是锚点）
+    const otherSub = (href) =>
+      href &&
+      href.charAt(0) !== "#" &&
+      /^[\w-]+\.html$/.test(href) &&
+      href !== "index.html" &&
+      href.replace(/\.html$/, "") !== here;
+
+    const bind = (el, findTarget) => {
+      el.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        const href = el.getAttribute("href");
+        if (!otherSub(href)) return;   // 当前页自身或首页，交给别的处理器/默认行为
+        e.preventDefault();
+        goSub(href, findTarget(href));
+      });
+    };
+
+    const items = [...document.querySelectorAll(".ib-item")];
+    const itemFor = (href) => items.find((it) => it.getAttribute("href") === href) || null;
+
+    items.forEach((it) => bind(it, itemFor));
+
+    // 覆盖菜单里的六个链接走同一套。否则「从横条点」与「从菜单点」
+    // 会是两种手感——同一个目的地不该因入口不同而表现不同。
+    document.querySelectorAll(".overlay-list a").forEach((a) => bind(a, itemFor));
   };
 
   /* ================================================================
@@ -1025,12 +1179,17 @@
 
   initPlanet();
 
-  // 子页面：入场放行 + 横条星球标记 + 横条随滚动隐去 + 回首页的退场。
+  // 子页面：入场放行 + 横条星球标记 + 当前项下划线 + 横条随滚动隐去
+  //         + 回首页的退场 + 子页之间的退场。
   // 各函数内部自行判断 data-page，首页调用它们是空操作。
   initPageEnter();
+  // initBarPlanet 必须在 initBarMarker 之前：星球插进当前项会让它变宽 16px，
+  // 先量下划线宽度就会短一截。
   initBarPlanet();
+  initBarMarker();
   initBarScroll();
   initLeaveBack();
+  initLeaveSub();
 
   // 首页：轨道项的退场旅行 + 从子页面返回时的到达编排。
   // 两者都依赖 initPlanet 已挂好的 __cesAimPlanet / __cesReleasePlanet。

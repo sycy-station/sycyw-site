@@ -72,10 +72,24 @@
   --title-top: clamp(8.5rem, 17vh, 12rem);
   /* 旅行时长，退场与子页入场共用 */
   --travel: 380ms;
+
+  /* ---- header 几何，唯一来源 ----
+     子页的 .index-bar 要压在 header 下方，原先 page.css 里写的是
+     calc(1.6rem * 2 + 42px)——手抄了一遍 header 的 padding 与按钮高。
+     两处各写一份，改 header 就会让横条脱节（要么压上去、要么留空隙）。
+     提成变量后 header 自己与横条都从这里派生，改一个数即可整体上移。
+     42px 是 .menu-toggle / .theme-toggle 的固定高，是 header 内最高的元素。 */
+  --header-pad-y: 1rem;
+  --header-btn: 42px;
+  --header-h: calc(var(--header-pad-y) * 2 + var(--header-btn));
 }
 
 @media (max-width: 600px) {
-  :root { --title-left: 1.4rem; }
+  :root {
+    --title-left: 1.4rem;
+    /* 窄屏原本是 1.2rem，按同比例继续收 */
+    --header-pad-y: 0.75rem;
+  }
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1157,10 +1171,29 @@ body.loading {
   right: 0;
   z-index: 500;
   display: flex;
-  justify-content: space-between;
+  /* 居中簇：标记与操作区并排落在中心轴上。
+     首页是例外，见下面 html[data-page="stage"] 那一段。 */
+  justify-content: center;
   align-items: center;
-  padding: 1.6rem 2.4rem;
+  gap: 1.8rem;
+  /* 竖向 padding 走变量：横条的让位高度从同一个数派生 */
+  padding: var(--header-pad-y) 2.4rem;
   mix-blend-mode: difference;
+}
+
+/* ---- 首页：标记撤掉，操作区退回右上 ----
+   两点理由：
+   1) 首页的标记 href="index.html" 指向你正待着的这一页，是纯冗余；
+      而 .stage-logo-name 就是同样的「森韵次元坞」，同轴出现两次只是累赘。
+   2) 标记撤掉后若操作区还居中，顶部正中会剩两个孤立图标，没有东西锚定。
+      退回右上后中心轴完整让给 logo 与它下方的名称。
+   用 display:none 而非 visibility:hidden——它在首页没有任何用途，
+   不该留在无障碍树和 Tab 序里。 */
+html[data-page="stage"] .site-header {
+  justify-content: flex-end;
+}
+html[data-page="stage"] .mark {
+  display: none;
 }
 
 /* header 内所有前景色都用 --blend-src：difference 混合要求源色为亮色，
@@ -1487,7 +1520,10 @@ body.leaving .orbit-planet {
 
 @media (max-width: 600px) {
   section { padding: 5rem 1.4rem; }
-  .site-header { padding: 1.2rem 1.4rem; }
+  /* 竖向 padding 由 --header-pad-y 统一给（见 :root 的窄屏覆盖），
+     这里只收横向。gap 也收一档，480px 下标记 95px + 操作区 87px
+     居中并排要留出余量。 */
+  .site-header { padding-left: 1.4rem; padding-right: 1.4rem; gap: 1.1rem; }
 }
 
 /* ================================================================

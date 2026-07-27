@@ -22,8 +22,9 @@
   left: 0;
   right: 0;
   z-index: 300;
-  /* header 高度 = 1.6rem*2 padding + 42px 按钮，横条压在它下方 */
-  padding: calc(1.6rem * 2 + 42px) 2.4rem 0;
+  /* 让位给 header。高度取 style.css 的 --header-h（= padding*2 + 按钮高），
+     不再手抄那个表达式——抄一遍就意味着改 header 时这里会脱节。 */
+  padding: var(--header-h) 2.4rem 0;
   pointer-events: none;
 }
 .ib-track {
@@ -40,6 +41,19 @@
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+
+  /* 六项居中，与首页的中心构图对齐（首页 logo / 名称 / 标语中心全在 50%）。
+     必须是 safe center 而不是 center：普通 center 配 overflow-x 时，
+     溢到左侧的内容会永久滚不回来——实测 480px 下首项落在 left:-65，
+     而 scrollLeft 已是 0、最大只能滚 88，「01 系统设计」彻底不可达。
+     safe 关键字在空间不足时自动退回 flex-start，首项始终能滚到。
+     不支持 safe 的旧引擎会整条声明失效，落回上面的默认左对齐——
+     也就是改动前的行为，不会退化成不可达。 */
+  justify-content: safe center;
+
+  /* .ib-marker 的包含块。放在滚动容器内是有意的：
+     窄屏横向滚动时线要跟着内容走，不能钉在视口上。 */
+  position: relative;
 }
 .ib-track::-webkit-scrollbar { display: none; }
 
@@ -63,19 +77,35 @@
 }
 .ib-item:hover { color: var(--ink); }
 
-/* 当前项：加重 + 一条下划线。星球由 JS 插在编号前，见 script.js */
+/* 当前项：加重。星球由 JS 插在编号前，见 script.js */
 .ib-item.is-current {
   color: var(--ink);
-  position: relative;
 }
-.ib-item.is-current::after {
-  content: "";
+
+/* ---- 当前项标记：一条可滑移的下划线 ----
+   原先是 .is-current::after，伪元素长在各自的项上，跨页时只能「这边消失、
+   那边出现」。改成 .ib-track 里唯一的一条实体线，由 JS 写 --mx / --mw
+   把它摆到当前项下方，于是子页之间切换时它能从旧项滑到新项——
+   六页的横条 DOM 逐字节相同，所以两个文档都算得出彼此的坐标，
+   与 --title-* 共享接缝坐标是同一个手法。
+   由 JS 加 .is-ready 才显形：首帧还没量到坐标，先亮着会在 left:0 闪一下。
+   无 JS 时它永远不出现，此时当前项仍有 color 加重可辨，见 noscript。 */
+.ib-marker {
   position: absolute;
+  bottom: -1px;              /* 压在 .ib-track 的下边框上 */
   left: 0;
-  right: 0;
-  bottom: -0.85rem;
   height: 1px;
+  width: var(--mw, 0px);
   background: var(--ink);
+  transform: translateX(var(--mx, 0px));
+  opacity: 0;
+  pointer-events: none;
+}
+.ib-marker.is-ready { opacity: 1; }
+/* 滑移只在同层级切换时发生（body.bar-slide），平时不带过渡：
+   窗口 resize 后重新量位置时不该看到一条线慢慢爬过去。 */
+body.bar-slide .ib-marker {
+  transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
 }
 /* 星球容器：占位与 16px 星球等宽，避免插入时编号横向跳动 */
 .ib-planet {
@@ -85,8 +115,13 @@
   line-height: 0;
   align-self: center;
   margin-right: -0.1em;
+  transition: opacity 0.16s var(--ease);
 }
 .ib-planet svg { display: block; }
+/* 星球不跟着下划线滑——它占 16px 布局宽度，抽出来会让整条横条重排。
+   改为在旧项淡出、在新项淡入，读成「熄灭再点亮」而不是跳变。
+   淡出走退场（body.leaving-sub），淡入由落地页的入场负责。 */
+body.leaving-sub .ib-planet { opacity: 0; }
 
 /* ---------------- 标题块 ---------------- */
 /* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
@@ -205,7 +240,9 @@
 }
 
 @media (max-width: 600px) {
-  .index-bar { padding: calc(1.2rem * 2 + 42px) 1.4rem 0; }
+  /* 竖向让位仍取 --header-h：它在窄屏已经跟着 --header-pad-y 变小了，
+     这里只需要收横向。原先写死 calc(1.2rem * 2 + 42px) 是第二处手抄。 */
+  .index-bar { padding-left: 1.4rem; padding-right: 1.4rem; }
   .page-main { padding-left: 1.4rem; padding-right: 1.4rem; }
   .site-footer { padding-left: 1.4rem; padding-right: 1.4rem; }
   /* --title-left 的窄屏取值同样在 style.css 里改，保持单一来源 */
@@ -280,6 +317,15 @@ html.nav-enter.page-ready .page-desc { transition-delay: 0.1s; }
 html.nav-enter.page-ready .page-body { transition-delay: 0.18s; }
 html.nav-enter.page-ready .site-footer { transition-delay: 0.22s; }
 
+/* 从另一个子页来：同样压缩。冷启动那套（0.06/0.18/0.28/0.34s 配 0.6s 过渡，
+   合计约 940ms）是给「第一次见到这个站」准备的；同层级切换时用户已经
+   在站内，横条也没动过，等一轮完整错峰只会读成迟滞。
+   横条不列在这里——它在这条路径上根本不参与入场。 */
+html.nav-sub.page-ready .page-title { transition-delay: 0s; }
+html.nav-sub.page-ready .page-desc { transition-delay: 0.08s; }
+html.nav-sub.page-ready .page-body { transition-delay: 0.15s; }
+html.nav-sub.page-ready .site-footer { transition-delay: 0.19s; }
+
 /* ============================================================
    子页面退场：点击 header 标记回首页
    ------------------------------------------------------------
@@ -307,13 +353,58 @@ body.leaving-back .site-footer {
 /* 标题块明确不参与。写出来是为了防止将来给 .page-* 加通用退场时误伤。 */
 body.leaving-back .page-title { opacity: 1; }
 
+/* ============================================================
+   子页面之间的退场：点击横条某一项，或覆盖菜单里的另一个子页
+   ------------------------------------------------------------
+   与回首页那条路径的关键区别：横条整条不动。
+   六页的横条 HTML 逐字节相同，唯一变化的是 .is-current 落在哪一项——
+   所以它该是跨接缝存活的家具，而不是每次导航都淡出再淡入的内容。
+   （改动前它每次都闪一下，这是这条路径上最刺眼的一层。）
+   动的只有两样：标记滑向新项、标题与正文快速淡出。
+   ============================================================ */
+body.leaving-sub {
+  /* 锁滚动：标记坐标是相对横条量的，滚动中途变化会让落点算偏 */
+  overflow: hidden;
+}
+/* 横条明确不参与退场。写出来同样是为了防止将来误伤。 */
+body.leaving-sub .index-bar {
+  opacity: 1;
+  transform: none;
+}
+/* 标题与正文：比回首页那条更快，因为这次没有旅行块要等 */
+body.leaving-sub .page-title,
+body.leaving-sub .page-desc,
+body.leaving-sub .page-body {
+  opacity: 0;
+  transition: opacity 0.18s var(--ease);
+}
+body.leaving-sub .site-footer {
+  opacity: 0;
+  transition: opacity 0.16s var(--ease);
+}
+
+/* ---- 从另一个子页来：横条首帧就位、不动，只播标题与正文 ----
+   html.nav-sub 由 nav-signal 内联脚本在首帧前挂上。
+   这一条必须比下面通用的 .js-enter 规则更具体，否则横条会跟着淡入。 */
+html.nav-sub .index-bar {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   body.leaving-back .index-bar,
   body.leaving-back .page-desc,
   body.leaving-back .page-body,
-  body.leaving-back .site-footer {
+  body.leaving-back .site-footer,
+  body.leaving-sub .page-title,
+  body.leaving-sub .page-desc,
+  body.leaving-sub .page-body,
+  body.leaving-sub .site-footer {
     transition: none !important;
   }
+  /* 标记直接就位，不滑 */
+  body.bar-slide .ib-marker { transition: none !important; }
 }
 
 /* ---------------- 横条随滚动隐去 ----------------
@@ -339,6 +430,9 @@ html.page-ready body.bar-hidden .index-bar {
     transform: none !important;
     transition: none !important;
   }
+  /* 标记仍要显形（它是「你在哪」的指示，属功能而非装饰），只是不做过渡 */
+  .ib-marker { transition: none !important; }
+  .ib-planet { transition: none !important; }
   /* 隐去本身是功能性的（让出阅读空间），保留，只是不做过渡 */
   html.page-ready body.bar-hidden .index-bar {
     transform: translateY(calc(-100% - 4px)) !important;

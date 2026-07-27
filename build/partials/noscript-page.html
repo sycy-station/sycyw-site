@@ -6,5 +6,16 @@
     .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
     .cursor { display: none !important; }
     .theme-toggle { display: none !important; }
+    /* 当前项下划线原本是 .is-current::after，不依赖 JS。改成可滑移的
+       .ib-marker 实体元素后由 script.js 创建，无脚本时就没有了——
+       当前项只剩 color 加重，辨识度不够。这里把伪元素那版补回来。 */
+    .ib-item.is-current { position: relative; }
+    .ib-item.is-current::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -0.85rem;
+      height: 1px;
+      background: var(--ink);
+    }
   </style>
 </noscript>

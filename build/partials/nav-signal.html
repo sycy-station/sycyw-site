@@ -42,9 +42,20 @@
     // 陈旧记录不该触发形变入场。
     var age = Date.now() - (sig.ts || 0);
     if (age < 0 || age > 2500) return;
-    if (sig.from !== "stage") return;
+
+    // 目标必须是本页。信号是给特定一页准备的，串页了就当冷启动。
     if (sig.slug !== root.getAttribute("data-slug")) return;
 
-    root.classList.add("nav-enter");
+    // 两种来路，对应两套入场：
+    //   stage    从首页轨道来。标题块已在接缝位置（旅行块刚落在这里），
+    //            所以标题不动，只播横条与正文。
+    //   sub-sub  从另一个子页来。横条是跨接缝存活的家具（六页 DOM 逐字节
+    //            相同，只有 .is-current 换了位置），首帧就位、不参与入场；
+    //            标题与正文用压缩错峰进场。
+    if (sig.from === "stage") {
+      root.classList.add("nav-enter");
+    } else if (sig.from === "sub-sub") {
+      root.classList.add("nav-sub");
+    }
   })();
 </script>
