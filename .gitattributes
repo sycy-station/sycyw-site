@@ -1,0 +1,21 @@
+# 行尾统一：仓库里一律存 LF，checkout 时也不转成 CRLF。
+# ------------------------------------------------------------
+# 起因：一次 git stash/pop 往返之后，git 按 core.autocrlf 把源文件的行尾
+# 换成了 CRLF，style.css 凭空多出约 1540 字节（≈ 行数），diff 里整个文件
+# 都算改动，真正的改动被淹没。
+# 另一层理由：build/build.js 用 fs.writeFileSync 写产物，行尾是 LF。
+# 源文件若是 CRLF，源与产物的行尾就不一致，跨文档接缝那种需要逐字节
+# 比对的验证会一直报满屏差异。
+#
+# 新建仓库时就该有这个文件。补上之后需要跑一次：
+#   git add --renormalize .
+# 才会把已入索引的文件按新规则重写，否则规则只对之后的改动生效。
+* text=auto eol=lf
+
+# 二进制资源不做任何行尾处理，否则内容会被破坏
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.zip binary

@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- data-wide="off" 留着是声明意图：子页不要大屏装饰层。
+     实际上 head 里已经不加载 wide.css 了，这个属性现在没有对应的规则，
+     但若哪天子页想开装饰层，改这里 + 补一行 link 就够。 -->
 <html lang="zh-CN" data-wide="off" data-page="sub" data-slug="{{ slug }}">
 <head>
 {{> head }}

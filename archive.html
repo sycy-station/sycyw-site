@@ -1,14 +1,40 @@
 <!DOCTYPE html>
+<!-- data-wide="off" 留着是声明意图：子页不要大屏装饰层。
+     实际上 head 里已经不加载 wide.css 了，这个属性现在没有对应的规则，
+     但若哪天子页想开装饰层，改这里 + 补一行 link 就够。 -->
 <html lang="zh-CN" data-wide="off" data-page="sub" data-slug="archive">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>实验归档 — 森韵次元坞</title>
 <meta name="description" content="未完成的尝试与被否决的方案">
+
+<!-- 站点图标：由 build/icons.py 从 assets/logo.png 派生，全部垫了 --paper
+     底色（logo 是纯黑 + 透明，留透明的话深色浏览器 UI 上就看不见了）。
+     改 logo 后重跑 python build/icons.py 即可，无需手工导出。 -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- 浏览器 UI 配色跟随两套调色板，取值与 style.css / theme.css 的 --paper 一致 -->
+<meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)">
+
+<!-- 分享卡片。canonical / og:url / og:image 要求绝对地址，所以这三条只在
+     pages.js 配了 SITE_URL 时才输出——域名填错比不填更糟（会把爬虫指到
+     别人家去）。其余几条与域名无关，任何情况下都给。 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="森韵次元坞">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="实验归档 — 森韵次元坞">
+<meta property="og:description" content="未完成的尝试与被否决的方案">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="实验归档 — 森韵次元坞">
+<meta name="twitter:description" content="未完成的尝试与被否决的方案">
+
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="stage.css">
-<!-- 大屏装饰层，可整行删除 -->
-<link rel="stylesheet" href="wide.css">
 <!-- 深色模式调色板，可整行删除 -->
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="page.css">

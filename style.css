@@ -1320,201 +1320,13 @@ section {
   margin: 0 auto;
 }
 
-.num {
-  font-family: var(--font-mono);
-  color: var(--grey);
-  font-size: 0.8rem;
-  margin-right: 0.4rem;
-}
-
-/* ---------------- Hero ---------------- */
-.hero {
-  min-height: 92vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-top: 6rem;
-}
-.hero-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  color: var(--grey);
-  margin-bottom: 1.6rem;
-}
-.hero-title {
-  font-size: clamp(2.6rem, 8vw, 6.4rem);
-  line-height: 1.05;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.hero-title .line {
-  display: block;
-}
-.hero-title .line:nth-child(2) {
-  margin-left: clamp(0rem, 10vw, 6rem);
-  color: var(--grey);
-}
-.hero-desc {
-  max-width: 480px;
-  margin-top: 2.2rem;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--text-soft);
-}
-.hero-scroll {
-  margin-top: 5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--grey);
-}
-.hero-scroll i {
-  width: 1px;
-  height: 34px;
-  background: var(--line);
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-}
-.hero-scroll i::after {
-  content: "";
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--ink);
-  animation: scrollLine 1.8s ease-in-out infinite;
-}
-@keyframes scrollLine {
-  0% { top: -100%; }
-  60% { top: 100%; }
-  100% { top: 100%; }
-}
-
-/* ---------------- 通用 section 标题 ---------------- */
-.section-title {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 600;
-  margin-bottom: 3rem;
-  padding-bottom: 1.4rem;
-  border-bottom: 1px solid var(--line);
-}
-
-/* ---------------- 索引列表 ---------------- */
-.index-list {
-  list-style: none;
-}
-.index-item {
-  display: grid;
-  grid-template-columns: 3rem 1fr 2fr auto;
-  align-items: baseline;
-  gap: 1.5rem;
-  padding: 1.8rem 0;
-  border-bottom: 1px solid var(--line);
-  transition: background 0.3s var(--ease), padding-left 0.3s var(--ease);
-}
-.index-item:hover {
-  padding-left: 0.6rem;
-  background: var(--tint);
-}
-.index-no {
-  font-family: var(--font-mono);
-  color: var(--grey);
-  font-size: 0.85rem;
-}
-.index-name {
-  font-size: clamp(1.2rem, 3vw, 1.7rem);
-  font-weight: 500;
-}
-.index-desc {
-  color: var(--grey);
-  font-size: 0.92rem;
-}
-.index-year {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--grey);
-  text-align: right;
-}
-@media (max-width: 700px) {
-  .index-item {
-    grid-template-columns: 2.2rem 1fr;
-    grid-template-rows: auto auto auto;
-  }
-  .index-desc { grid-column: 2; }
-  .index-year { grid-column: 2; text-align: left; margin-top: 0.3rem; }
-}
-
-/* ---------------- Manifesto ---------------- */
-.manifesto-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4rem;
-}
-.manifesto-text {
-  font-size: 1.15rem;
-  line-height: 1.85;
-  color: var(--text-body);
-}
-.drop-cap {
-  float: left;
-  font-size: 3.4rem;
-  line-height: 0.8;
-  font-weight: 700;
-  padding-right: 0.5rem;
-  margin-top: 0.1rem;
-}
-@media (max-width: 800px) {
-  .manifesto-grid { grid-template-columns: 1fr; gap: 2rem; }
-}
-
-/* ---------------- 联系方式 ---------------- */
-.contact {
-  text-align: left;
-  padding-bottom: 10rem;
-}
-.contact-link {
-  display: inline-block;
-  font-size: clamp(1.8rem, 6vw, 3.4rem);
-  font-weight: 600;
-  border-bottom: 1px solid var(--ink);
-  padding-bottom: 0.3rem;
-  transition: opacity 0.3s var(--ease), letter-spacing 0.3s var(--ease);
-}
-.contact-link:hover {
-  opacity: 0.5;
-  letter-spacing: 0.02em;
-}
-.social {
-  display: flex;
-  gap: 2rem;
-  margin-top: 2.4rem;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--grey);
-}
-.social a {
-  position: relative;
-  padding-bottom: 2px;
-}
-.social a::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: 0;
-  width: 100%;
-  height: 1px;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s var(--ease);
-}
-.social a:hover { color: var(--ink); }
-.social a:hover::after { transform: scaleX(1); }
+/* ---------------- 单页时代的区块样式已移除 ----------------
+   多页改造后 .hero / .section-title / .index-list / .manifesto / .contact
+   这五个区块的 DOM 已不存在（索引变成首页轨道 + 子页横条，观点并入 archive
+   页的 PAGES.manifesto，联系方式并入 footer 的 .sf-contact）。
+   对应样式连同 .num / .drop-cap / .social / .back-top 一并删除。
+   需要翻旧实现见 git 首个提交里的 index.orig.html.bak。
+   ------------------------------------------------------------------- */
 
 /* ---------------- Footer ---------------- */
 .site-footer {
@@ -1529,11 +1341,6 @@ section {
   max-width: 1200px;
   margin: 0 auto;
 }
-.back-top {
-  color: var(--ink);
-  transition: opacity 0.3s;
-}
-.back-top:hover { opacity: 0.5; }
 
 /* ================================================================
    首页退场：点击轨道某一项 → 跳转到该子页面
@@ -1673,11 +1480,10 @@ body.leaving .orbit-planet {
   transform: translateY(0);
 }
 
-/* stagger for index items */
-.index-item.reveal-item:nth-child(1) { transition-delay: 0s; }
-.index-item.reveal-item:nth-child(2) { transition-delay: 0.08s; }
-.index-item.reveal-item:nth-child(3) { transition-delay: 0.16s; }
-.index-item.reveal-item:nth-child(4) { transition-delay: 0.24s; }
+/* .reveal-item 目前全站没有 DOM 使用（子页正文还是占位），
+   但 script.js 的 initReveal 在选择器里带着它，且这是子页填内容时
+   最自然的逐项揭示钩子，所以基础规则留着，只删掉针对已撤区块的
+   .index-item 错峰延迟。 */
 
 @media (max-width: 600px) {
   section { padding: 5rem 1.4rem; }
@@ -1705,9 +1511,7 @@ body.leaving .orbit-planet {
     opacity: 1;
     transform: none;
   }
-  .index-item.reveal-item { transition-delay: 0s !important; }
 
-  .hero-scroll i::after { display: none; }
   .code-cursor { animation: none !important; }
 
   .statusbar,

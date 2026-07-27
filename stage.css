@@ -508,6 +508,15 @@ body.stage-in .sf-line {
   background: var(--ink);
   animation: scrollLine 1.8s ease-in-out infinite;
 }
+/* 原先定义在 style.css 的 .hero-scroll 那一节里，随单页区块样式一起删了。
+   挪到唯一使用者旁边，stage.css 不再依赖 style.css 的 keyframe。
+   注意 .stage-scroll 目前也没有 DOM（只在 noscript 的选择器里被点名），
+   保留是因为它属于分区页的滚动提示，将来子页有长内容时会用上。 */
+@keyframes scrollLine {
+  0% { top: -100%; }
+  60% { top: 100%; }
+  100% { top: 100%; }
+}
 
 /* ---------------- 入场：开屏退场后由 JS 加 body.stage-in ---------------- */
 /* logo 不做入场动画，它要跟开屏最后一帧严格对齐 */

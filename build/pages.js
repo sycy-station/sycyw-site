@@ -12,6 +12,16 @@
    desc   一句话描述，取自原 .index-list 的既有文案
    ============================================================ */
 
+/* 站点根地址，不带结尾斜杠。
+   ------------------------------------------------------------
+   留空 = 还没定域名。这时 build 会跳过三样必须用绝对地址的东西：
+   <link rel="canonical">、og:url、og:image，以及整个 sitemap.xml。
+   宁可不输出也不填占位域名——错的绝对地址会把爬虫和分享卡片指到别处，
+   比缺这几条严重得多。
+   定好域名后把它填在这里，重跑 node build/build.js，三者自动补齐。
+   例：const SITE_URL = "https://sycyw.example"; */
+const SITE_URL = "";
+
 /* 开屏侧标题取六项里的哪两项。
    ------------------------------------------------------------
    原先写的是「极简系统 / 界面实验室」，与分区页的六项零共享字形，
@@ -27,7 +37,8 @@ const SPLASH_SIDES = ["interaction", "motion"];
 const SPLASH_CAPTION = "MINIMAL SYSTEM / INTERFACE LAB";
 
 /* 原 hero 的描述段。改造后首页只保留一行 h1，这段暂时没有承载处，
-   存在这里避免它只活在 index.orig.html.bak 里。 */
+   存在这里避免它只活在旧版单页里（旧版见 git 首个提交的
+   index.orig.html.bak，该文件已从工作区删除）。 */
 const ABOUT_DESC =
   "森韵次元坞是一个专注于极简系统与界面的实验室。我们相信少即是多，克制本身就是一种表达方式。";
 
@@ -81,7 +92,7 @@ const PAGES = [
     desc: "未完成的尝试与被否决的方案",
     year: "2023",
     // 原单页 .manifesto 两段并入本页。壳子阶段模板还没消费这个字段，
-    // 放在这里是为了内容不只存在于 index.orig.html.bak 里。
+    // 放在这里是为了内容不只存在于旧版单页里（旧版见 git 首个提交）。
     manifesto: [
       "我们不追逐流行的视觉语言，也不堆叠不必要的装饰。真正的设计感，来自于对留白、节奏和秩序的耐心打磨。",
       "一个页面的好坏，不取决于它用了多少组件，而取决于它有没有被认真地思考过每一处间距、每一次过渡、每一个字号的选择。"
@@ -89,4 +100,4 @@ const PAGES = [
   }
 ];
 
-module.exports = { PAGES, SPLASH_SIDES, SPLASH_CAPTION, ABOUT_DESC };
+module.exports = { PAGES, SPLASH_SIDES, SPLASH_CAPTION, ABOUT_DESC, SITE_URL };
