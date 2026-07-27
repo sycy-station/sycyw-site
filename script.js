@@ -26,12 +26,16 @@
 
   // 统一收口所有定时器，跳过开屏时一次性清空，避免残留回调继续推进阶段
   // 阶段同时打在 splash 和 body 上。跨接缝存活的装饰层（蜂巢、四角括号）
-  // 已移到 .stage 内，不再是 #splash 的后代，只能靠 body.sp-* 驱动。
+  // 已移到 .stage 内，不再是 #splash 的后代，只能靠 body 上的类驱动。
   const SP_PHASES = ["sp-logo", "sp-name", "sp-code", "sp-expand", "sp-leave"];
   const setPhase = (name) => {
     if (name) splash.classList.add("phase-" + name);
     document.body.classList.remove(...SP_PHASES);
     document.body.classList.add("sp-" + name);
+    // 装饰层的常驻态从 expand 阶段起一直保持，此后不再摘除。
+    // 用一个语义类而不是让 CSS 枚举各个阶段名，见 style.css 的
+    // .deco .splash-grid 一节——枚举漏掉了返回首页那条路径。
+    if (name === "expand") document.body.classList.add("deco-on");
   };
 
   const timers = new Set();
@@ -173,6 +177,11 @@
     splash.setAttribute("aria-hidden", "true");
     // stage-in 可能已在溶解中途加上，这里兜住减弱动效与跳过开屏两条路径
     document.body.classList.add("stage-in");
+    // 兜底：reduced-motion 下 leaveSplash 直接跳到这里，setPhase("expand")
+    // 从未执行过，deco-on 就不会被加上。虽然 reduced-motion 的 @media 里
+    // 有六层的 !important 兜底、装饰实际仍可见，但这里补一次能让
+    // 「deco-on 在场 = 装饰在场」在每条路径都成立。加类是幂等的。
+    document.body.classList.add("deco-on");
     initReveal();
   };
 
@@ -489,14 +498,19 @@
     '<rect x="3" y="5" width="2" height="1"/><rect x="2" y="6" width="3" height="1"/></g>' +
     "</svg>";
 
+  /* 星球挂在 .ib-track 上而不是插进当前项。
+     插进项里会占 16px 布局宽（加项内 gap 共 22px），换项时那段宽度也换
+     位置，导致中间的项横向跳 22px——见 page.css 的 .ib-planet 一节。
+     挂在轨道上、绝对定位，六项宽度就恒定了。 */
   const initBarPlanet = () => {
-    const current = document.querySelector(".ib-item.is-current");
-    if (!current) return;
+    const track = document.querySelector(".ib-track");
+    if (!track || !document.querySelector(".ib-item.is-current")) return;
     const holder = document.createElement("span");
     holder.className = "ib-planet";
     holder.setAttribute("aria-hidden", "true");
     holder.innerHTML = PLANET_SVG;
-    current.insertBefore(holder, current.firstChild);
+    track.appendChild(holder);
+    barPlanet = holder;
   };
 
   /* ---------------- 横条上的当前项下划线 ---------------- */
@@ -508,13 +522,47 @@
      所以旧页算得出新项的位置、新页也算得出旧项的位置。
      与 --title-* 共享接缝坐标是同一个手法。 */
   let barMarker = null;
+  let barPlanet = null;
 
-  // 把标记摆到某一项下方。offsetLeft 是相对 .ib-track 内容盒的，
-  // 不受横向滚动影响——用 getBoundingClientRect 反而要再减去滚动量。
+  const PLANET_SIZE = 16;
+  // 与 style.css 的 --planet-slot 同值。那个变量给 .ib-track 做 padding-left
+  // （保证第一项也有地方站），这里用它当有效空隙的上限。
+  const PLANET_SLOT = 21;
+
+  // 把标记与星球一起摆到某一项。两者共用同一次量测，保证同步。
+  // offsetLeft 是相对 .ib-track 的，不受横向滚动影响——
+  // 用 getBoundingClientRect 反而要再减去滚动量。
   const placeMarker = (item) => {
-    if (!barMarker || !item) return;
-    barMarker.style.setProperty("--mx", item.offsetLeft + "px");
-    barMarker.style.setProperty("--mw", item.offsetWidth + "px");
+    if (!item) return;
+    if (barMarker) {
+      barMarker.style.setProperty("--mx", item.offsetLeft + "px");
+      barMarker.style.setProperty("--mw", item.offsetWidth + "px");
+    }
+    if (barPlanet) {
+      // 星球贴在当前项左侧，落在它与前一项之间的空隙里。
+      //
+      // 两个都试过、都不行的写法：
+      //   固定偏移 21px（星球 16 + 呼吸 5）——空隙随视口从 1920 的 39px
+      //     收到 480 的 18px，窄屏会超出 3px 压到前一项的字上（实测星球
+      //     叠在「交互研究」末字）。
+      //   按整段空隙居中——第一项左侧不是那 21px 槽位，而是 safe center
+      //     留出的一整段居中留白（1920 下 124px），星球会飘到那段正中，
+      //     离「01 系统设计」老远。而且宽屏下空隙 39px 时星球停在正中，
+      //     离两侧各 11px，看不出它属于左边还是右边那一项。
+      //
+      // 现在的写法：取「实际空隙」与槽位宽的较小者作为有效空隙，再在其中
+      // 居中。于是星球始终贴着当前项（宽屏离项左缘 2.5px、窄屏 0.5px），
+      // 归属明确，且永远不会越过前一项的右缘。
+      const prev = item.previousElementSibling;
+      const prevRight =
+        prev && prev.classList.contains("ib-item")
+          ? prev.offsetLeft + prev.offsetWidth
+          : 0;
+      const actualGap = item.offsetLeft - prevRight;
+      const effGap = Math.min(actualGap, PLANET_SLOT);
+      const px = item.offsetLeft - effGap + (effGap - PLANET_SIZE) / 2;
+      barPlanet.style.setProperty("--px", Math.max(0, px).toFixed(1) + "px");
+    }
   };
 
   const initBarMarker = () => {
@@ -527,13 +575,16 @@
     barMarker.setAttribute("aria-hidden", "true");
     track.appendChild(barMarker);
 
-    // 星球是 initBarPlanet 插进当前项的，会让该项变宽 16px。
-    // 必须等它插完再量，否则线短一截。两者的调用顺序在 init 里保证。
+    // 星球已挂在轨道上、不占布局宽，所以这里量到的项宽就是最终值，
+    // 不再依赖「星球先插完」的调用顺序。
     placeMarker(current);
 
-    // 双 rAF 后才显形：首帧还没量到坐标，先亮着会在 left:0 闪一下
+    // 双 rAF 后两者一起显形：首帧还没量到坐标，先亮着会在 left:0 闪一下
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => barMarker.classList.add("is-ready"));
+      requestAnimationFrame(() => {
+        barMarker.classList.add("is-ready");
+        if (barPlanet) barPlanet.classList.add("is-ready");
+      });
     });
 
     // 视口变化后重量。此刻没有 body.bar-slide，所以是瞬时归位、不带过渡。
@@ -875,8 +926,9 @@
         return true;
       }
 
-      // 标记滑向新项。加 .bar-slide 才有过渡——平时（如 resize 重量）是瞬时归位。
-      if (targetItem && barMarker) {
+      // 标记与星球一起滑向新项。加 .bar-slide 才有过渡——
+      // 平时（如 resize 重量）是瞬时归位，不该看到一条线慢慢爬过去。
+      if (targetItem && (barMarker || barPlanet)) {
         document.body.classList.add("bar-slide");
         // 下一帧再改坐标：同帧设起点终点不会插值
         requestAnimationFrame(() => placeMarker(targetItem));
@@ -942,6 +994,13 @@
     const items = [...document.querySelectorAll(".orbit-item")];
     const item =
       items.find((el) => el.getAttribute("data-no") === no) || items[0];
+
+    // 装饰层就位。这条路径上开屏被整体跳过（hasSplash 为 false），
+    // setPhase 一次都不跑，所以必须在这里补——否则蜂巢、四角括号、
+    // 两侧参考线与边缘带六层全停在 opacity:0，返回后的首页是光板。
+    // 放在最前面、且在任何 return 之前：reduced-motion 与找不到到达项
+    // 这两条早退路径同样需要装饰在场。
+    document.body.classList.add("deco-on");
 
     const finish = () => document.body.classList.add("stage-back");
 

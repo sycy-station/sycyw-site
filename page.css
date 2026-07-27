@@ -42,6 +42,11 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 
+  /* 星球槽位：星球停在当前项左侧的空隙里，但左起第一项左边没有空隙。
+     预留这段内边距，让 01 成为当前项时星球也有地方站，不必压在编号上。
+     取值 = 星球 16px + 两侧各约 2.5px 呼吸。 */
+  padding-left: var(--planet-slot);
+
   /* 六项居中，与首页的中心构图对齐（首页 logo / 名称 / 标语中心全在 50%）。
      必须是 safe center 而不是 center：普通 center 配 overflow-x 时，
      溢到左侧的内容会永久滚不回来——实测 480px 下首项落在 left:-65，
@@ -51,10 +56,11 @@
      也就是改动前的行为，不会退化成不可达。 */
   justify-content: safe center;
 
-  /* .ib-marker 的包含块。放在滚动容器内是有意的：
-     窄屏横向滚动时线要跟着内容走，不能钉在视口上。 */
+  /* .ib-marker 与 .ib-planet 的包含块。放在滚动容器内是有意的：
+     窄屏横向滚动时线与星球要跟着内容走，不能钉在视口上。 */
   position: relative;
 }
+
 .ib-track::-webkit-scrollbar { display: none; }
 
 .ib-item {
@@ -107,21 +113,82 @@
 body.bar-slide .ib-marker {
   transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
 }
-/* 星球容器：占位与 16px 星球等宽，避免插入时编号横向跳动 */
+/* ---- 星球：脱离布局流，与下划线同步滑移 ----
+   原先它插在当前项的编号前，占 16px 布局宽 + 项内 gap 约 6px，
+   让当前项从 83px 变成 105px。后果是每次换当前项，那 22px 的宽度
+   也换位置——实测旧当前项与新当前项之间的项横向跳 22px（480px 下 21px）。
+   一个号称「全程不动的家具」其实在重排，这才是切换显得生硬的主因；
+   星球本身的淡出淡入只是表象。
+
+   改成 .ib-track 内的绝对定位元素后：
+     六项宽度恒定 83px，重排彻底消失
+     星球可以和下划线同一时长、同一缓动一起滑
+     横条总宽反而窄 22px，窄屏溢出压力略减
+   落点是当前项左侧的那道空隙（1920 下 39px、900 下 24px、480 下 18px，
+   星球 16px，最窄处两边各余 1px）。 */
 .ib-planet {
-  flex: none;
+  position: absolute;
+  /* 与项内文字的基线视觉对齐。项高 20px，星球 16px，居中偏上一点 */
+  top: 2px;
+  left: 0;
   width: 16px;
   height: 16px;
   line-height: 0;
-  align-self: center;
-  margin-right: -0.1em;
-  transition: opacity 0.16s var(--ease);
+  /* --px 由 JS 写：当前项左缘减去星球宽与呼吸间距 */
+  transform: translateX(var(--px, 0px));
+  opacity: 0;
+  pointer-events: none;
 }
 .ib-planet svg { display: block; }
-/* 星球不跟着下划线滑——它占 16px 布局宽度，抽出来会让整条横条重排。
-   改为在旧项淡出、在新项淡入，读成「熄灭再点亮」而不是跳变。
-   淡出走退场（body.leaving-sub），淡入由落地页的入场负责。 */
-body.leaving-sub .ib-planet { opacity: 0; }
+/* 与下划线同一条件显形：首帧还没量到坐标，先亮着会在 left:0 闪一下 */
+.ib-planet.is-ready { opacity: 1; }
+/* 滑移只在同层级切换时发生，与下划线共用 body.bar-slide 与 --travel，
+   两者必须同时长同缓动，否则会读成两个东西各自在动。 */
+body.bar-slide .ib-planet {
+  transition: transform var(--travel) var(--ease);
+}
+
+/* ---------------- 宽屏：横条升进 header 同一行 ----------------
+   顶部只占一行：标记 | 六项 | 主题开关与汉堡。正文因此上移一整行
+   （--title-top 在 style.css 的同名断点里减掉了 --bar-h）。
+
+   1000px 是实测临界，见 style.css 的 @media (min-width: 1000px) 注释。
+   这一档依赖星球已移出布局流——星球还占位时六项宽 652px，
+   1000px 那档的可用宽只有 693px，余量不足。
+
+   横条不能真的塞进 .site-header：那里有 mix-blend-mode: difference，
+   六项文字会被反色。所以两者仍是各自独立的 fixed 层，只是纵向重合。
+   header z-index 500 > 横条 300，所以 header 必须 pointer-events:none，
+   否则它中间那片空白会吃掉六项的点击（见 style.css 的 .site-header）。
+
+   本块必须排在 .ib-marker / .ib-planet 的基础规则之后：媒体查询不增加
+   特异度，写在前面的话基础规则的 top 会靠源码顺序赢回去——实测星球
+   因此跑到了行顶而不是行中。 */
+@media (min-width: 1000px) {
+  .index-bar {
+    /* 不再给 header 让位，改为与它同高、内容竖向居中 */
+    padding-top: 0;
+    height: var(--header-h);
+  }
+  .ib-track {
+    /* 撑满整行后，下边框落在这一行的底部，读成「导航行下的一条界线」。
+       原先边框在横条自己的基线上，升进 header 行后会变成一条
+       横穿行中间的线。 */
+    height: 100%;
+    align-items: center;
+    padding-bottom: 0;
+  }
+  /* 下划线原先靠 bottom:-1px 压在 .ib-track 的下边框上。轨道现在撑满
+     整行、边框在行底，而文字在行中——线要跟着文字走，不是跟着边框。 */
+  .ib-marker {
+    bottom: auto;
+    top: calc(50% + 0.72rem);
+  }
+  .ib-planet {
+    top: 50%;
+    margin-top: -8px;
+  }
+}
 
 /* ---------------- 标题块 ---------------- */
 /* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），

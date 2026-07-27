@@ -153,7 +153,12 @@ html[data-wide="off"] .wide {
   html[data-wide="on"] #splash.phase-expand .wide-hlines { opacity: 0.085; }
 
   /* 后景（.deco 内）：取值与前景逐阶段一致，接缝处不变化。
-     stage-in 之后保持 expand 的取值，两侧死区就一直有结构。 */
+     常驻态保持 expand 的取值，两侧死区就一直有结构。
+
+     常驻态认 body.deco-on，不再枚举 sp-expand / sp-leave / stage-in。
+     枚举的写法漏掉了「从子页返回首页」那条路径（它加的是
+     body.stage-back，且开屏整套被跳过），实测返回后这三层全是 0。
+     见 style.css 的 .deco .splash-grid 一节。 */
   html[data-wide="on"] body.sp-logo .deco .wide-guides { opacity: 0.22; }
   html[data-wide="on"] body.sp-logo .deco .wide-scale { opacity: 0.7; }
   html[data-wide="on"] body.sp-name .deco .wide-guides { opacity: 0.22; }
@@ -163,15 +168,9 @@ html[data-wide="off"] .wide {
   html[data-wide="on"] body.sp-code .deco .wide-scale { opacity: 0.7; }
   html[data-wide="on"] body.sp-code .deco .wide-hlines { opacity: 0.16; }
 
-  html[data-wide="on"] body.sp-expand .deco .wide-guides,
-  html[data-wide="on"] body.sp-leave .deco .wide-guides,
-  html[data-wide="on"] body.stage-in .deco .wide-guides { opacity: 0.12; }
-  html[data-wide="on"] body.sp-expand .deco .wide-scale,
-  html[data-wide="on"] body.sp-leave .deco .wide-scale,
-  html[data-wide="on"] body.stage-in .deco .wide-scale { opacity: 0.4; }
-  html[data-wide="on"] body.sp-expand .deco .wide-hlines,
-  html[data-wide="on"] body.sp-leave .deco .wide-hlines,
-  html[data-wide="on"] body.stage-in .deco .wide-hlines { opacity: 0.085; }
+  html[data-wide="on"] body.deco-on .deco .wide-guides { opacity: 0.12; }
+  html[data-wide="on"] body.deco-on .deco .wide-scale { opacity: 0.4; }
+  html[data-wide="on"] body.deco-on .deco .wide-hlines { opacity: 0.085; }
 }
 
 /* 上下刻度尺在大屏上只占两成屏宽，看着像漏了一截，跟着屏宽放开 */
@@ -257,9 +256,8 @@ html[data-wide="off"] .wide {
 
   html[data-wide="on"] body.sp-name .deco .wide-edge,
   html[data-wide="on"] body.sp-code .deco .wide-edge { opacity: 1; }
-  html[data-wide="on"] body.sp-expand .deco .wide-edge,
-  html[data-wide="on"] body.sp-leave .deco .wide-edge,
-  html[data-wide="on"] body.stage-in .deco .wide-edge { opacity: 0.42; }
+  /* 常驻态同样认 deco-on，见上面 A 层的说明 */
+  html[data-wide="on"] body.deco-on .deco .wide-edge { opacity: 0.42; }
 }
 
 /* ---------------- 减弱动效：只去动画，保留静态结构 ---------------- */

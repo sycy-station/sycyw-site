@@ -82,6 +82,30 @@
   --header-pad-y: 1rem;
   --header-btn: 42px;
   --header-h: calc(var(--header-pad-y) * 2 + var(--header-btn));
+
+  /* 子页横条自占一行时的高度（内容 35px + 下内边距 0.85rem）。
+     宽屏下横条升进 header 同一行，这一行就省了出来，
+     标题块的纵向位置要相应上提，见下面 min-width:1000px 的覆盖。 */
+  --bar-h: calc(35px + 0.85rem);
+
+  /* 横条上星球标记的槽位宽度（星球 16px + 两侧呼吸）。
+     .ib-track 用它做 padding-left，保证第一项成为当前项时星球也有地方站。 */
+  --planet-slot: 21px;
+}
+
+/* 横条与 header 同行的断点。
+   ------------------------------------------------------------
+   1000px 是实测的临界：六项跨度（星球移出布局流后）630px，
+   中间可用宽 693px；再窄一档 900px 就是 617 vs 593，放不下。
+   所以 1000px 以下退回「header 一行 + 横条一行」的两行布局。
+
+   --title-top 是跨文档接缝坐标，首页退场的旅行终点与子页标题块起点
+   共用它。这里减掉 --bar-h 之后两个文档同时生效（都 link 本文件），
+   接缝不会只动一头。 */
+@media (min-width: 1000px) {
+  :root {
+    --title-top: calc(clamp(8.5rem, 17vh, 12rem) - var(--bar-h));
+  }
 }
 
 @media (max-width: 600px) {
@@ -343,14 +367,22 @@ body.has-custom-cursor .menu-toggle {
 #splash.phase-logo .splash-grid { opacity: 0.075; }
 #splash.phase-expand .splash-grid { opacity: 0.045; }
 
-/* .deco 里那份（后景，跨接缝存活）：不是 #splash 后代，靠 body.sp-* 驱动。
-   开屏期间它被不透明的 .splash-bg 完全挡住，只在 bg 淡出后露出来。 */
+/* .deco 里那份（后景，跨接缝存活）：不是 #splash 后代，靠 body 上的类驱动。
+   开屏期间它被不透明的 .splash-bg 完全挡住，只在 bg 淡出后露出来。
+
+   两档取值：
+     开屏前段（sp-logo/name/code）  亮，只在开屏期间存在
+     常驻态（deco-on）              压暗，把注意力交还中心
+
+   常驻态用 body.deco-on 而不是枚举 sp-expand / sp-leave / stage-in。
+   原先是枚举，于是从子页返回首页那条路径（加的是 body.stage-back，
+   开屏整套被跳过、setPhase 一次都不跑）一个都没命中——实测返回后
+   蜂巢、四角括号、两侧参考线与边缘带六层全是 opacity:0。
+   枚举进入路径的写法注定会漏，改成单一语义类：谁想让装饰在场就加它。 */
 body.sp-logo .deco .splash-grid,
 body.sp-name .deco .splash-grid,
 body.sp-code .deco .splash-grid { opacity: 0.075; }
-body.sp-expand .deco .splash-grid,
-body.sp-leave .deco .splash-grid,
-body.stage-in .deco .splash-grid { opacity: 0.045; }
+body.deco-on .deco .splash-grid { opacity: 0.045; }
 
 /* 四角括号：分两段边框绘制 L 形 */
 .splash-frame {
@@ -374,12 +406,13 @@ body.stage-in .deco .splash-grid { opacity: 0.045; }
   opacity: 0.55;
   transform: translate(0, 0);
 }
+/* 四角括号只有一档取值，全程 0.55，所以直接认 deco-on。
+   前段那三个 sp-* 也并进来：它们出现在 deco-on 之前，
+   括号要从 sp-logo 就在场。 */
 body.sp-logo .deco .fr,
 body.sp-name .deco .fr,
 body.sp-code .deco .fr,
-body.sp-expand .deco .fr,
-body.sp-leave .deco .fr,
-body.stage-in .deco .fr {
+body.deco-on .deco .fr {
   opacity: 0.55;
   transform: translate(0, 0);
 }
@@ -1171,27 +1204,30 @@ body.loading {
   right: 0;
   z-index: 500;
   display: flex;
-  /* 居中簇：标记与操作区并排落在中心轴上。
-     首页是例外，见下面 html[data-page="stage"] 那一段。 */
-  justify-content: center;
+  /* 标记靠左、操作区靠右。宽屏下子页的横条会升进这一行的中间地带，
+     见 page.css 的 min-width:1000px 一节。 */
+  justify-content: space-between;
   align-items: center;
-  gap: 1.8rem;
   /* 竖向 padding 走变量：横条的让位高度从同一个数派生 */
   padding: var(--header-pad-y) 2.4rem;
   mix-blend-mode: difference;
+  /* header 是全宽 fixed 层且 z-index 500，宽屏下子页的横条与它纵向重合。
+     不关掉指针事件的话，中间那片空白会把横条六项的点击全吃掉——
+     实测「element intercepts pointer events」，六项完全点不动。
+     子元素各自恢复 auto。 */
+  pointer-events: none;
+}
+.mark,
+.header-actions {
+  pointer-events: auto;
 }
 
-/* ---- 首页：标记撤掉，操作区退回右上 ----
-   两点理由：
-   1) 首页的标记 href="index.html" 指向你正待着的这一页，是纯冗余；
-      而 .stage-logo-name 就是同样的「森韵次元坞」，同轴出现两次只是累赘。
-   2) 标记撤掉后若操作区还居中，顶部正中会剩两个孤立图标，没有东西锚定。
-      退回右上后中心轴完整让给 logo 与它下方的名称。
+/* ---- 首页：标记撤掉 ----
+   首页的标记 href="index.html" 指向你正待着的这一页，是纯冗余；
+   而 .stage-logo-name 就是同样的「森韵次元坞」，同轴出现两次只是累赘。
    用 display:none 而非 visibility:hidden——它在首页没有任何用途，
-   不该留在无障碍树和 Tab 序里。 */
-html[data-page="stage"] .site-header {
-  justify-content: flex-end;
-}
+   不该留在无障碍树和 Tab 序里。
+   撤掉后 space-between 只剩一个子元素，操作区自然靠右，不需要额外规则。 */
 html[data-page="stage"] .mark {
   display: none;
 }
@@ -1521,9 +1557,8 @@ body.leaving .orbit-planet {
 @media (max-width: 600px) {
   section { padding: 5rem 1.4rem; }
   /* 竖向 padding 由 --header-pad-y 统一给（见 :root 的窄屏覆盖），
-     这里只收横向。gap 也收一档，480px 下标记 95px + 操作区 87px
-     居中并排要留出余量。 */
-  .site-header { padding-left: 1.4rem; padding-right: 1.4rem; gap: 1.1rem; }
+     这里只收横向。 */
+  .site-header { padding-left: 1.4rem; padding-right: 1.4rem; }
 }
 
 /* ================================================================
