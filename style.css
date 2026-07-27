@@ -1227,7 +1227,9 @@ body.loading {
    而 .stage-logo-name 就是同样的「森韵次元坞」，同轴出现两次只是累赘。
    用 display:none 而非 visibility:hidden——它在首页没有任何用途，
    不该留在无障碍树和 Tab 序里。
-   撤掉后 space-between 只剩一个子元素，操作区自然靠右，不需要额外规则。 */
+   注意 display:none 会把它整个移出 flex 布局，此时 space-between 只剩
+   一个子元素、会把操作区放在 flex-start。靠右由 .header-actions 的
+   margin-left:auto 保证，不是靠 space-between。 */
 html[data-page="stage"] .mark {
   display: none;
 }
@@ -1247,6 +1249,11 @@ html[data-page="stage"] .mark {
   display: flex;
   align-items: center;
   gap: 0.2rem;
+  /* 靠右不能只依赖 space-between：首页的 .mark 是 display:none，被整个移出
+     flex 布局，只剩一个子元素时 space-between 会把它放在 flex-start，
+     于是首页的两个按钮跑到了左上角。margin-left:auto 在「有兄弟」和
+     「独子」两种情况下都把它推到右侧，不必按页面分支。 */
+  margin-left: auto;
 }
 
 .menu-toggle {
