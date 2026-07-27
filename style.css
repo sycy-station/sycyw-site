@@ -73,6 +73,13 @@
   /* 旅行时长，退场与子页入场共用 */
   --travel: 380ms;
 
+  /* 横条上「线由左向右伸出」的时长。比 --travel 短：星球先到位，
+     线随即抽出，两者是先后而不是并行——并行会读成两个东西各自在动。 */
+  --reveal: 300ms;
+  /* 伸出用一条只减速的缓动。--ease 是 in-out，起步慢，
+     会让「抽出」这个动作前段发虚。 */
+  --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
+
   /* ---- header 几何，唯一来源 ----
      子页的 .index-bar 要压在 header 下方，原先 page.css 里写的是
      calc(1.6rem * 2 + 42px)——手抄了一遍 header 的 padding 与按钮高。
@@ -84,29 +91,35 @@
   --header-h: calc(var(--header-pad-y) * 2 + var(--header-btn));
 
   /* 子页横条自占一行时的高度（内容 35px + 下内边距 0.85rem）。
-     宽屏下横条升进 header 同一行，这一行就省了出来，
-     标题块的纵向位置要相应上提，见下面 min-width:1000px 的覆盖。 */
+     曾用于「横条升进 header 同一行」那一档给 --title-top 做减量，
+     该布局已撤。保留是因为它仍是横条真实高度的唯一记录，
+     将来要算「横条底到标题顶还剩多少」时用得上。 */
   --bar-h: calc(35px + 0.85rem);
 
   /* 横条上星球标记的槽位宽度（星球 16px + 两侧呼吸）。
      .ib-track 用它做 padding-left，保证第一项成为当前项时星球也有地方站。 */
   --planet-slot: 21px;
+
+  /* 横条下方刻度尺占的纵向空间。
+     .ib-scroll 用它做 padding-bottom 把刻度尺纳入裁剪区（裁剪发生在
+     padding box 边缘），.ib-scale 用它做自身高度——两处同值，所以走变量。
+     构成：--scale-gap 让位 + 刻度 6px + 读数一行约 9px，留一点余量。 */
+  --scale-h: 24px;
+
+  /* 刻度尺与当前项下划线之间的让位。
+     两者原先都从轨道下缘起算，实测加密段压在线上 2.5px，糊成一团分不清
+     哪条是下划线、哪些是刻度。 */
+  --scale-gap: 3px;
+
+  /* 刻度间距。刻度用 repeating-linear-gradient 画（见 page.css 的
+     .ib-scale::after），长刻度每五格一根，加密段取一半间距。 */
+  --tick-step: 9px;
 }
 
-/* 横条与 header 同行的断点。
-   ------------------------------------------------------------
-   1000px 是实测的临界：六项跨度（星球移出布局流后）630px，
-   中间可用宽 693px；再窄一档 900px 就是 617 vs 593，放不下。
-   所以 1000px 以下退回「header 一行 + 横条一行」的两行布局。
-
-   --title-top 是跨文档接缝坐标，首页退场的旅行终点与子页标题块起点
-   共用它。这里减掉 --bar-h 之后两个文档同时生效（都 link 本文件），
-   接缝不会只动一头。 */
-@media (min-width: 1000px) {
-  :root {
-    --title-top: calc(clamp(8.5rem, 17vh, 12rem) - var(--bar-h));
-  }
-}
+/* 这里曾有一档 min-width:1000px 把 --title-top 减去 --bar-h，配合
+   「横条升进 header 同一行」的布局。整体压得太靠上，已撤。
+   --title-top 现在全尺寸统一取 clamp 那个值，横条自占一行。
+   --bar-h 仍在用（见下方说明）。 */
 
 @media (max-width: 600px) {
   :root {

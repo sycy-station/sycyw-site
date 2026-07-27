@@ -88,11 +88,14 @@ const orbitItems = () =>
           </span>
         </a>`).join("\n");
 
-// 子页顶部横条：当前页标记 aria-current，星球落在当前项编号前
+// 子页顶部横条：当前页标记 aria-current，星球落在当前项编号前。
+// data-freq 是刻度尺（调频盘）上该项的读数，由 script.js 读出来生成标签。
+// 写在 DOM 上而不是在 script.js 里再抄一份数组：站点结构的唯一来源是 pages.js，
+// 抄一份就意味着加页面时要改两处。
 const indexBar = (currentSlug) =>
   PAGES.map((p) => {
     const cur = p.slug === currentSlug;
-    return `      <a class="ib-item${cur ? " is-current" : ""}" href="${p.slug}.html"${cur ? ' aria-current="page"' : ""}>
+    return `      <a class="ib-item${cur ? " is-current" : ""}" href="${p.slug}.html"${cur ? ' aria-current="page"' : ""} data-freq="${p.freq}">
         <span class="ib-no">${p.no}</span>
         <span class="ib-title">${p.title}</span>
       </a>`;

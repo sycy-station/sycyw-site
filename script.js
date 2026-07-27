@@ -525,44 +525,149 @@
   let barPlanet = null;
 
   const PLANET_SIZE = 16;
-  // 与 style.css 的 --planet-slot 同值。那个变量给 .ib-track 做 padding-left
-  // （保证第一项也有地方站），这里用它当有效空隙的上限。
-  const PLANET_SLOT = 21;
+  // 星球右缘与当前项左缘之间留的空。原先按空隙居中算出来只有 2~3px，
+  // 星球贴着编号显得拘束。放到 5px 松一档。
+  // 上限由前一项的右缘兜住：空隙不够时自动收窄，绝不越界。
+  const PLANET_GAP = 5;
 
-  // 把标记与星球一起摆到某一项。两者共用同一次量测，保证同步。
-  // offsetLeft 是相对 .ib-track 的，不受横向滚动影响——
-  // 用 getBoundingClientRect 反而要再减去滚动量。
-  const placeMarker = (item) => {
-    if (!item) return;
-    if (barMarker) {
-      barMarker.style.setProperty("--mx", item.offsetLeft + "px");
-      barMarker.style.setProperty("--mw", item.offsetWidth + "px");
-    }
-    if (barPlanet) {
-      // 星球贴在当前项左侧，落在它与前一项之间的空隙里。
+  /* 项在轨道局部坐标系里的左缘与宽度，亚像素精度。
+     ------------------------------------------------------------
+     为什么不直接用 offsetLeft / offsetWidth：它们是取整值，最多少算 0.5px。
+     而下面的钳位要跟 getBoundingClientRect 的亚像素结果比较，混用两套精度
+     会让钳位失效——实测 601px 下星球因此压进了前一项 0.x px。
+
+     为什么不直接用 getBoundingClientRect：横条窄屏时可横向滚动，rect 会随
+     scrollLeft 平移，而 .ib-planet / .ib-marker 是绝对定位、不随滚动移动。
+     所以要把 rect 换算回局部坐标：减去轨道左缘、加回 scrollLeft。
+     绝对定位的 left:0 与这个原点重合（轨道无边框）。 */
+  const localBox = (el) => {
+    const track = el.closest(".ib-track");
+    const tb = track.getBoundingClientRect();
+    const b = el.getBoundingClientRect();
+    return { left: b.left - tb.left + track.scrollLeft, width: b.width };
+  };
+
+  // 星球单独一个函数：退场时只有它动，线是原地收回。
+  // 两者合在一起的话，退场时 --mx 会跟着改，而位移没有过渡，
+  // 旧页那条线就会一边收一边瞬移到新位置，是可见的跳变。
+  const placePlanet = (item) => {
+    if (!barPlanet || !item) return;
+    {
+      // 星球停在当前项左侧，距项左缘 PLANET_GAP。
       //
-      // 两个都试过、都不行的写法：
-      //   固定偏移 21px（星球 16 + 呼吸 5）——空隙随视口从 1920 的 39px
-      //     收到 480 的 18px，窄屏会超出 3px 压到前一项的字上（实测星球
-      //     叠在「交互研究」末字）。
+      // 两个试过、都不行的写法：
       //   按整段空隙居中——第一项左侧不是那 21px 槽位，而是 safe center
       //     留出的一整段居中留白（1920 下 124px），星球会飘到那段正中，
-      //     离「01 系统设计」老远。而且宽屏下空隙 39px 时星球停在正中，
-      //     离两侧各 11px，看不出它属于左边还是右边那一项。
+      //     离「01 系统设计」老远。
+      //   宽屏下按空隙居中——空隙 39px 时星球停在正中，离项左缘 11px，
+      //     看不出它属于左边还是右边那一项。
       //
-      // 现在的写法：取「实际空隙」与槽位宽的较小者作为有效空隙，再在其中
-      // 居中。于是星球始终贴着当前项（宽屏离项左缘 2.5px、窄屏 0.5px），
-      // 归属明确，且永远不会越过前一项的右缘。
+      // 现在是「贴着当前项，留固定间距」，再用前一项的右缘兜住上限：
+      // 空隙不足时自动收窄而不是压到前一项的字上（实测 480px 空隙 18px，
+      // 固定 21px 偏移会让星球叠在「交互研究」末字）。
+      const box = localBox(item);
       const prev = item.previousElementSibling;
       const prevRight =
         prev && prev.classList.contains("ib-item")
-          ? prev.offsetLeft + prev.offsetWidth
-          : 0;
-      const actualGap = item.offsetLeft - prevRight;
-      const effGap = Math.min(actualGap, PLANET_SLOT);
-      const px = item.offsetLeft - effGap + (effGap - PLANET_SIZE) / 2;
-      barPlanet.style.setProperty("--px", Math.max(0, px).toFixed(1) + "px");
+          ? localBox(prev).left + localBox(prev).width
+          : 0;   // 第一项：左侧是 .ib-track 的 --planet-slot 那段内边距
+      const want = box.left - PLANET_SIZE - PLANET_GAP;
+      const px = Math.max(prevRight, want);
+      barPlanet.style.setProperty("--px", Math.max(0, px).toFixed(2) + "px");
     }
+  };
+
+  // 线的位置与宽度。--mx 上没有过渡（见 page.css），所以这是瞬时归位，
+  // 用于初次就位与 resize 重量；退场时不调它，那时线只收不移。
+  const placeMarker = (item) => {
+    if (!barMarker || !item) return;
+    const box = localBox(item);
+    barMarker.style.setProperty("--mx", box.left.toFixed(2) + "px");
+    barMarker.style.setProperty("--mw", box.width.toFixed(2) + "px");
+  };
+
+  /* ---------------- 刻度尺（调频盘） ---------------- */
+  /* 横条下方一条等距刻度带，每项下方一个 FM 频率读数（来自 data-freq，
+     经 build.js 从 pages.js 的 freq 字段写进 DOM）。当前项那段刻度加密加深。
+
+     刻度根数取决于实测宽度、随视口变化，所以在这里生成而不是写死在模板里。
+     读数仍来自 DOM 属性，站点结构的单一来源没有被破坏。 */
+  let barScale = null;
+  let barDense = null;
+
+  const initBarScale = () => {
+    const track = document.querySelector(".ib-track");
+    const items = [...document.querySelectorAll(".ib-item")];
+    const current = document.querySelector(".ib-item.is-current");
+    if (!track || !items.length || !current) return;
+
+    barScale = document.createElement("div");
+    barScale.className = "ib-scale";
+    barScale.setAttribute("aria-hidden", "true");   // 纯装饰，读屏跳过
+
+    // 基准线与刻度都由 CSS 画（.ib-scale 的 ::before / ::after，用
+    // repeating-linear-gradient）。这里不再逐根生成 <i>：
+    //   梯度是连续的，间距不会因逐个取整而参差——原先按整数 px 放置，
+    //     实测相邻间距在 8/9px 之间跳，看上去是不匀的散划
+    //   根数不再取决于视口，resize 时只需重算读数位置，不必重建刻度
+    // JS 只管两件与内容有关的事：每项的读数、加密段落在哪一项。
+
+    // 每项一个读数，居中对齐该项
+    items.forEach((it) => {
+      const box = localBox(it);
+      const b = document.createElement("b");
+      b.textContent = it.getAttribute("data-freq") || "";
+      b.style.left = (box.left + box.width / 2).toFixed(2) + "px";
+      if (it === current) b.classList.add("is-cur");
+      barScale.appendChild(b);
+    });
+
+    barDense = document.createElement("div");
+    barDense.className = "ib-scale-dense";
+    barScale.appendChild(barDense);
+
+    track.appendChild(barScale);
+    placeDense(current);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => barScale.classList.add("is-ready"));
+    });
+  };
+
+  // 视口变化后重算读数位置。刻度与基准线是 CSS 梯度，跟着元素宽度自适应，
+  // 不用管。整块重建比逐个改简单，且读数条目本就只有六个。
+  // 重建后直接 is-ready，不重播淡入——那会读成一次无来由的闪动。
+  const rebuildScale = () => {
+    if (!barScale) return;
+    barScale.remove();
+    barScale = null;
+    barDense = null;
+    initBarScale();
+    if (barScale) barScale.classList.add("is-ready");
+  };
+
+  // 加密段跟着当前项走
+  const placeDense = (item) => {
+    if (!barDense || !item) return;
+    const box = localBox(item);
+    barDense.style.setProperty("--dx", box.left.toFixed(2) + "px");
+    barDense.style.setProperty("--dw", box.width.toFixed(2) + "px");
+  };
+
+  // 读数的强调随当前项转移
+  const emphasizeFreq = (item) => {
+    if (!barScale || !item) return;
+    const freq = item.getAttribute("data-freq");
+    barScale.querySelectorAll("b").forEach((b) => {
+      b.classList.toggle("is-cur", b.textContent === freq);
+    });
+  };
+
+  // 三者一起就位
+  const placeBoth = (item) => {
+    placeMarker(item);
+    placePlanet(item);
+    placeDense(item);
   };
 
   const initBarMarker = () => {
@@ -577,21 +682,31 @@
 
     // 星球已挂在轨道上、不占布局宽，所以这里量到的项宽就是最终值，
     // 不再依赖「星球先插完」的调用顺序。
-    placeMarker(current);
+    placeBoth(current);
 
-    // 双 rAF 后两者一起显形：首帧还没量到坐标，先亮着会在 left:0 闪一下
+    // 双 rAF 后两者一起显形：首帧还没量到坐标，先亮着会在 left:0 闪一下。
+    // 同一帧把 --clip 从默认的 100% 改成 0%，线由左向右抽出。
+    // 必须在 is-ready 之后（或同帧）：先露出再抽会看到一条完整的线闪现。
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         barMarker.classList.add("is-ready");
         if (barPlanet) barPlanet.classList.add("is-ready");
+        barMarker.style.setProperty("--clip", "0%");
       });
     });
 
-    // 视口变化后重量。此刻没有 body.bar-slide，所以是瞬时归位、不带过渡。
+    // 视口变化后重量。此刻没有 body.bar-slide，星球与加密段都是瞬时归位；
+    // 线的 --mx 本就无过渡，--clip 不变所以不会重播揭示。
     let rt = 0;
     window.addEventListener("resize", () => {
       clearTimeout(rt);
-      rt = setTimeout(() => placeMarker(document.querySelector(".ib-item.is-current")), 120);
+      rt = setTimeout(() => {
+        const cur = document.querySelector(".ib-item.is-current");
+        placeBoth(cur);
+        // 刻度与读数的位置全是实测值，视口变了必须重算。
+        // 整块重建比逐个改简单，且刻度根数本身也会变。
+        rebuildScale();
+      }, 120);
     });
   };
 
@@ -926,12 +1041,21 @@
         return true;
       }
 
-      // 标记与星球一起滑向新项。加 .bar-slide 才有过渡——
-      // 平时（如 resize 重量）是瞬时归位，不该看到一条线慢慢爬过去。
+      // 退场编排：星球滑向新项，线先收回去。
+      // 线收回而不是跟着滑——新页会在目标项下方重新抽出一条，
+      // 旧页这条要是横向平移过去，接缝两侧就成了「同一条线走完全程」，
+      // 星球与线并排平移读起来像整块搬家，主从关系就没了。
       if (targetItem && (barMarker || barPlanet)) {
         document.body.classList.add("bar-slide");
-        // 下一帧再改坐标：同帧设起点终点不会插值
-        requestAnimationFrame(() => placeMarker(targetItem));
+        // 下一帧再改：同帧设起点终点不会插值
+        requestAnimationFrame(() => {
+          // 线原地收回（不调 placeMarker，--mx 保持在旧项）
+          if (barMarker) barMarker.style.setProperty("--clip", "100%");
+          // 星球与刻度尺的加密段一起滑向新项，读数强调随之转移
+          placePlanet(targetItem);
+          placeDense(targetItem);
+          emphasizeFreq(targetItem);
+        });
       }
 
       document.body.classList.add("leaving-sub");
@@ -1246,6 +1370,8 @@
   // 先量下划线宽度就会短一截。
   initBarPlanet();
   initBarMarker();
+  // 刻度尺要量六项的位置，放在 marker 之后（两者互不依赖，顺序只为可读性）
+  initBarScale();
   initBarScroll();
   initLeaveBack();
   initLeaveSub();

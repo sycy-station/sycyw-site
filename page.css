@@ -27,20 +27,34 @@
   padding: var(--header-h) 2.4rem 0;
   pointer-events: none;
 }
-.ib-track {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(1.1rem, 2.6vw, 2.4rem);
+/* 滚动层。横向滚动放在这里而不是 .ib-track 上：
+   规范规定一轴为 auto/scroll 时另一轴的 visible 会被强制算成 auto，
+   所以带滚动的元素必然裁竖向。刻度尺长在线的下方，会被裁掉。
+   把滚动挪到外层、并用 padding-bottom 把刻度尺纳入这层的裁剪区（裁剪发生在
+   padding box 边缘），刻度尺就能留在 .ib-track 内、跟着内容一起滚。 */
+.ib-scroll {
   max-width: 1200px;
   margin: 0 auto;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--line);
   pointer-events: auto;
   /* 窄屏横向滚动：六项中文标题带编号约 60 字宽，放不下 */
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  padding-bottom: var(--scale-h);
+}
+.ib-scroll::-webkit-scrollbar { display: none; }
+
+.ib-track {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.1rem, 2.6vw, 2.4rem);
+  /* 内容窄时撑满滚动层，safe center 才有居中的余地；
+     内容宽时由 max-content 跟着长，下边框与刻度尺才能覆盖全部六项。 */
+  min-width: 100%;
+  width: max-content;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--line);
 
   /* 星球槽位：星球停在当前项左侧的空隙里，但左起第一项左边没有空隙。
      预留这段内边距，让 01 成为当前项时星球也有地方站，不必压在编号上。
@@ -56,12 +70,10 @@
      也就是改动前的行为，不会退化成不可达。 */
   justify-content: safe center;
 
-  /* .ib-marker 与 .ib-planet 的包含块。放在滚动容器内是有意的：
-     窄屏横向滚动时线与星球要跟着内容走，不能钉在视口上。 */
+  /* .ib-marker / .ib-planet / .ib-scale 三者的包含块。放在滚动层内是有意的：
+     窄屏横向滚动时它们要跟着内容走，不能钉在视口上。 */
   position: relative;
 }
-
-.ib-track::-webkit-scrollbar { display: none; }
 
 .ib-item {
   flex: none;
@@ -88,12 +100,14 @@
   color: var(--ink);
 }
 
-/* ---- 当前项标记：一条可滑移的下划线 ----
+/* ---- 当前项标记：一条由左向右伸出的线 ----
    原先是 .is-current::after，伪元素长在各自的项上，跨页时只能「这边消失、
    那边出现」。改成 .ib-track 里唯一的一条实体线，由 JS 写 --mx / --mw
-   把它摆到当前项下方，于是子页之间切换时它能从旧项滑到新项——
-   六页的横条 DOM 逐字节相同，所以两个文档都算得出彼此的坐标，
-   与 --title-* 共享接缝坐标是同一个手法。
+   把它摆到当前项下方——六页的横条 DOM 逐字节相同，所以两个文档都算得出
+   彼此的坐标，与 --title-* 共享接缝坐标是同一个手法。
+
+   线本身不横向滑：那样它和星球是两个东西并排平移，读起来像整块搬家。
+   改成「星球先走到位，线随即由左向右抽出」，两个动作有先后、有主从。
    由 JS 加 .is-ready 才显形：首帧还没量到坐标，先亮着会在 left:0 闪一下。
    无 JS 时它永远不出现，此时当前项仍有 color 加重可辨，见 noscript。 */
 .ib-marker {
@@ -106,14 +120,22 @@
   transform: translateX(var(--mx, 0px));
   opacity: 0;
   pointer-events: none;
+
+  /* 由左向右伸出，而不是整条线跟着星球横向滑。
+     用 clip-path 而不是 scaleX：后者会把线上的刻度与数字一起压扁
+     （见下面 .ib-ruler），clip 只是遮挡，内容几何不变。
+     --clip 由 JS 从 100%（全遮）改成 0%（全露），触发揭示。 */
+  clip-path: inset(0 var(--clip, 100%) 0 0);
+
+  /* 过渡只挂在 clip-path 上，不挂 transform。
+     --mx（位移）因此是瞬时的：线直接出现在目标项下方，不从旧项爬过去。
+     这条无条件生效而不是挂在 body.bar-slide 下——到达时（无论从首页、
+     从别的子页，还是冷启动）线都该抽出一次，而 --mx 在 resize 重量时
+     变化不触发任何动画，正是想要的。 */
+  transition: clip-path var(--reveal) var(--ease-out);
 }
 .ib-marker.is-ready { opacity: 1; }
-/* 滑移只在同层级切换时发生（body.bar-slide），平时不带过渡：
-   窗口 resize 后重新量位置时不该看到一条线慢慢爬过去。 */
-body.bar-slide .ib-marker {
-  transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
-}
-/* ---- 星球：脱离布局流，与下划线同步滑移 ----
+/* ---- 星球：脱离布局流，横向滑到当前项 ----
    原先它插在当前项的编号前，占 16px 布局宽 + 项内 gap 约 6px，
    让当前项从 83px 变成 105px。后果是每次换当前项，那 22px 的宽度
    也换位置——实测旧当前项与新当前项之间的项横向跳 22px（480px 下 21px）。
@@ -122,10 +144,9 @@ body.bar-slide .ib-marker {
 
    改成 .ib-track 内的绝对定位元素后：
      六项宽度恒定 83px，重排彻底消失
-     星球可以和下划线同一时长、同一缓动一起滑
+     星球可以自由滑移，成为切换时唯一在走的东西
      横条总宽反而窄 22px，窄屏溢出压力略减
-   落点是当前项左侧的那道空隙（1920 下 39px、900 下 24px、480 下 18px，
-   星球 16px，最窄处两边各余 1px）。 */
+   落点在当前项左侧，距项左缘 2~5px，见 script.js 的 placeMarker。 */
 .ib-planet {
   position: absolute;
   /* 与项内文字的基线视觉对齐。项高 20px，星球 16px，居中偏上一点 */
@@ -134,7 +155,7 @@ body.bar-slide .ib-marker {
   width: 16px;
   height: 16px;
   line-height: 0;
-  /* --px 由 JS 写：当前项左缘减去星球宽与呼吸间距 */
+  /* --px 由 JS 写：当前项左缘往左退一个星球宽加呼吸间距 */
   transform: translateX(var(--px, 0px));
   opacity: 0;
   pointer-events: none;
@@ -142,53 +163,153 @@ body.bar-slide .ib-marker {
 .ib-planet svg { display: block; }
 /* 与下划线同一条件显形：首帧还没量到坐标，先亮着会在 left:0 闪一下 */
 .ib-planet.is-ready { opacity: 1; }
-/* 滑移只在同层级切换时发生，与下划线共用 body.bar-slide 与 --travel，
-   两者必须同时长同缓动，否则会读成两个东西各自在动。 */
+/* 滑移只在同层级切换时发生。星球先走（--travel），线随后抽出（--reveal），
+   两者是先后而不是并行。 */
 body.bar-slide .ib-planet {
   transition: transform var(--travel) var(--ease);
 }
 
-/* ---------------- 宽屏：横条升进 header 同一行 ----------------
-   顶部只占一行：标记 | 六项 | 主题开关与汉堡。正文因此上移一整行
-   （--title-top 在 style.css 的同名断点里减掉了 --bar-h）。
+/* ============================================================
+   刻度尺（调频盘）
+   ------------------------------------------------------------
+   横条下方一条等距刻度带，每一项下方标一个 FM 频率读数（取自 pages.js 的
+   freq 字段，经 data-freq 传到 DOM）。当前项那一段刻度加密并加深，
+   读成「调到了这一档」。
 
-   1000px 是实测临界，见 style.css 的 @media (min-width: 1000px) 注释。
-   这一档依赖星球已移出布局流——星球还占位时六项宽 652px，
-   1000px 那档的可用宽只有 693px，余量不足。
+   为什么是全宽而不是只在当前项下画一小段：整个量程都在场，当前位置才有
+   参照。只画一段的话它是一枚孤立的碎片，传达不出刻度盘的意思。
 
-   横条不能真的塞进 .site-header：那里有 mix-blend-mode: difference，
-   六项文字会被反色。所以两者仍是各自独立的 fixed 层，只是纵向重合。
-   header z-index 500 > 横条 300，所以 header 必须 pointer-events:none，
-   否则它中间那片空白会吃掉六项的点击（见 style.css 的 .site-header）。
+   刻度由 script.js 生成而不是写死在模板里：根数取决于实测宽度，
+   随视口变化。数字则来自 data-freq，仍是 pages.js 单一来源。
 
-   本块必须排在 .ib-marker / .ib-planet 的基础规则之后：媒体查询不增加
-   特异度，写在前面的话基础规则的 top 会靠源码顺序赢回去——实测星球
-   因此跑到了行顶而不是行中。 */
-@media (min-width: 1000px) {
-  .index-bar {
-    /* 不再给 header 让位，改为与它同高、内容竖向居中 */
-    padding-top: 0;
-    height: var(--header-h);
-  }
-  .ib-track {
-    /* 撑满整行后，下边框落在这一行的底部，读成「导航行下的一条界线」。
-       原先边框在横条自己的基线上，升进 header 行后会变成一条
-       横穿行中间的线。 */
-    height: 100%;
-    align-items: center;
-    padding-bottom: 0;
-  }
-  /* 下划线原先靠 bottom:-1px 压在 .ib-track 的下边框上。轨道现在撑满
-     整行、边框在行底，而文字在行中——线要跟着文字走，不是跟着边框。 */
-  .ib-marker {
-    bottom: auto;
-    top: calc(50% + 0.72rem);
-  }
-  .ib-planet {
-    top: 50%;
-    margin-top: -8px;
-  }
+   本块所有元素都在 .ib-track 内（跟着横向滚动走），而 .ib-track 不裁剪，
+   裁剪发生在 .ib-scroll 的 padding box——它的 padding-bottom 正好等于
+   --scale-h，把刻度尺纳进可见区。
+   ============================================================ */
+.ib-scale {
+  position: absolute;
+  /* 从轨道下边框再往下让 --scale-gap。
+     不让位的话加密段会压在 .ib-marker 上（实测重叠 2.5px），
+     下划线与刻度糊成一团。 */
+  top: calc(100% + var(--scale-gap));
+  left: 0;
+  right: 0;
+  height: calc(var(--scale-h) - var(--scale-gap));
+  pointer-events: none;
+  /* 与线同一条件显形，避免首帧刻度在 0 位闪一下 */
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
 }
+.ib-scale.is-ready { opacity: 1; }
+
+/* 基准线：贯通整条量程，不断。
+   刻度悬在空中会读成一串散落的短划，有了这条底线才成为一把尺。 */
+.ib-scale::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+/* 刻度：两层等距梯度，短刻度每 --tick-step、长刻度每五格一根。
+   用 repeating-linear-gradient 而不是一根根生成 <i>：
+     梯度本身是连续的，间距不会因逐个取整而参差（原先 JS 按整数 px
+     放置，实测相邻间距在 8/9px 之间跳）
+     根数不再取决于视口，resize 时不必重建 DOM
+     六页的刻度图案完全一致，跨文档切换时这一层读不出变化
+   1px 的硬边用 0 与 1px 两个色标夹出，不做插值，所以不会发虚。 */
+.ib-scale::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-image:
+    /* 长刻度 */
+    repeating-linear-gradient(to right,
+      var(--line-strong) 0 1px,
+      transparent 1px calc(var(--tick-step) * 5)),
+    /* 短刻度 */
+    repeating-linear-gradient(to right,
+      var(--line-strong) 0 1px,
+      transparent 1px var(--tick-step));
+  background-size: 100% 6px, 100% 3px;
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat;
+}
+
+/* 读数：每项下方一个，非当前项压淡。
+   压淡而不是隐藏——整条量程的刻度值都可读，才像一把尺。 */
+.ib-scale b {
+  position: absolute;
+  top: 9px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--grey-strong);
+  opacity: 0.32;
+  transition: opacity 0.3s var(--ease), color 0.3s var(--ease);
+}
+.ib-scale b.is-cur {
+  opacity: 1;
+  color: var(--ink);
+}
+
+/* 加密段：盖在当前项那一段上的一块密刻度，宽度与该项等宽。
+   同样用梯度，间距是基准的一半，颜色加深——读成「这一档被调到了」。
+   与星球共用 --travel 与缓动一起滑移：两者是同一次「调频」的两个指示，
+   不同步会读成各自在动。
+   基准线在 .ib-scale::before 上、加密段不覆盖它，所以那条底线全程连续。 */
+.ib-scale-dense {
+  position: absolute;
+  top: 1px;                  /* 让开基准线那 1px，不盖住它 */
+  left: 0;
+  height: 5px;
+  width: var(--dw, 0px);
+  transform: translateX(var(--dx, 0px));
+  background-image: repeating-linear-gradient(to right,
+    var(--ink) 0 1px,
+    transparent 1px calc(var(--tick-step) / 2));
+  opacity: 0.6;
+}
+body.bar-slide .ib-scale-dense {
+  transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
+}
+
+/* ---- 移动端：撤掉刻度尺 ----
+   窄屏横条本就要横向滚动，再叠一层刻度与六组数字太喵；
+   480px 下六项读数还会互相重叠。此时仍保留那条揭示线与 color 加重。
+   .ib-scroll 的 padding-bottom 一并收掉，不留空带。 */
+@media (max-width: 600px) {
+  .ib-scale { display: none; }
+  .ib-scroll { padding-bottom: 0; }
+}
+
+/* ---- 移动端：撤掉星球 ----
+   窄屏空隙只有 18px，星球 16px 塞进去两边各余 1px，视觉上是硬挤；
+   而且此时横条本身要横向滚动，多一个装饰只是负担。
+   撤掉后当前项靠 color 加重与下方那条线辨识，足够了。
+   JS 侧不再需要判断——.ib-planet 仍会被创建，只是不显示，
+   这样 resize 跨过断点时不必重建元素。--planet-slot 那段
+   padding 也一并收掉，六项能多用 21px。 */
+@media (max-width: 600px) {
+  .ib-planet { display: none; }
+  .ib-track { padding-left: 0; }
+}
+
+/* 曾经有一档「横条升进 header 同一行」（min-width:1000px）已撤。
+   整体压得太靠上，顶部三样东西（标记、六项、两个按钮）挤在一行里，
+   横条失去了自己的呼吸空间。回到两行：header 一行，横条一行。
+   连带撤掉的还有 style.css 里那个把 --title-top 减去 --bar-h 的同名断点。
+   实现细节（header 需要 pointer-events:none 等）留着仍然正确，
+   见 style.css 的 .site-header。 */
 
 /* ---------------- 标题块 ---------------- */
 /* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
@@ -470,8 +591,11 @@ html.nav-sub .index-bar {
   body.leaving-sub .site-footer {
     transition: none !important;
   }
-  /* 标记直接就位，不滑 */
-  body.bar-slide .ib-marker { transition: none !important; }
+  /* 标记、星球、刻度尺直接就位，不播揭示、不滑 */
+  .ib-marker { transition: none !important; clip-path: none !important; }
+  body.bar-slide .ib-planet,
+  body.bar-slide .ib-scale-dense { transition: none !important; }
+  .ib-scale { opacity: 1 !important; transition: none !important; }
 }
 
 /* ---------------- 横条随滚动隐去 ----------------
@@ -497,9 +621,12 @@ html.page-ready body.bar-hidden .index-bar {
     transform: none !important;
     transition: none !important;
   }
-  /* 标记仍要显形（它是「你在哪」的指示，属功能而非装饰），只是不做过渡 */
-  .ib-marker { transition: none !important; }
+  /* 标记仍要显形（它是「你在哪」的指示，属功能而非装饰），只是不做过渡。
+     clip-path 也要撤掉：JS 若没来得及把 --clip 改成 0%，线会一直被全遮。 */
+  .ib-marker { transition: none !important; clip-path: none !important; }
   .ib-planet { transition: none !important; }
+  .ib-scale { opacity: 1 !important; transition: none !important; }
+  .ib-scale-dense { transition: none !important; }
   /* 隐去本身是功能性的（让出阅读空间），保留，只是不做过渡 */
   html.page-ready body.bar-hidden .index-bar {
     transform: translateY(calc(-100% - 4px)) !important;

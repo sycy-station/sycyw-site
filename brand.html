@@ -178,33 +178,43 @@
 
   <!-- 顶部横向索引：轨道在子页面上的形态。
        当前项由 build 时打 .is-current + aria-current，星球落在它编号前。
-       窄屏横向滚动（见 page.css）。 -->
+       窄屏横向滚动（见 page.css）。
+
+       .ib-scroll 这层包裹是必需的，不是多余嵌套：
+       横向滚动要 overflow-x:auto，而规范规定另一轴的 visible 会被强制算成
+       auto，所以带滚动的元素必然裁竖向（否则冒出一条竖滚动条）。
+       刻度尺长在线的下方，正好在被裁的那片——第一版把它放在 .ib-track 里，
+       刻度全不见了。把滚动移到外层、让 .ib-track 不再裁剪，刻度尺就能留在
+       track 内（窄屏滚动时跟着内容走，不会与六项错位）。
+       .ib-marker / .ib-planet / .ib-scale 三者都由 script.js 追加到 .ib-track。 -->
   <nav class="index-bar" aria-label="分区索引">
-    <div class="ib-track">
-      <a class="ib-item" href="system-design.html">
+    <div class="ib-scroll">
+      <div class="ib-track">
+      <a class="ib-item" href="system-design.html" data-freq="88.1">
         <span class="ib-no">01</span>
         <span class="ib-title">系统设计</span>
       </a>
-      <a class="ib-item" href="interaction.html">
+      <a class="ib-item" href="interaction.html" data-freq="91.5">
         <span class="ib-no">02</span>
         <span class="ib-title">交互研究</span>
       </a>
-      <a class="ib-item is-current" href="brand.html" aria-current="page">
+      <a class="ib-item is-current" href="brand.html" aria-current="page" data-freq="94.7">
         <span class="ib-no">03</span>
         <span class="ib-title">品牌语言</span>
       </a>
-      <a class="ib-item" href="engineering.html">
+      <a class="ib-item" href="engineering.html" data-freq="98.3">
         <span class="ib-no">04</span>
         <span class="ib-title">前端工程</span>
       </a>
-      <a class="ib-item" href="motion.html">
+      <a class="ib-item" href="motion.html" data-freq="101.9">
         <span class="ib-no">05</span>
         <span class="ib-title">动效编排</span>
       </a>
-      <a class="ib-item" href="archive.html">
+      <a class="ib-item" href="archive.html" data-freq="104.6">
         <span class="ib-no">06</span>
         <span class="ib-title">实验归档</span>
       </a>
+      </div>
     </div>
   </nav>
 

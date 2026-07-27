@@ -42,6 +42,13 @@ const SPLASH_CAPTION = "MINIMAL SYSTEM / INTERFACE LAB";
 const ABOUT_DESC =
   "森韵次元坞是一个专注于极简系统与界面的实验室。我们相信少即是多，克制本身就是一种表达方式。";
 
+/* freq 字段说明
+   ------------------------------------------------------------
+   子页横条下方的刻度尺（调频盘）上每一项的读数。取真实存在的 FM 频段值，
+   递增顺序与六项一致——刻度尺是一个量程，数字必须单调，否则「调到某一档」
+   这件事就说不通了。
+   数据放这里而不是硬编码在 script.js：站点结构的唯一来源是本文件。 */
+
 const PAGES = [
   {
     slug: "system-design",
@@ -49,7 +56,8 @@ const PAGES = [
     title: "系统设计",
     sub: "SYSTEM DESIGN",
     desc: "结构化的界面逻辑与组件体系",
-    year: "2024"
+    year: "2024",
+    freq: "88.1"
   },
   {
     slug: "interaction",
@@ -57,7 +65,8 @@ const PAGES = [
     title: "交互研究",
     sub: "INTERACTION",
     desc: "动效节奏与真实的操作反馈",
-    year: "2024"
+    year: "2024",
+    freq: "91.5"
   },
   {
     slug: "brand",
@@ -65,7 +74,8 @@ const PAGES = [
     title: "品牌语言",
     sub: "BRAND VOICE",
     desc: "克制而清晰的视觉表达系统",
-    year: "2023"
+    year: "2023",
+    freq: "94.7"
   },
   {
     slug: "engineering",
@@ -73,7 +83,8 @@ const PAGES = [
     title: "前端工程",
     sub: "ENGINEERING",
     desc: "不依赖框架的轻量实现方式",
-    year: "2023"
+    year: "2023",
+    freq: "98.3"
   },
   {
     slug: "motion",
@@ -82,7 +93,8 @@ const PAGES = [
     sub: "MOTION",
     // 原 .index-list 只有四条，这两条是新写的
     desc: "时序、缓动与可被跳过的编排",
-    year: "2024"
+    year: "2024",
+    freq: "101.9"
   },
   {
     slug: "archive",
@@ -91,6 +103,7 @@ const PAGES = [
     sub: "ARCHIVE",
     desc: "未完成的尝试与被否决的方案",
     year: "2023",
+    freq: "104.6",
     // 原单页 .manifesto 两段并入本页。壳子阶段模板还没消费这个字段，
     // 放在这里是为了内容不只存在于旧版单页里（旧版见 git 首个提交）。
     manifesto: [
