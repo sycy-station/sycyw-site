@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-wide="off" data-page="sub" data-slug="{{ slug }}">
+<head>
+{{> head }}
+{{> nav-signal }}
+{{> noscript-page }}
+</head>
+<body>
+
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+
+{{> header }}
+
+  <!-- 顶部横向索引：轨道在子页面上的形态。
+       当前项由 build 时打 .is-current + aria-current，星球落在它编号前。
+       窄屏横向滚动（见 page.css）。 -->
+  <nav class="index-bar" aria-label="分区索引">
+    <div class="ib-track">
+{{ indexBar }}
+    </div>
+  </nav>
+
+  <main class="page-main" id="top">
+
+    <!-- 标题块：结构与 .orbit-inner 的三行完全一致（编号 / 中文 / 英文），
+         首页退场时那一项旅行到这里，接缝处两者重合。
+         纵向位置由 --title-top 决定，与退场终点共用同一变量。 -->
+    <header class="page-title" id="pageTitle">
+      <span class="pt-no">{{ no }}</span>
+      <h1 class="pt-name">{{ title }}</h1>
+      <span class="pt-sub">{{ subNbsp }}</span>
+    </header>
+
+    <p class="page-desc reveal-line">{{ desc }}</p>
+
+    <!-- 壳子阶段：内容待补。模板结构定下来之后往这里填。 -->
+    <section class="page-body">
+      <div class="pb-placeholder reveal-line">
+        <span class="pbp-label">CONTENT&nbsp;/&nbsp;PENDING</span>
+        <span class="pbp-line"></span>
+        <span class="pbp-text">这一页的内容待补。</span>
+      </div>
+    </section>
+
+  </main>
+
+{{> footer }}
+
+  <script src="script.js"></script>
+</body>
+</html>

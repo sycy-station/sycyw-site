@@ -1,0 +1,26 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ pageTitle }}</title>
+<meta name="description" content="{{ pageDesc }}">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stage.css">
+<!-- 大屏装饰层，可整行删除 -->
+<link rel="stylesheet" href="wide.css">
+<!-- 深色模式调色板，可整行删除 -->
+<link rel="stylesheet" href="theme.css">
+{{ extraCss }}
+<!-- 主题必须在首帧前定好，否则深色偏好的用户会先看到一帧白底。
+     故意内联且放在样式表之后：这段极短，阻塞可忽略。
+     无此脚本时 theme.css 的 @media 仍会跟随系统，只是失去手动选择。 -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("ces-theme");
+      if (t === "dark" || t === "light") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {
+      /* 隐私模式下 localStorage 可能抛异常，落回系统偏好即可 */
+    }
+  })();
+</script>

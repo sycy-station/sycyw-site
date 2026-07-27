@@ -1,0 +1,30 @@
+  <!-- 角标式导航，非通栏 -->
+  <header class="site-header">
+    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
+        <i aria-hidden="true"></i>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 全屏覆盖式菜单 -->
+  <nav class="overlay-nav" id="overlayNav" aria-hidden="true" aria-label="主导航">
+    <!-- 不列「分区」：header 的标记就在同一屏、同一角，重复一次只是噪音。
+         菜单专管六个子页面。 -->
+    <ol class="overlay-list">
+      <li><a href="system-design.html" data-index="01">系统设计</a></li>
+      <li><a href="interaction.html" data-index="02">交互研究</a></li>
+      <li><a href="brand.html" data-index="03">品牌语言</a></li>
+      <li><a href="engineering.html" data-index="04">前端工程</a></li>
+      <li><a href="motion.html" data-index="05">动效编排</a></li>
+      <li><a href="archive.html" data-index="06">实验归档</a></li>
+    </ol>
+    <div class="overlay-foot">
+      <span class="clock" id="clock">--:--:--</span>
+      <span>Shanghai, CN</span>
+    </div>
+  </nav>

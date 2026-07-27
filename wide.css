@@ -1,0 +1,278 @@
+/* ============================================================
+   大屏装饰层（WIDE-SCREEN DECOR）
+   ------------------------------------------------------------
+   全部规则挂在 html[data-wide="on"] 上，两档撤回：
+     1) 把 <html data-wide="on"> 改成 "off"  -> 立即全部关闭
+     2) 删除本文件 + index.html 的 <link> + .wide 那一块 HTML -> 彻底清除
+   不修改 style.css / stage.css 任何既有规则。
+
+   A 层：垂直/水平参考线 + 坐标标注（仅中央内容区之外） （>=1200px 生效）
+   B 层：左右边缘信息带                        （>=1400px 生效）
+
+   .wide 有两份 DOM：
+     #splash > .wide   前景，开屏期间可见，溶解时与 .splash-bg 同步淡出
+     .deco   > .wide   后景，开屏期间被 .splash-bg 挡住，之后留在分区页填两侧死区
+   前景由 #splash.phase-* 驱动，后景由 body.sp-* 驱动，两份取值相同，接缝读不出交替。
+   ============================================================ */
+
+.wide {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* 默认不显示，由下面的断点逐层打开 */
+  display: none;
+}
+html[data-wide="on"] .wide {
+  display: block;
+}
+html[data-wide="off"] .wide {
+  display: none !important;
+}
+
+/* ---------------- 公共：随开屏阶段淡入 ---------------- */
+.wide-guides,
+.wide-scale,
+.wide-edge {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 1.1s var(--ease);
+}
+
+/* ============================================================
+   A 层
+   ============================================================ */
+
+/* 垂直参考线：两级密度，且只在中央内容区之外出现
+   ------------------------------------------------------------
+   .splash-stage 宽度锁在 1040px，所以中央 ±520px 是内容区。
+   用两个伪元素分别铺左右死区，而不是整幅加遮罩——这样边界与内容区
+   严格对齐，且不依赖 mask-composite（跨浏览器支持不一致）。
+   background-attachment: fixed 让两侧共用同一套视口坐标，
+   左右的线仍落在全局 160px 网格上，与坐标标注对得上。 */
+.wide-guides {
+  inset: 0;
+}
+.wide-guides::before,
+.wide-guides::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(50% - var(--wide-carve, 520px));
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--guide-major) 0 1px,
+      transparent 1px 640px
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--guide-minor) 0 1px,
+      transparent 1px 160px
+    );
+  background-attachment: fixed;
+  /* 上下端淡出，不与角括号、HUD 打架 */
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+.wide-guides::before { left: 0; }
+.wide-guides::after { right: 0; }
+
+/* 死区水平参考线：只在左右两侧出现，中央留空不干扰内容 */
+.wide-hlines {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.1s var(--ease);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--guide-h) 0 1px,
+    transparent 1px 160px
+  );
+  /* 中央内容区挖空，边界与 .splash-stage 对齐（±520px），留 24px 羽化 */
+  mask-image: linear-gradient(to right,
+    #000 0,
+    #000 calc(50% - var(--wide-carve, 520px)),
+    transparent calc(50% - var(--wide-carve, 520px) + 24px),
+    transparent calc(50% + var(--wide-carve, 520px) - 24px),
+    #000 calc(50% + var(--wide-carve, 520px)),
+    #000 100%);
+  -webkit-mask-image: linear-gradient(to right,
+    #000 0,
+    #000 calc(50% - var(--wide-carve, 520px)),
+    transparent calc(50% - var(--wide-carve, 520px) + 24px),
+    transparent calc(50% + var(--wide-carve, 520px) - 24px),
+    #000 calc(50% + var(--wide-carve, 520px)),
+    #000 100%);
+}
+
+/* 坐标标注：贴在参考线上方，每 320px 一个 */
+.wide-scale {
+  left: 0;
+  right: 0;
+  top: 9.5vh;
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+.wide-scale span {
+  /* 每格 320px = 参考线间距 160px 的两倍 */
+  flex: 0 0 320px;
+  padding-left: 5px;
+}
+/* 中央没有参考线了，对应的标注一并挖掉，否则会出现无线可标的孤字 */
+.wide-scale {
+  mask-image: linear-gradient(to right,
+    #000 0,
+    #000 calc(50% - var(--wide-carve, 520px)),
+    transparent calc(50% - var(--wide-carve, 520px) + 16px),
+    transparent calc(50% + var(--wide-carve, 520px) - 16px),
+    #000 calc(50% + var(--wide-carve, 520px)),
+    #000 100%);
+  -webkit-mask-image: linear-gradient(to right,
+    #000 0,
+    #000 calc(50% - var(--wide-carve, 520px)),
+    transparent calc(50% - var(--wide-carve, 520px) + 16px),
+    transparent calc(50% + var(--wide-carve, 520px) - 16px),
+    #000 calc(50% + var(--wide-carve, 520px)),
+    #000 100%);
+}
+
+@media (min-width: 1200px) {
+  /* 前景（splash 内） */
+  html[data-wide="on"] #splash.phase-logo .wide-guides { opacity: 0.22; }
+  html[data-wide="on"] #splash.phase-logo .wide-scale { opacity: 0.7; }
+  html[data-wide="on"] #splash.phase-name .wide-hlines { opacity: 0.16; }
+  /* 放大阶段整体压暗，把注意力交还中心 */
+  html[data-wide="on"] #splash.phase-expand .wide-guides { opacity: 0.12; }
+  html[data-wide="on"] #splash.phase-expand .wide-scale { opacity: 0.4; }
+  html[data-wide="on"] #splash.phase-expand .wide-hlines { opacity: 0.085; }
+
+  /* 后景（.deco 内）：取值与前景逐阶段一致，接缝处不变化。
+     stage-in 之后保持 expand 的取值，两侧死区就一直有结构。 */
+  html[data-wide="on"] body.sp-logo .deco .wide-guides { opacity: 0.22; }
+  html[data-wide="on"] body.sp-logo .deco .wide-scale { opacity: 0.7; }
+  html[data-wide="on"] body.sp-name .deco .wide-guides { opacity: 0.22; }
+  html[data-wide="on"] body.sp-name .deco .wide-scale { opacity: 0.7; }
+  html[data-wide="on"] body.sp-name .deco .wide-hlines { opacity: 0.16; }
+  html[data-wide="on"] body.sp-code .deco .wide-guides { opacity: 0.22; }
+  html[data-wide="on"] body.sp-code .deco .wide-scale { opacity: 0.7; }
+  html[data-wide="on"] body.sp-code .deco .wide-hlines { opacity: 0.16; }
+
+  html[data-wide="on"] body.sp-expand .deco .wide-guides,
+  html[data-wide="on"] body.sp-leave .deco .wide-guides,
+  html[data-wide="on"] body.stage-in .deco .wide-guides { opacity: 0.12; }
+  html[data-wide="on"] body.sp-expand .deco .wide-scale,
+  html[data-wide="on"] body.sp-leave .deco .wide-scale,
+  html[data-wide="on"] body.stage-in .deco .wide-scale { opacity: 0.4; }
+  html[data-wide="on"] body.sp-expand .deco .wide-hlines,
+  html[data-wide="on"] body.sp-leave .deco .wide-hlines,
+  html[data-wide="on"] body.stage-in .deco .wide-hlines { opacity: 0.085; }
+}
+
+/* 上下刻度尺在大屏上只占两成屏宽，看着像漏了一截，跟着屏宽放开 */
+@media (min-width: 1200px) {
+  html[data-wide="on"] .splash-rule { width: min(76vw, 1180px); }
+}
+
+/* ============================================================
+   B 层：左右边缘信息带
+   ============================================================ */
+
+/* 垂直居中且限高，让出四角给 HUD */
+.wide-edge {
+  top: 18vh;
+  height: 64vh;
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+}
+.wide-edge-l {
+  left: clamp(30px, 3.4vw, 64px);
+}
+.wide-edge-r {
+  right: clamp(30px, 3.4vw, 64px);
+  flex-direction: row-reverse;
+}
+
+/* 全高刻度轨 */
+.we-rail {
+  flex: none;
+  width: 9px;
+  display: flex;
+  justify-content: center;
+}
+.we-rail i {
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--ink) 0 1px,
+    transparent 1px 13px
+  );
+  opacity: 0.34;
+}
+/* 每 5 格一条长刻线：用第二层渐变叠加 */
+.wide-edge-r .we-rail i {
+  background-position: right top;
+}
+
+/* 数字标注：等距分布在轨旁 */
+.we-marks {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+  color: var(--grey-strong);
+}
+.wide-edge-r .we-marks {
+  text-align: right;
+}
+
+/* 竖排技术串 */
+.we-vtext {
+  flex: none;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.56rem;
+  letter-spacing: 0.26em;
+  color: var(--grey-strong);
+  opacity: 0.8;
+  align-self: center;
+}
+.wide-edge-l .we-vtext {
+  transform: rotate(180deg);
+}
+
+@media (min-width: 1400px) {
+  html[data-wide="on"] #splash.phase-name .wide-edge { opacity: 1; }
+  html[data-wide="on"] #splash.phase-expand .wide-edge { opacity: 0.42; }
+
+  html[data-wide="on"] body.sp-name .deco .wide-edge,
+  html[data-wide="on"] body.sp-code .deco .wide-edge { opacity: 1; }
+  html[data-wide="on"] body.sp-expand .deco .wide-edge,
+  html[data-wide="on"] body.sp-leave .deco .wide-edge,
+  html[data-wide="on"] body.stage-in .deco .wide-edge { opacity: 0.42; }
+}
+
+/* ---------------- 减弱动效：只去动画，保留静态结构 ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .wide-guides,
+  .wide-hlines,
+  .wide-scale,
+  .wide-edge {
+    transition: none !important;
+  }
+  /* 开屏被跳过，后景副本要直接就位，否则分区页两侧空着 */
+  html[data-wide="on"] .deco .wide-guides { opacity: 0.12 !important; }
+  html[data-wide="on"] .deco .wide-scale { opacity: 0.4 !important; }
+  html[data-wide="on"] .deco .wide-hlines { opacity: 0.085 !important; }
+  html[data-wide="on"] .deco .wide-edge { opacity: 0.42 !important; }
+}

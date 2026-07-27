@@ -1,0 +1,28 @@
+<noscript>
+  <!-- 脚本不可用时，直接展示完整内容，不让开屏黑幕和揭示动画把页面锁死 -->
+  <style>
+    .splash { display: none !important; }
+    .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
+    .orbit-inner, .stage-logo-name, .stage-scroll, .stage-about { opacity: 1 !important; transform: none !important; }
+    .deco .splash-grid { opacity: 0.045 !important; }
+    .deco .fr { opacity: 0.55 !important; transform: translate(0, 0) !important; }
+    .orbit-ring { opacity: 0.15 !important; }
+    /* 无 JS 时不会有 body.stage-in，环得自己描满 */
+    .orbit-ring-path { stroke-dashoffset: 0 !important; }
+    .orbit-ticks { opacity: 0.3 !important; }
+    /* 无 JS 时星球不公转，停在 12 点；环仍然画出来 */
+    .orbit-planet-ring { opacity: 0.1 !important; }
+    .orbit-planet { opacity: 1 !important; }
+    .stage-foot { opacity: 1 !important; }
+    .sf-line { transform: scaleX(1) !important; }
+    /* 无 JS 时 body.sp-* 不会被加上，wide 两层会停在 opacity:0 */
+    .deco .wide-guides { opacity: 0.12 !important; }
+    .deco .wide-scale { opacity: 0.4 !important; }
+    .deco .wide-hlines { opacity: 0.085 !important; }
+    .deco .wide-edge { opacity: 0.42 !important; }
+    .cursor { display: none !important; }
+    /* 主题开关依赖 JS，无脚本时不显示（body.has-theme-toggle 也加不上，
+       这里再声明一次是为了意图明确） */
+    .theme-toggle { display: none !important; }
+  </style>
+</noscript>

@@ -1,0 +1,47 @@
+<!-- 返回信号（首页侧）：必须在首帧之前决定，否则会先闪一下开屏底再跳变。
+     与主题防闪白、子页入场信号同一手法。
+     只有首页需要这段；子页面用 nav-signal.html。 -->
+<script>
+  (function () {
+    var root = document.documentElement;
+
+    var raw = null;
+    try {
+      raw = sessionStorage.getItem("ces-nav");
+    } catch (e) {
+      return; // 拿不到信号就正常播开屏，不是错误
+    }
+    if (!raw) return;
+
+    var sig;
+    try {
+      sig = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+
+    // from 必须是 sub：'stage' 那条是给子页面用的，不能在首页消费。
+    // 不匹配时原样留着，交给真正的消费方。
+    if (sig.from !== "sub") return;
+
+    // 过期保护：标签页搁置很久、或退场播了但跳转被取消
+    var age = Date.now() - (sig.ts || 0);
+    if (age < 0 || age > 2500) {
+      try { sessionStorage.removeItem("ces-nav"); } catch (e) {}
+      return;
+    }
+
+    try { sessionStorage.removeItem("ces-nav"); } catch (e) {}
+
+    // 供 script.js 找到到达项。用 data 属性而不是再读一次 storage，
+    // 因为上面已经把它清掉了（保证一次性，刷新不重放）。
+    root.setAttribute("data-back-no", sig.no || "");
+    root.classList.add("nav-back");
+
+    // 兜底：整段编排由 script.js 推进。脚本失败时六项会永久停在 opacity:0，
+    // 这里保证内容最终一定可见。
+    setTimeout(function () {
+      document.body && document.body.classList.add("stage-back");
+    }, 1400);
+  })();
+</script>

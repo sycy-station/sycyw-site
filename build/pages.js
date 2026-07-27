@@ -1,0 +1,92 @@
+/* ============================================================
+   站点结构的唯一来源
+   ------------------------------------------------------------
+   首页轨道的六项、子页面顶部横条、每页的标题块，全部由这份数据生成。
+   加一页 = 在这里加一条，跑一次 node build/build.js。
+   顺序即 pos-1..pos-6 与横条从左到右的顺序。
+
+   slug   输出文件名（放平在根目录）
+   no     两位编号，轨道与横条都显示
+   title  中文主标题
+   sub    英文副标题（轨道 .orbit-sub / 子页 kicker）
+   desc   一句话描述，取自原 .index-list 的既有文案
+   ============================================================ */
+
+/* 开屏侧标题取六项里的哪两项。
+   ------------------------------------------------------------
+   原先写的是「极简系统 / 界面实验室」，与分区页的六项零共享字形，
+   所以 splash→stage 的形变只能靠透明度交叉淡化，读起来是糊而不是变
+   （原注释也承认「文案与 orbit 不同，无法形变」）。
+   改成直接取六项里的两项后，字形全程不变，只有字号/字距/位置在动，
+   糊的成因从根上消失。
+   取 pos-2 与 pos-5：它们在轨道上是左右最外侧的中间项，
+   落点与开屏侧标题几乎重合（原注释实测 pos-5 差 2px、pos-2 差 25px）。 */
+const SPLASH_SIDES = ["interaction", "motion"];
+
+/* 品牌陈述：原先占据侧标题位置，语义修正后移到 .splash-caption。 */
+const SPLASH_CAPTION = "MINIMAL SYSTEM / INTERFACE LAB";
+
+/* 原 hero 的描述段。改造后首页只保留一行 h1，这段暂时没有承载处，
+   存在这里避免它只活在 index.orig.html.bak 里。 */
+const ABOUT_DESC =
+  "森韵次元坞是一个专注于极简系统与界面的实验室。我们相信少即是多，克制本身就是一种表达方式。";
+
+const PAGES = [
+  {
+    slug: "system-design",
+    no: "01",
+    title: "系统设计",
+    sub: "SYSTEM DESIGN",
+    desc: "结构化的界面逻辑与组件体系",
+    year: "2024"
+  },
+  {
+    slug: "interaction",
+    no: "02",
+    title: "交互研究",
+    sub: "INTERACTION",
+    desc: "动效节奏与真实的操作反馈",
+    year: "2024"
+  },
+  {
+    slug: "brand",
+    no: "03",
+    title: "品牌语言",
+    sub: "BRAND VOICE",
+    desc: "克制而清晰的视觉表达系统",
+    year: "2023"
+  },
+  {
+    slug: "engineering",
+    no: "04",
+    title: "前端工程",
+    sub: "ENGINEERING",
+    desc: "不依赖框架的轻量实现方式",
+    year: "2023"
+  },
+  {
+    slug: "motion",
+    no: "05",
+    title: "动效编排",
+    sub: "MOTION",
+    // 原 .index-list 只有四条，这两条是新写的
+    desc: "时序、缓动与可被跳过的编排",
+    year: "2024"
+  },
+  {
+    slug: "archive",
+    no: "06",
+    title: "实验归档",
+    sub: "ARCHIVE",
+    desc: "未完成的尝试与被否决的方案",
+    year: "2023",
+    // 原单页 .manifesto 两段并入本页。壳子阶段模板还没消费这个字段，
+    // 放在这里是为了内容不只存在于 index.orig.html.bak 里。
+    manifesto: [
+      "我们不追逐流行的视觉语言，也不堆叠不必要的装饰。真正的设计感，来自于对留白、节奏和秩序的耐心打磨。",
+      "一个页面的好坏，不取决于它用了多少组件，而取决于它有没有被认真地思考过每一处间距、每一次过渡、每一个字号的选择。"
+    ]
+  }
+];
+
+module.exports = { PAGES, SPLASH_SIDES, SPLASH_CAPTION, ABOUT_DESC };

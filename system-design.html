@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-wide="off" data-page="sub" data-slug="system-design">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统设计 — 森韵次元坞</title>
+<meta name="description" content="结构化的界面逻辑与组件体系">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stage.css">
+<!-- 大屏装饰层，可整行删除 -->
+<link rel="stylesheet" href="wide.css">
+<!-- 深色模式调色板，可整行删除 -->
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="page.css">
+<!-- 主题必须在首帧前定好，否则深色偏好的用户会先看到一帧白底。
+     故意内联且放在样式表之后：这段极短，阻塞可忽略。
+     无此脚本时 theme.css 的 @media 仍会跟随系统，只是失去手动选择。 -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("ces-theme");
+      if (t === "dark" || t === "light") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {
+      /* 隐私模式下 localStorage 可能抛异常，落回系统偏好即可 */
+    }
+  })();
+</script>
+
+<!-- 入场信号：必须在首帧之前决定，否则会先画冷启动布局再跳变。
+     与主题防闪白同一手法（内联、放在样式表之后）。
+     只有子页面需要这段；首页不参与。 -->
+<script>
+  (function () {
+    var root = document.documentElement;
+
+    // 必须无条件、在任何 return 之前加上：page.css 的初始隐藏态全挂在这个类下。
+    // 脚本没跑 = 类不存在 = 内容默认可见，脚本失效不会留白屏。
+    root.classList.add("js-enter");
+
+    // 兜底：入场由 script.js 推进（rAF 后加 .page-ready）。若 script.js
+    // 加载失败或在到达那段之前抛异常，横条与正文会永久停在 opacity:0。
+    // 同样必须在任何 return 之前，冷启动路径也要有这层保险。
+    setTimeout(function () {
+      root.classList.add("page-ready");
+    }, 1400);
+
+    // 浏览器可能在导航后恢复上一次的滚动位置。入场动画依赖 scrollY=0
+    // 时 fixed 坐标与文档流位置重合，所以这里关掉自动恢复。
+    try {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    } catch (e) {}
+
+    var raw = null;
+    try {
+      raw = sessionStorage.getItem("ces-nav");
+      sessionStorage.removeItem("ces-nav");
+    } catch (e) {
+      return; // 拿不到信号就走冷启动入场，不是错误
+    }
+    if (!raw) return;
+
+    var sig;
+    try {
+      sig = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+
+    // 过期保护：标签页搁置很久、或退场播了但跳转被取消，
+    // 陈旧记录不该触发形变入场。
+    var age = Date.now() - (sig.ts || 0);
+    if (age < 0 || age > 2500) return;
+    if (sig.from !== "stage") return;
+    if (sig.slug !== root.getAttribute("data-slug")) return;
+
+    root.classList.add("nav-enter");
+  })();
+</script>
+
+<noscript>
+  <!-- 子页面没有开屏，只需把依赖 JS 的入场与揭示直接就位。
+       无脚本时 html.nav-enter 也加不上，所以入场那套本就不会生效，
+       这里主要负责滚动揭示与自定义光标。 -->
+  <style>
+    .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
+    .cursor { display: none !important; }
+    .theme-toggle { display: none !important; }
+  </style>
+</noscript>
+
+</head>
+<body>
+
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+
+  <!-- 角标式导航，非通栏 -->
+  <header class="site-header">
+    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
+        <i aria-hidden="true"></i>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 全屏覆盖式菜单 -->
+  <nav class="overlay-nav" id="overlayNav" aria-hidden="true" aria-label="主导航">
+    <!-- 不列「分区」：header 的标记就在同一屏、同一角，重复一次只是噪音。
+         菜单专管六个子页面。 -->
+    <ol class="overlay-list">
+      <li><a href="system-design.html" data-index="01">系统设计</a></li>
+      <li><a href="interaction.html" data-index="02">交互研究</a></li>
+      <li><a href="brand.html" data-index="03">品牌语言</a></li>
+      <li><a href="engineering.html" data-index="04">前端工程</a></li>
+      <li><a href="motion.html" data-index="05">动效编排</a></li>
+      <li><a href="archive.html" data-index="06">实验归档</a></li>
+    </ol>
+    <div class="overlay-foot">
+      <span class="clock" id="clock">--:--:--</span>
+      <span>Shanghai, CN</span>
+    </div>
+  </nav>
+
+
+  <!-- 顶部横向索引：轨道在子页面上的形态。
+       当前项由 build 时打 .is-current + aria-current，星球落在它编号前。
+       窄屏横向滚动（见 page.css）。 -->
+  <nav class="index-bar" aria-label="分区索引">
+    <div class="ib-track">
+      <a class="ib-item is-current" href="system-design.html" aria-current="page">
+        <span class="ib-no">01</span>
+        <span class="ib-title">系统设计</span>
+      </a>
+      <a class="ib-item" href="interaction.html">
+        <span class="ib-no">02</span>
+        <span class="ib-title">交互研究</span>
+      </a>
+      <a class="ib-item" href="brand.html">
+        <span class="ib-no">03</span>
+        <span class="ib-title">品牌语言</span>
+      </a>
+      <a class="ib-item" href="engineering.html">
+        <span class="ib-no">04</span>
+        <span class="ib-title">前端工程</span>
+      </a>
+      <a class="ib-item" href="motion.html">
+        <span class="ib-no">05</span>
+        <span class="ib-title">动效编排</span>
+      </a>
+      <a class="ib-item" href="archive.html">
+        <span class="ib-no">06</span>
+        <span class="ib-title">实验归档</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="page-main" id="top">
+
+    <!-- 标题块：结构与 .orbit-inner 的三行完全一致（编号 / 中文 / 英文），
+         首页退场时那一项旅行到这里，接缝处两者重合。
+         纵向位置由 --title-top 决定，与退场终点共用同一变量。 -->
+    <header class="page-title" id="pageTitle">
+      <span class="pt-no">01</span>
+      <h1 class="pt-name">系统设计</h1>
+      <span class="pt-sub">SYSTEM&nbsp;DESIGN</span>
+    </header>
+
+    <p class="page-desc reveal-line">结构化的界面逻辑与组件体系</p>
+
+    <!-- 壳子阶段：内容待补。模板结构定下来之后往这里填。 -->
+    <section class="page-body">
+      <div class="pb-placeholder reveal-line">
+        <span class="pbp-label">CONTENT&nbsp;/&nbsp;PENDING</span>
+        <span class="pbp-line"></span>
+        <span class="pbp-text">这一页的内容待补。</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 全站 footer：原 .contact 区块的联系方式并入这里 -->
+  <footer class="site-footer">
+    <div class="sf-contact">
+      <a class="footer-mail" href="mailto:hello@ces.studio">hello@ces.studio</a>
+      <div class="footer-social">
+        <a href="#">微博</a>
+        <a href="#">GitHub</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+    <!-- 回首页只留 header 的标记一条路（全站惯例，且它是唯一带退场动画的入口）。
+         这里原有的「返回分区 ↑」已撤：三个裸 href 指向同一目标，彼此不知道
+         对方存在，其中两个还会绕过退场动画直接硬跳。 -->
+    <div class="sf-meta">
+      <span>© 2024 森韵次元坞</span>
+      <span class="sf-rev">REV&nbsp;2.31</span>
+    </div>
+  </footer>
+
+
+  <script src="script.js"></script>
+</body>
+</html>

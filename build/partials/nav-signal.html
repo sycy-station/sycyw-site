@@ -1,0 +1,50 @@
+<!-- 入场信号：必须在首帧之前决定，否则会先画冷启动布局再跳变。
+     与主题防闪白同一手法（内联、放在样式表之后）。
+     只有子页面需要这段；首页不参与。 -->
+<script>
+  (function () {
+    var root = document.documentElement;
+
+    // 必须无条件、在任何 return 之前加上：page.css 的初始隐藏态全挂在这个类下。
+    // 脚本没跑 = 类不存在 = 内容默认可见，脚本失效不会留白屏。
+    root.classList.add("js-enter");
+
+    // 兜底：入场由 script.js 推进（rAF 后加 .page-ready）。若 script.js
+    // 加载失败或在到达那段之前抛异常，横条与正文会永久停在 opacity:0。
+    // 同样必须在任何 return 之前，冷启动路径也要有这层保险。
+    setTimeout(function () {
+      root.classList.add("page-ready");
+    }, 1400);
+
+    // 浏览器可能在导航后恢复上一次的滚动位置。入场动画依赖 scrollY=0
+    // 时 fixed 坐标与文档流位置重合，所以这里关掉自动恢复。
+    try {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    } catch (e) {}
+
+    var raw = null;
+    try {
+      raw = sessionStorage.getItem("ces-nav");
+      sessionStorage.removeItem("ces-nav");
+    } catch (e) {
+      return; // 拿不到信号就走冷启动入场，不是错误
+    }
+    if (!raw) return;
+
+    var sig;
+    try {
+      sig = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+
+    // 过期保护：标签页搁置很久、或退场播了但跳转被取消，
+    // 陈旧记录不该触发形变入场。
+    var age = Date.now() - (sig.ts || 0);
+    if (age < 0 || age > 2500) return;
+    if (sig.from !== "stage") return;
+    if (sig.slug !== root.getAttribute("data-slug")) return;
+
+    root.classList.add("nav-enter");
+  })();
+</script>

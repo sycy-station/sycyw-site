@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-wide="on" data-page="stage">
+<head>
+{{> head }}
+{{> nav-signal-home }}
+{{> noscript-home }}
+</head>
+<body>
+
+  <!-- 噪点纹理层，弱化纯平面模板感 -->
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- 自定义反色光标 -->
+  <div class="cursor" aria-hidden="true"></div>
+
+  <!-- 开屏动画 -->
+  <div class="splash" id="splash" aria-hidden="true">
+    <div class="splash-bg"></div>
+
+    <!-- ==================== WIDE-SCREEN DECOR / 大屏装饰层 ====================
+         整块可删除。或把 <html data-wide="on"> 改成 "off" 即可全部关闭。
+         前景副本，开屏期间可见，溶解时与 .splash-bg 同步淡出。
+         ======================================================================= -->
+    <div class="wide" aria-hidden="true">
+{{> wide }}
+    </div>
+    <!-- ==================== /WIDE-SCREEN DECOR ==================== -->
+
+    <!-- 技术质感层：蜂巢和括号是开屏里的「前景」副本，溶解时淡出。
+         .stage 内的 .deco 是跨接缝存活的「后景」副本，在 splash-bg 透明后接住。-->
+    <div class="splash-grid" aria-hidden="true"></div>
+
+    <div class="splash-frame" aria-hidden="true">
+      <span class="fr fr-tl"></span><span class="fr fr-tr"></span>
+      <span class="fr fr-bl"></span><span class="fr fr-br"></span>
+    </div>
+
+    <div class="splash-rule splash-rule-t" aria-hidden="true"></div>
+    <div class="splash-rule splash-rule-b" aria-hidden="true"></div>
+
+    <!-- 四角读数：状态机、序列号、坐标、进度 -->
+    <div class="hud" aria-hidden="true">
+      <div class="hud-tl">
+        <span class="hud-k">STATUS</span>
+        <span class="hud-v" id="hudStatus">INIT</span>
+      </div>
+      <div class="hud-tr">
+        <span class="hud-k">SEQ</span>
+        <span class="hud-v" id="hudSeq">0x0000</span>
+      </div>
+      <div class="hud-bl">
+        <span class="hud-k">NODE</span>
+        <span class="hud-v">SYCYW<span class="hud-coord">&nbsp;/&nbsp;31.23N&nbsp;121.47E</span></span>
+      </div>
+      <div class="hud-br">
+        <span class="hud-v" id="hudPct">000</span>
+        <span class="hud-bar"><i id="hudBar"></i></span>
+      </div>
+    </div>
+
+    <div class="splash-content">
+      <!-- 三栏网格：侧标题 / logo / 侧标题，侧标题初始向 logo 中心收拢 -->
+      <div class="splash-stage">
+        <!-- 侧标题就是六项里的两项（pos-2 / pos-5），字字相同。
+             这样溶解时只有字号/字距/位置在动，字形不变，不再是两个不同的词
+             在同一位置交叉淡化。文案来源 build/pages.js 的 SPLASH_SIDES。 -->
+        <div class="splash-side splash-side-left">
+          <span class="side-no">{{ sideLeftNo }}</span>
+          <span class="side-title">{{ sideLeftTitle }}</span>
+          <span class="side-sub">{{ sideLeftSub }}</span>
+        </div>
+
+        <div class="splash-logo-wrap">
+          <span class="reticle" aria-hidden="true">
+            <i class="rt rt-tl"></i><i class="rt rt-tr"></i>
+            <i class="rt rt-bl"></i><i class="rt rt-br"></i>
+            <i class="rt-tick rt-tick-t"></i><i class="rt-tick rt-tick-b"></i>
+            <i class="rt-tick rt-tick-l"></i><i class="rt-tick rt-tick-r"></i>
+          </span>
+          <img class="splash-logo" src="assets/logo.png" alt="" width="1000" height="1000" decoding="async">
+        </div>
+
+        <div class="splash-side splash-side-right">
+          <span class="side-no">{{ sideRightNo }}</span>
+          <span class="side-title">{{ sideRightTitle }}</span>
+          <span class="side-sub">{{ sideRightSub }}</span>
+        </div>
+
+        <!-- 左右数据面板：填充 expand 之前的空栏，expand 时退场让位给侧标题 -->
+        <div class="panel panel-left" aria-hidden="true">
+          <span class="panel-rail"><i></i><span class="panel-seq">SEQ-0417</span></span>
+          <div class="panel-body">
+            <span class="panel-label">SPEC&nbsp;/&nbsp;01</span>
+            <span class="panel-bars">
+              <i style="--w:78%"></i><i style="--w:54%"></i><i style="--w:91%"></i>
+              <i style="--w:36%"></i><i style="--w:67%"></i>
+            </span>
+            <span class="panel-hex">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </span>
+            <span class="panel-read">
+              <span><b>CELL</b><em>0417</em></span>
+              <span><b>FLUX</b><em>2.31</em></span>
+              <span><b>TEMP</b><em>036</em></span>
+            </span>
+            <span class="panel-foot">GRID&nbsp;LOCK&nbsp;·&nbsp;OK</span>
+          </div>
+        </div>
+
+        <div class="panel panel-right" aria-hidden="true">
+          <span class="panel-rail"><i></i><span class="panel-seq">REV-2.31</span></span>
+          <div class="panel-body">
+            <span class="panel-label">SPEC&nbsp;/&nbsp;02</span>
+            <span class="panel-bars">
+              <i style="--w:62%"></i><i style="--w:88%"></i><i style="--w:44%"></i>
+              <i style="--w:73%"></i><i style="--w:29%"></i>
+            </span>
+            <span class="panel-hex">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </span>
+            <span class="panel-read">
+              <span><b>NODE</b><em>08</em></span>
+              <span><b>GAIN</b><em>1.04</em></span>
+              <span><b>DRIFT</b><em>000</em></span>
+            </span>
+            <span class="panel-foot">CELL&nbsp;ARRAY&nbsp;·&nbsp;OK</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 名称与代码：放大阶段退场，把画面让给 logo 与侧标题 -->
+      <div class="splash-meta">
+        <div class="splash-name">
+          <span class="splash-letter">森</span>
+          <span class="splash-letter">韵</span>
+          <span class="splash-letter">次</span>
+          <span class="splash-letter">元</span>
+          <span class="splash-letter">坞</span>
+        </div>
+        <div class="splash-line"></div>
+        <!-- 品牌陈述移到这里：侧标题的位置让给了六项里的两项 -->
+        <div class="splash-caption">
+          <span class="cap-br">[</span>
+          <span>{{ splashCaption }}</span>
+          <span class="cap-br">]</span>
+        </div>
+        <div class="splash-code" id="splashCode"></div>
+      </div>
+
+      <!-- 底部状态块：expand 阶段进场，填补 meta 撤走后的下半屏。
+           三段构成厚度：主状态行 / 读数列 / 刻度条 -->
+      <div class="statusbar" aria-hidden="true">
+
+        <div class="sb-main">
+          <i class="sb-line"></i>
+          <span class="sb-text">
+            <span class="sb-seg">SYSTEM&nbsp;READY</span>
+            <span class="sb-dot">·</span>
+            <span class="sb-seg">06&nbsp;MODULES</span>
+            <span class="sb-dot">·</span>
+            <span class="sb-seg">GRID&nbsp;LOCK&nbsp;OK</span>
+          </span>
+          <i class="sb-line"></i>
+        </div>
+
+        <div class="sb-cols">
+          <span class="sb-col"><b>CELL</b><em>0417</em></span>
+          <span class="sb-col"><b>FLUX</b><em>2.31</em></span>
+          <span class="sb-col"><b>NODE</b><em>08</em></span>
+          <span class="sb-col"><b>GAIN</b><em>1.04</em></span>
+          <span class="sb-col"><b>TEMP</b><em>036</em></span>
+          <span class="sb-col"><b>DRIFT</b><em>000</em></span>
+        </div>
+
+        <div class="sb-ticks"><i></i></div>
+      </div>
+    </div>
+  </div>
+
+{{> header }}
+
+  <main id="top">
+
+    <!-- 分区页：承接开屏最后一帧，logo 原位不动，六个二级标题绕 logo 成弧线排布。
+         多页改造后这是首页的唯一区块，六项各自指向一个子页面。 -->
+    <section class="stage" id="stage">
+
+      <!-- 跨接缝装饰层：这两层从开屏一直活到分区页，中途不重建、不淡出，
+           所以接缝处「环境」没有变化。 -->
+      <div class="deco" aria-hidden="true">
+        <div class="splash-grid"></div>
+        <div class="splash-frame">
+          <span class="fr fr-tl"></span><span class="fr fr-tr"></span>
+          <span class="fr fr-bl"></span><span class="fr fr-br"></span>
+        </div>
+
+        <!-- 大屏装饰层的后景副本：与 splash 里那份同参数（同一 partial），
+             开屏期间被 .splash-bg 挡住，bg 淡出后接住。 -->
+        <div class="wide">
+{{> wide }}
+        </div>
+      </div>
+
+      <div class="stage-orbit">
+
+        <!-- 轨道环：半径等于六项的公转半径，让六项从「漂浮」变成「在环上」。
+             改成 SVG 是为了能做部分描边（border 做不到）。
+             pathLength="1" 把周长归一化成 1，dasharray/dashoffset 用 0..1 的
+             比例值，视口变化时不必重算——这是这套动画能写成纯 CSS 的关键。
+             rotate(-90) 让起点从 3 点移到 12 点，与星球的 0° 定义一致。 -->
+        <!-- 不设 viewBox：这样 SVG 用户单位 = CSS 像素，stroke-width:1 就是
+             真 1px，不必用 vector-effect="non-scaling-stroke"。
+             这一点很关键——实测 non-scaling-stroke 会破坏 pathLength 的
+             dash 归一化（描边卡在约 16/24 档，dashoffset 怎么变都不动），
+             那正是环画成三段孤弧的原因。
+             几何（r/cx/cy）改由 CSS 从 --orbit-r 算，随视口跟随。 -->
+        <svg class="orbit-ring" focusable="false" aria-hidden="true">
+          <circle class="orbit-ring-path" pathLength="1"/>
+        </svg>
+        <span class="orbit-ticks" aria-hidden="true"></span>
+
+        <!-- 星球轨道：半径落在 logo 边缘与六项内缘之间的空带上。
+             底部挖掉一段，避开 logo 下方的名称，不让静态圆线切字。 -->
+        <span class="orbit-planet-ring" aria-hidden="true"></span>
+        <!-- 像素星球：9 档灰的 7x7 方格盘，受光面在左上。
+             位置由 script.js 的 rAF 循环写 transform，顺时针公转，
+             指向/聚焦某项时按最近路径停到该方向。 -->
+        <span class="orbit-planet" aria-hidden="true">
+          <svg viewBox="0 0 7 7" width="16" height="16" focusable="false" aria-hidden="true">
+            <g fill="var(--planet-1)">
+              <rect x="2" y="0" width="2" height="1"/>
+              <rect x="1" y="1" width="2" height="1"/>
+              <rect x="0" y="2" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-2)">
+              <rect x="4" y="0" width="1" height="1"/>
+              <rect x="3" y="1" width="2" height="1"/>
+              <rect x="2" y="2" width="3" height="1"/>
+              <rect x="1" y="3" width="3" height="1"/>
+              <rect x="1" y="4" width="2" height="1"/>
+              <rect x="2" y="5" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-3)">
+              <rect x="5" y="1" width="1" height="1"/>
+              <rect x="5" y="2" width="2" height="1"/>
+              <rect x="4" y="3" width="3" height="1"/>
+              <rect x="3" y="4" width="3" height="1"/>
+              <rect x="3" y="5" width="2" height="1"/>
+              <rect x="2" y="6" width="3" height="1"/>
+            </g>
+          </svg>
+        </span>
+
+        <div class="stage-logo-wrap">
+          <img class="stage-logo" src="assets/logo.png" alt="森韵次元坞" width="1000" height="1000">
+          <span class="stage-logo-name">森韵次元坞</span>
+        </div>
+
+{{ orbitItems }}
+
+      </div>
+
+      <!-- 原 hero 的标题并入这里：hero 页撤掉后 stage 必须自带 h1，
+           否则全站没有一级标题。这句同时充当「关于」。 -->
+      <h1 class="stage-about">设计与工程之间没有边界</h1>
+
+      <!-- 底部信息带 -->
+      <div class="stage-foot" aria-hidden="true">
+        <i class="sf-line"></i>
+        <span class="sf-text">
+          <span class="sf-seg">SYCYW</span>
+          <span class="sf-dot">·</span>
+          <!-- 实时上海时钟：与右侧坐标标注同源，让这一带从静态铭牌
+               变成「在运行」的读数。整个 .stage-foot 是 aria-hidden，
+               秒级跳动的文字对读屏只是噪音。 -->
+          <span class="sf-seg sf-clock clock">--:--:--</span>
+          <span class="sf-dot">·</span>
+          <span class="sf-seg">31.23N&nbsp;121.47E</span>
+        </span>
+        <i class="sf-line"></i>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

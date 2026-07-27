@@ -1,0 +1,347 @@
+/* ============================================================
+   子页面模板
+   ------------------------------------------------------------
+   顶部横向索引 + 标题块 + 正文 + 全站 footer。
+
+   跨文档接缝的关键在 --title-* 三个变量：
+   首页退场时被点那一项旅行到这组坐标，子页面首帧把标题块放在同一坐标。
+   两个文档都 link 本文件，所以取值必然一致，不需要 JS 量任何像素。
+   改这三个值会同时改变退场终点与子页起点，不会只改一头。
+   ============================================================ */
+
+/* --title-left / --title-top / --travel 定义在 style.css 的 :root。
+   两个文档都 link style.css，所以取值必然一致——首页退场的终点
+   与本页标题块的起点是同一个数，不需要 JS 量任何像素。 */
+
+/* ---------------- 顶部横向索引 ---------------- */
+/* 轨道在子页面上的形态。不从弧线形变过来——轨道属于枢纽、横条属于页面，
+   两者是不同层级的导航物，各自淡出淡入在语义上更诚实。 */
+.index-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  /* header 高度 = 1.6rem*2 padding + 42px 按钮，横条压在它下方 */
+  padding: calc(1.6rem * 2 + 42px) 2.4rem 0;
+  pointer-events: none;
+}
+.ib-track {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.1rem, 2.6vw, 2.4rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--line);
+  pointer-events: auto;
+  /* 窄屏横向滚动：六项中文标题带编号约 60 字宽，放不下 */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ib-track::-webkit-scrollbar { display: none; }
+
+.ib-item {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+  white-space: nowrap;
+  color: var(--grey-strong);
+  transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.ib-no {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+.ib-title {
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+}
+.ib-item:hover { color: var(--ink); }
+
+/* 当前项：加重 + 一条下划线。星球由 JS 插在编号前，见 script.js */
+.ib-item.is-current {
+  color: var(--ink);
+  position: relative;
+}
+.ib-item.is-current::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.85rem;
+  height: 1px;
+  background: var(--ink);
+}
+/* 星球容器：占位与 16px 星球等宽，避免插入时编号横向跳动 */
+.ib-planet {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  line-height: 0;
+  align-self: center;
+  margin-right: -0.1em;
+}
+.ib-planet svg { display: block; }
+
+/* ---------------- 标题块 ---------------- */
+/* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
+   接缝处旅行块落在这里，两者重合。 */
+.page-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--title-top) 2.4rem 8rem;
+}
+
+.page-title {
+  display: grid;
+  gap: 0.28rem;
+  /* 旅行块是 max-content 宽，这里也收成 max-content，
+     否则两者的文字起点相同但盒宽不同，将来加背景/边框会露馅 */
+  width: max-content;
+  max-width: 100%;
+}
+.pt-no {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+/* 字号与 .orbit-title 的 clamp 参数完全一致，接缝处不发生字号跳变 */
+.pt-name {
+  font-size: clamp(1.35rem, 2.7vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.pt-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+
+.page-desc {
+  margin-top: 2.4rem;
+  max-width: 34em;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+/* ---------------- 正文占位 ---------------- */
+.page-body {
+  margin-top: 5rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid var(--line);
+}
+.pb-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+}
+.pbp-line {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.pbp-text {
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+}
+
+/* ---------------- footer ---------------- */
+.site-footer {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2.4rem 2.6rem;
+  border-top: 1px solid var(--line);
+}
+.sf-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.4rem;
+  padding-bottom: 2.6rem;
+}
+.footer-mail {
+  font-size: clamp(1.3rem, 3.4vw, 2rem);
+  font-weight: 600;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0.2rem;
+  transition: opacity 0.3s var(--ease), letter-spacing 0.3s var(--ease);
+}
+.footer-mail:hover { opacity: 0.5; letter-spacing: 0.02em; }
+.footer-social {
+  display: flex;
+  gap: 1.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--grey);
+}
+.footer-social a { transition: color 0.3s var(--ease); }
+.footer-social a:hover { color: var(--ink); }
+
+.sf-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--grey);
+}
+
+@media (max-width: 600px) {
+  .index-bar { padding: calc(1.2rem * 2 + 42px) 1.4rem 0; }
+  .page-main { padding-left: 1.4rem; padding-right: 1.4rem; }
+  .site-footer { padding-left: 1.4rem; padding-right: 1.4rem; }
+  /* --title-left 的窄屏取值同样在 style.css 里改，保持单一来源 */
+}
+
+/* ============================================================
+   入场
+   ------------------------------------------------------------
+   两条路径：
+     html.nav-enter   从首页点进来。标题块已在接缝位置（旅行块刚好落在
+                      这里），所以标题不做动画；只让横条与正文接着进场。
+     无 nav-enter     直接深链进入。标题块也需要自持的入场，
+                      否则冷启动会是静止的一屏。
+   nav-enter 由 nav-signal 内联脚本在首帧前挂上，1.4s 后兜底摘除。
+   ============================================================ */
+
+/* ---- 冷启动：标题块与正文一起淡入 ---- */
+.page-title,
+.page-desc,
+.page-body,
+.index-bar,
+.site-footer {
+  --enter-shift: 14px;
+}
+
+/* 所有初始隐藏态都挂在 .js-enter 下。这个类由 nav-signal 内联脚本
+   无条件加上（在首帧前），所以脚本没跑 = 类不存在 = 内容默认可见。
+   反过来做（默认隐藏、JS 移除 .no-js）在脚本失效时会留一片空白。 */
+html.js-enter:not(.nav-enter) .page-title {
+  opacity: 0;
+  transform: translateY(var(--enter-shift));
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+html.js-enter:not(.nav-enter).page-ready .page-title {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- 从首页来：标题块首帧就位、不动 ----
+   旅行块停在与它重合的位置，所以这里任何位移都会被看成跳变。 */
+html.nav-enter .page-title {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- 两条路径共用：横条与正文 ----
+   横条不从轨道形变过来，就是淡入 + 轻微下移。 */
+html.js-enter .index-bar,
+html.js-enter .page-desc,
+html.js-enter .page-body,
+html.js-enter .site-footer {
+  opacity: 0;
+  transform: translateY(var(--enter-shift));
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+html.page-ready .index-bar,
+html.page-ready .page-desc,
+html.page-ready .page-body,
+html.page-ready .site-footer {
+  opacity: 1;
+  transform: none;
+}
+/* 错峰：横条先、描述次之、正文与 footer 最后 */
+html.page-ready .index-bar { transition-delay: 0.06s; }
+html.page-ready .page-desc { transition-delay: 0.18s; }
+html.page-ready .page-body { transition-delay: 0.28s; }
+html.page-ready .site-footer { transition-delay: 0.34s; }
+
+/* 从首页来时整体压缩延迟：用户已经看了 420ms 退场，不该再等一轮 */
+html.nav-enter.page-ready .index-bar { transition-delay: 0.02s; }
+html.nav-enter.page-ready .page-desc { transition-delay: 0.1s; }
+html.nav-enter.page-ready .page-body { transition-delay: 0.18s; }
+html.nav-enter.page-ready .site-footer { transition-delay: 0.22s; }
+
+/* ============================================================
+   子页面退场：点击 header 标记回首页
+   ------------------------------------------------------------
+   标题块不动——它就是接缝，首页首帧会把到达项摆在同一坐标接住。
+   其余各自淡出。飞行在首页文档里做（见 stage.css 的 html.nav-back）。
+   ============================================================ */
+body.leaving-back {
+  /* 锁滚动：接缝坐标的对齐前提是 scrollY 不再变化 */
+  overflow: hidden;
+}
+body.leaving-back .index-bar {
+  opacity: 0;
+  transform: translateY(calc(-100% - 4px));
+  transition: opacity 0.24s var(--ease), transform 0.3s var(--ease);
+}
+body.leaving-back .page-desc,
+body.leaving-back .page-body {
+  opacity: 0;
+  transition: opacity 0.22s var(--ease);
+}
+body.leaving-back .site-footer {
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+/* 标题块明确不参与。写出来是为了防止将来给 .page-* 加通用退场时误伤。 */
+body.leaving-back .page-title { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.leaving-back .index-bar,
+  body.leaving-back .page-desc,
+  body.leaving-back .page-body,
+  body.leaving-back .site-footer {
+    transition: none !important;
+  }
+}
+
+/* ---------------- 横条随滚动隐去 ----------------
+   向下滚时上移隐去，向上滚时回来。阅读时把屏幕还给内容，需要导航时一上滚就有。
+   必须放在入场规则之后：两者都写 transform/opacity，选择器特异度相同（0,2,1），
+   靠源码顺序决胜。写在前面会被入场的 .page-ready 规则盖掉。 */
+html.page-ready .index-bar {
+  transition: transform 0.42s var(--ease), opacity 0.3s var(--ease);
+}
+html.page-ready body.bar-hidden .index-bar {
+  /* 位移要盖过自身整高（padding + 内容 + 下边框），留 4px 余量 */
+  transform: translateY(calc(-100% - 4px));
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-title,
+  .index-bar,
+  .page-desc,
+  .page-body,
+  .site-footer {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  /* 隐去本身是功能性的（让出阅读空间），保留，只是不做过渡 */
+  html.page-ready body.bar-hidden .index-bar {
+    transform: translateY(calc(-100% - 4px)) !important;
+    opacity: 0 !important;
+  }
+}

@@ -1,0 +1,1736 @@
+/* ============================================================
+   CES — 极简黑白官网框架
+   设计原则：留白 / 秩序 / 无多余装饰
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  --ink: #0a0a0a;
+  --paper: #f4f3ef;
+  --grey: #8c8c86;
+  /* 浅底上的小字灰：--grey 对 paper 仅 3.05:1，不足正文对比度要求 */
+  --grey-strong: #6a6a63;
+  --line: rgba(10, 10, 10, 0.14);
+
+  /* ---- 派生色：深色模式要整组换掉，所以不再散落写 rgba(10,10,10,…) ----
+     改动这几个值请同时看 theme.css 的深色调色板。 */
+  /* 读数行的点线引导，比 --line 重一档 */
+  --line-strong: rgba(10, 10, 10, 0.28);
+  /* 列表悬停的极淡底色 */
+  --tint: rgba(10, 10, 10, 0.02);
+  /* 正文两档：hero 描述略浅，manifesto 略重 */
+  --text-soft: #3a3a38;
+  --text-body: #2b2b29;
+  /* 大屏参考线三档（wide.css 用） */
+  --guide-major: rgba(10, 10, 10, 1);
+  --guide-minor: rgba(10, 10, 10, 0.42);
+  --guide-h: rgba(10, 10, 10, 0.5);
+
+  /* mix-blend-mode: difference 的源色。difference 要求源色为亮色才能在两种
+     底色上都反出可见结果，所以这个值在浅色/深色下都不变，不跟着 --paper 走。 */
+  --blend-src: #f4f3ef;
+
+  /* 噪点层：深色下黑点 multiply 会几乎失效，改白点 screen */
+  --noise-dot: #000;
+  --noise-blend: multiply;
+  --noise-opacity: 0.035;
+
+  /* 蜂巢底纹的 SVG 描边色写死在 data URI 里，无法用变量。
+     深色下整层 invert(1) 把黑线翻成白线，省掉第二份 data URI。 */
+  --grid-invert: none;
+
+  /* 像素星球的三档灰，受光面在左上。
+     不直接复用 --grey/--grey-strong/--ink：深色下那三个的明暗顺序会反过来，
+     星球的受光方向就跟着翻了。这里显式给出由亮到暗的斜坡。 */
+  --planet-1: #8c8c86;
+  --planet-2: #6a6a63;
+  --planet-3: #0a0a0a;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-sans: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
+  /* 展示用字体栈：优先带真 700 字重的中文黑体，避免浏览器合成假粗 */
+  --font-display: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
+    "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+
+  /* logo 尺寸基准：开屏放大后的视觉尺寸 = 分区页 logo 尺寸，两处共用同一数值，
+     开屏退场时 logo 不会发生尺寸或位置跳变 */
+  --logo-base: clamp(120px, 20vw, 248px);
+  --logo-expand: 1.55;
+  --logo-final: calc(var(--logo-base) * var(--logo-expand));
+
+  /* 画面整体上移量，开屏与分区页共用，保证两者视觉中心重合 */
+  --view-shift: clamp(2vh, 4.5vh, 6vh);
+
+  /* ---- 跨文档接缝坐标 ----
+     首页退场时旅行块飞到这里，子页面标题块首帧就在这里。
+     必须定义在 style.css（两个文档都 link 它）而不是 page.css
+     （只有子页 link），否则首页拿不到终点坐标。
+     左值 = section 内容列左缘：max-width:1200px + padding:2.4rem 居中。 */
+  --title-left: calc(max((100vw - 1200px) / 2, 0px) + 2.4rem);
+  --title-top: clamp(8.5rem, 17vh, 12rem);
+  /* 旅行时长，退场与子页入场共用 */
+  --travel: 380ms;
+}
+
+@media (max-width: 600px) {
+  :root { --title-left: 1.4rem; }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* 旧版 Edge / IE */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome / Edge / Safari */
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* 键盘焦点可见性：鼠标点击不出现，仅键盘导航时出现 */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+/* header 整体走 difference 混合，描边也会被反色。用 --blend-src 作源色，
+   反出来才是与底色对立的深/浅描边；用 ink 会反成同色系，几乎看不见。 */
+.site-header :focus-visible {
+  outline-color: var(--blend-src);
+}
+
+/* 隐藏光标只在 JS 成功接管后生效，避免脚本失效时无光标可用 */
+body.has-custom-cursor,
+body.has-custom-cursor .menu-toggle {
+  cursor: none;
+}
+
+/* ---------------- 噪点纹理，避免纯平面塑料感 ---------------- */
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  mix-blend-mode: var(--noise-blend);
+  background-image:
+    radial-gradient(circle at 1px 1px, var(--noise-dot) 1px, transparent 0);
+  background-size: 3px 3px;
+}
+
+/* ---------------- 自定义反色光标 ---------------- */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  /* difference 混合下源色须为亮色：浅底得到深色光标，深底得到亮色光标。
+     用 --blend-src 而非 --paper：深色模式下 --paper 变成近黑，
+     difference 会得到几乎不变的底色，光标直接消失。 */
+  background: var(--blend-src);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s var(--ease), height 0.25s var(--ease);
+}
+.cursor.hovering {
+  width: 46px;
+  height: 46px;
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor { display: none; }
+  body { cursor: auto; }
+}
+
+/* ================================================================
+   开屏动画
+   ================================================================ */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+/* ---------------- 退场：分层溶解，不是幕布位移 ----------------
+   幕布位移会让开屏 logo 飞走、露出底下另一个一样的 logo，接缝暴露。
+   改成按「离视觉中心的远近」错峰淡出：最外层的大屏参考线先走，
+   然后四角读数与面板，最后侧标题与状态块。
+   .splash-logo 全程不淡出——它和 .stage-logo 像素级重合，
+   由 finishSplash 在同一帧里直接切换，观众抓不到切换点。
+   蜂巢与四角括号已移出 splash，全程不参与退场。 */
+/* .wide 现在有后景副本要接手，所以必须与 .splash-bg 同步同速，
+   不能像原来那样先走——否则前景已淡出、后景还被 bg 挡着，两侧会闪一下空 */
+#splash.leave.leave .wide {
+  opacity: 0;
+  transition: opacity 0.42s var(--ease) 0.12s;
+}
+#splash.leave.leave .hud {
+  opacity: 0;
+  transition: opacity 0.34s var(--ease) 0.06s;
+}
+#splash.leave.leave .splash-rule {
+  opacity: 0;
+  transition: opacity 0.3s var(--ease) 0.1s;
+}
+#splash.leave.leave .panel {
+  opacity: 0;
+  transition: opacity 0.3s var(--ease) 0.1s;
+}
+#splash.leave.leave .reticle {
+  opacity: 0;
+  transition: opacity 0.26s var(--ease);
+}
+/* 侧标题与状态块最后走，和 orbit 项的淡入交叠 */
+#splash.leave.leave .splash-side {
+  opacity: 0;
+  /* 用 linear 而非 --ease：--ease 是 cubic-bezier(0.22,1,0.36,1)，前 17% 的时间
+     就走完 46% 的不透明度，用在纯淡出上近乎硬切。形变期需要匀速减弱。
+     延迟 0.18s 让形变先被看见，0.3s 走完，收尾与形变终点（0.38s）基本齐平。 */
+  transition: opacity 0.3s linear 0.18s;
+}
+/* 语义修正后（侧标题就是六项里的两项，见 build/pages.js 的 SPLASH_SIDES），
+   编号与副标题的字形也与 orbit 完全一致，不再需要「先快速退掉」这个权宜。
+   三行一起参与形变：编号收到 .orbit-no 规格，副标题收到 .orbit-sub 规格。 */
+#splash.leave.leave .side-no {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  transition:
+    font-size 0.36s var(--ease) 0.02s,
+    letter-spacing 0.36s var(--ease) 0.02s;
+}
+#splash.leave.leave .side-sub {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  transition:
+    font-size 0.36s var(--ease) 0.02s,
+    letter-spacing 0.36s var(--ease) 0.02s;
+}
+/* 主标题：字号与字距向 .orbit-title 规格收（clamp 参数与它完全一致）。
+   侧标题中心与 pos-2 / pos-5 仅差 6px，收到同一规格后两者重叠。
+   语义修正后两边是同一个词（交互研究 / 动效编排），所以这里真的是
+   「同一行字被收小并移位」，不再有第二个词淡入。
+   font-weight 700→500 浏览器会取整跳变，但同帧有字号在连续变，跳变不显。 */
+#splash.leave.leave .side-title {
+  font-size: clamp(1.35rem, 2.7vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  /* 字距补偿跟着收，否则两侧对齐的边缘会在形变中漂一下 */
+  margin-right: -0.04em;
+  /* 横向对位：侧标题右缘落在栅格列边界上，pos-2 右缘落在 50% - orbit_r 上，
+     两者差 --stage-gap - clamp(52px,5vw,76px)（栅格式相减后 logo 项全部抵消，
+     实测 960..1920 八档误差 ≤0.1px）。末项 0.04em 补形变后的字距补偿。 */
+  transform: translateX(calc(var(--stage-gap) - clamp(52px, 5vw, 76px) - 0.04em));
+  transition:
+    font-size 0.36s var(--ease) 0.02s,
+    letter-spacing 0.36s var(--ease) 0.02s,
+    margin-right 0.36s var(--ease) 0.02s,
+    transform 0.36s var(--ease) 0.02s;
+}
+#splash.leave.leave .splash-side-right .side-title {
+  margin-right: 0;
+  margin-left: -0.04em;
+  /* 右侧镜像 */
+  transform: translateX(calc(clamp(52px, 5vw, 76px) - var(--stage-gap) + 0.04em));
+  transition:
+    font-size 0.36s var(--ease) 0.02s,
+    letter-spacing 0.36s var(--ease) 0.02s,
+    margin-left 0.36s var(--ease) 0.02s,
+    transform 0.36s var(--ease) 0.02s;
+}
+#splash.leave.leave .statusbar {
+  opacity: 0;
+  transition: opacity 0.3s var(--ease) 0.16s;
+}
+/* 底色与 stage 同为 --paper，淡出时下方同色接住，视觉上无变化 */
+#splash.leave.leave .splash-bg {
+  opacity: 0;
+  transition: opacity 0.42s var(--ease) 0.12s;
+}
+/* 前景的蜂巢与括号：和 .splash-bg 同步同速淡出。
+   底下 .deco 那份透明度相同、位置相同，露出来时读不出交替。 */
+#splash.leave.leave .splash-grid,
+#splash.leave.leave .fr {
+  opacity: 0;
+  transition: opacity 0.42s var(--ease) 0.12s;
+}
+
+.splash-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--paper);
+}
+
+/* ================================================================
+   开屏技术质感层
+   借用工业/实验室面板的结构语言：蜂巢网格、角括号、刻度、扫描线、准星、
+   四角读数。全部保持黑白，不引入第二色，靠线宽与透明度分层。
+   ================================================================ */
+
+/* 跨接缝装饰层容器：挂在 .stage 内，随页面滚走。
+   stage 首屏 min-height:100vh 且 scrollY=0，所以 inset:0 正好等于视口。 */
+.deco {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* 必须锁死一个视口高，不能用 inset:0。窄屏下 stage 内容会超过 100vh，
+     inset:0 会让这层跟着长高，底部两个括号掉到视口外，接缝处就跳了。 */
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 蜂巢网格：平顶六边形，瓦片 66 x 38.11 */
+.splash-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='66.00' height='38.11' viewBox='0 0 66.00 38.11'%3E%3Cg fill='none' stroke='%230a0a0a' stroke-width='1'%3E%3Cpath d='M22.00 0.00L11.00 19.05L-11.00 19.05L-22.00 0.00L-11.00 -19.05L11.00 -19.05Z'/%3E%3Cpath d='M22.00 38.11L11.00 57.16L-11.00 57.16L-22.00 38.11L-11.00 19.05L11.00 19.05Z'/%3E%3Cpath d='M55.00 19.05L44.00 38.11L22.00 38.11L11.00 19.05L22.00 0.00L44.00 0.00Z'/%3E%3Cpath d='M88.00 0.00L77.00 19.05L55.00 19.05L44.00 0.00L55.00 -19.05L77.00 -19.05Z'/%3E%3Cpath d='M88.00 38.11L77.00 57.16L55.00 57.16L44.00 38.11L55.00 19.05L77.00 19.05Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 66px 38.11px;
+  /* 描边色写死在 data URI 里，深色模式靠整层反色翻成白线。
+     透明像素反色后仍透明，只有线本身受影响。 */
+  filter: var(--grid-invert);
+  /* 中心亮、四周淡出，避免网格抢 logo 的注意力 */
+  mask-image: radial-gradient(ellipse 78% 68% at 50% 46%, #000 0%, rgba(0,0,0,0.45) 52%, transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 78% 68% at 50% 46%, #000 0%, rgba(0,0,0,0.45) 52%, transparent 82%);
+  transition: opacity 1.1s var(--ease);
+}
+/* 开屏里那份（前景）：溶解时淡出 */
+#splash.phase-logo .splash-grid { opacity: 0.075; }
+#splash.phase-expand .splash-grid { opacity: 0.045; }
+
+/* .deco 里那份（后景，跨接缝存活）：不是 #splash 后代，靠 body.sp-* 驱动。
+   开屏期间它被不透明的 .splash-bg 完全挡住，只在 bg 淡出后露出来。 */
+body.sp-logo .deco .splash-grid,
+body.sp-name .deco .splash-grid,
+body.sp-code .deco .splash-grid { opacity: 0.075; }
+body.sp-expand .deco .splash-grid,
+body.sp-leave .deco .splash-grid,
+body.stage-in .deco .splash-grid { opacity: 0.045; }
+
+/* 四角括号：分两段边框绘制 L 形 */
+.splash-frame {
+  position: absolute;
+  inset: clamp(14px, 2.2vw, 30px);
+  z-index: 2;
+  pointer-events: none;
+}
+.fr {
+  position: absolute;
+  width: clamp(22px, 3vw, 40px);
+  height: clamp(22px, 3vw, 40px);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease), transform 0.7s var(--ease);
+}
+.fr-tl { top: 0; left: 0; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); transform: translate(-7px, -7px); }
+.fr-tr { top: 0; right: 0; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); transform: translate(7px, -7px); }
+.fr-bl { bottom: 0; left: 0; border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); transform: translate(-7px, 7px); }
+.fr-br { bottom: 0; right: 0; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); transform: translate(7px, 7px); }
+#splash.phase-logo .fr {
+  opacity: 0.55;
+  transform: translate(0, 0);
+}
+body.sp-logo .deco .fr,
+body.sp-name .deco .fr,
+body.sp-code .deco .fr,
+body.sp-expand .deco .fr,
+body.sp-leave .deco .fr,
+body.stage-in .deco .fr {
+  opacity: 0.55;
+  transform: translate(0, 0);
+}
+
+/* 上下刻度尺：等距细线，steps 感由固定间距本身提供 */
+.splash-rule {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: min(52vw, 620px);
+  height: 7px;
+  pointer-events: none;
+  opacity: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--ink) 0 1px,
+    transparent 1px 14px
+  );
+  transition: opacity 0.7s var(--ease) 0.25s;
+}
+.splash-rule-t { top: clamp(30px, 4.4vw, 56px); }
+.splash-rule-b {
+  bottom: clamp(30px, 4.4vw, 56px);
+  /* 下方刻度向下生长，与上方镜像 */
+  transform: translateX(-50%) scaleY(-1);
+}
+#splash.phase-name .splash-rule { opacity: 0.3; }
+
+/* ---------------- 四角读数 ---------------- */
+.hud {
+  position: absolute;
+  inset: clamp(14px, 2.2vw, 30px);
+  z-index: 4;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  opacity: 0;
+  transition: opacity 0.7s var(--ease) 0.15s;
+}
+#splash.phase-logo .hud { opacity: 1; }
+
+.hud > div {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+}
+/* 让读数贴在角括号内侧 */
+.hud-tl { top: 0; left: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
+.hud-tr { top: 0; right: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
+.hud-bl { bottom: 0; left: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
+.hud-br { bottom: 0; right: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
+
+.hud-k {
+  opacity: 0.62;
+}
+.hud-k::after {
+  content: ":";
+  margin-left: 0.35em;
+}
+.hud-v {
+  color: var(--ink);
+}
+/* 状态切换时短暂闪烁，用 steps 制造硬切而非渐变 */
+.hud-v.flick {
+  animation: hudFlick 0.26s steps(2, end) 2;
+}
+@keyframes hudFlick {
+  50% { opacity: 0.15; }
+}
+
+.hud-bar {
+  display: inline-block;
+  width: clamp(48px, 7vw, 88px);
+  height: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.hud-bar i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--ink);
+  /* 分段跳进，机械感 */
+  transition: width 0.45s steps(6, end);
+}
+
+/* ---------------- logo 准星 ---------------- */
+.reticle {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.14);
+  transition: opacity 0.7s var(--ease), transform 0.9s var(--ease);
+}
+#splash.phase-logo .reticle {
+  opacity: 0.62;
+  transform: scale(1);
+}
+/* 放大阶段准星让位，避免与外扩的侧标题争夺空间 */
+#splash.phase-expand .reticle {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+.rt {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+}
+.rt-tl { top: 0; left: 0; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.rt-tr { top: 0; right: 0; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+.rt-bl { bottom: 0; left: 0; border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.rt-br { bottom: 0; right: 0; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+
+/* 四边中点刻线，强化「被测量」的意味 */
+.rt-tick {
+  position: absolute;
+  background: var(--ink);
+  opacity: 0.5;
+}
+.rt-tick-t, .rt-tick-b { left: 50%; width: 1px; height: 6px; margin-left: -0.5px; }
+.rt-tick-l, .rt-tick-r { top: 50%; width: 6px; height: 1px; margin-top: -0.5px; }
+.rt-tick-t { top: -3px; }
+.rt-tick-b { bottom: -3px; }
+.rt-tick-l { left: -3px; }
+.rt-tick-r { right: -3px; }
+
+/* 窄屏读数收缩：坐标串最长，先让它退场，避免左下与右下读数相撞 */
+@media (max-width: 520px) {
+  .hud { font-size: 0.6rem; letter-spacing: 0.12em; }
+  .hud-coord { display: none; }
+  .splash-rule { width: min(64vw, 320px); }
+}
+@media (max-width: 400px) {
+  .hud-tl .hud-k,
+  .hud-tr .hud-k { display: none; }
+}
+
+/* caption 的方括号 */
+.cap-br {
+  color: var(--grey-strong);
+  opacity: 0.7;
+}
+
+.splash-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+
+  /* 尺寸取自 :root 基准，与分区页共用 */
+  --logo-size: var(--logo-base);
+  /* 偏移跟随 logo 半径，logo 放大时小字与它的间距保持恒定，不再被写死 */
+  --meta-offset: calc(var(--logo-size) / 2 + 1rem);
+  --stage-gap: clamp(1rem, 3.5vw, 3.2rem);
+
+  /* 整体上移，与分区页的 --view-shift 一致 */
+  transform: translateY(calc(-1 * var(--view-shift)));
+}
+
+/* ---------------- 阶段一：logo 入场 ---------------- */
+/* 三栏网格让 logo 始终占据视觉中心，侧栏预留位置但初始收拢隐藏 */
+.splash-stage {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--stage-gap);
+  width: min(96vw, 1040px);
+  transition: gap 1.2s var(--ease);
+}
+/* scale 不改变布局盒，放大时须把溢出的半宽补进 gap，否则侧标题会压到 logo 上 */
+#splash.phase-expand .splash-stage {
+  gap: calc(var(--stage-gap) + var(--logo-size) * (var(--logo-expand) - 1) / 2);
+}
+
+.splash-logo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.splash-logo {
+  display: block;
+  width: var(--logo-size);
+  height: auto;
+  opacity: 0;
+  transform: scale(0.82);
+  filter: blur(7px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 1.1s var(--ease),
+    filter 0.9s var(--ease);
+}
+#splash.phase-logo .splash-logo {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+
+/* ================================================================
+   左右数据面板
+   expand 之前左右两栏是空的，这里用实验室面板的语言把它填起来：
+   括号轨 + 竖排序列号 + 数据条 + 六边形单元格阵列。
+   与侧标题占同一网格单元，expand 时面板退场、侧标题进场，交替不重叠。
+   ================================================================ */
+.panel {
+  grid-row: 1;
+  /* 宽度写死而非跟随栏宽：expand 时 gap 变化会压缩栏宽，
+     跟随会让面板在淡出的同一帧被挤窄，产生可见抖动 */
+  width: clamp(164px, 19.5vw, 268px);
+  display: flex;
+  gap: 0.85rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease), transform 0.9s var(--ease);
+}
+/* 贴向 logo 一侧，而不是居中在空栏里 */
+.panel-left {
+  grid-column: 1;
+  justify-self: end;
+  transform: translateX(-16px);
+}
+.panel-right {
+  grid-column: 3;
+  justify-self: start;
+  flex-direction: row-reverse;
+  transform: translateX(16px);
+}
+#splash.phase-logo .panel {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* 放大阶段整块退场，把栏位交还侧标题 */
+#splash.phase-expand .panel {
+  opacity: 0;
+  transition-duration: 0.5s, 0.5s;
+}
+#splash.phase-expand .panel-left { transform: translateX(-14px); }
+#splash.phase-expand .panel-right { transform: translateX(14px); }
+
+/* ---------------- 刻度轨 + 竖排序列号 ---------------- */
+.panel-rail {
+  position: relative;
+  flex: none;
+  width: 12px;
+  display: flex;
+  justify-content: center;
+}
+/* 竖向刻度：等距横线，靠固定间距体现「量具」感 */
+.panel-rail i {
+  width: 7px;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--ink) 0 1px,
+    transparent 1px 11px
+  );
+  opacity: 0.32;
+}
+.panel-seq {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+  /* 竖排：旋转后以中心为轴归位 */
+  transform: translate(-50%, -50%) rotate(-90deg);
+  background: var(--paper);
+  padding: 0.35em 0.2em;
+}
+
+/* ---------------- 面板主体 ---------------- */
+/* 用左边框加上下短臂构成括号，而非闭合矩形，保持通透 */
+.panel-body {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.9rem 0 0.9rem 0.85rem;
+  border-left: 1px solid var(--ink);
+}
+.panel-body::before,
+.panel-body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 14px;
+  height: 1px;
+  background: var(--ink);
+}
+.panel-body::before { top: 0; }
+.panel-body::after { bottom: 0; }
+
+.panel-right .panel-body {
+  padding: 0.9rem 0.85rem 0.9rem 0;
+  border-left: none;
+  border-right: 1px solid var(--ink);
+  align-items: flex-end;
+  text-align: right;
+}
+.panel-right .panel-body::before,
+.panel-right .panel-body::after {
+  left: auto;
+  right: 0;
+}
+
+.panel-label,
+.panel-foot {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+.panel-foot { opacity: 0.75; }
+
+/* ---------------- 数据条：分段跳进 ---------------- */
+.panel-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+.panel-bars i {
+  display: block;
+  width: 0;
+  height: 3px;
+  background: var(--ink);
+  opacity: 0.42;
+  transition: width 0.55s steps(5, end);
+}
+#splash.phase-name .panel-bars i { width: var(--w); }
+#splash.phase-name .panel-bars i:nth-child(1) { transition-delay: 0.05s; }
+#splash.phase-name .panel-bars i:nth-child(2) { transition-delay: 0.14s; }
+#splash.phase-name .panel-bars i:nth-child(3) { transition-delay: 0.23s; }
+#splash.phase-name .panel-bars i:nth-child(4) { transition-delay: 0.32s; }
+#splash.phase-name .panel-bars i:nth-child(5) { transition-delay: 0.41s; }
+
+/* ---------------- 读数行：虚线引导 + 键值对 ---------------- */
+.panel-read {
+  display: flex;
+  flex-direction: column;
+  gap: 0.34rem;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+}
+.panel-read > span {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+}
+.panel-read b {
+  font-weight: 400;
+  color: var(--grey-strong);
+  flex: none;
+}
+/* 键与值之间用点线牵引，账目/仪表读数的排版惯例 */
+.panel-read b::after {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+}
+.panel-read > span::before {
+  content: "";
+  flex: 1;
+  height: 0;
+  border-bottom: 1px dotted var(--line-strong);
+  transform: translateY(-0.2em);
+}
+.panel-read em {
+  font-style: normal;
+  color: var(--ink);
+  flex: none;
+}
+.panel-right .panel-read > span { flex-direction: row-reverse; }
+
+#splash.phase-name .panel-read > span {
+  opacity: 1;
+  transform: translateY(0);
+}
+#splash.phase-name .panel-read > span:nth-child(1) { transition-delay: 0.5s; }
+#splash.phase-name .panel-read > span:nth-child(2) { transition-delay: 0.6s; }
+#splash.phase-name .panel-read > span:nth-child(3) { transition-delay: 0.7s; }
+
+/* ---------------- 六边形单元格阵列 ---------------- */
+.panel-hex {
+  display: flex;
+  gap: 4px;
+}
+.panel-hex i {
+  width: 13px;
+  height: 15px;
+  background: var(--ink);
+  opacity: 0;
+  /* 平顶六边形 */
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  transition: opacity 0.4s steps(2, end);
+}
+/* code 阶段逐格点亮，深浅交替避免读成实心块 */
+#splash.phase-code .panel-hex i:nth-child(1) { opacity: 0.5; transition-delay: 0.05s; }
+#splash.phase-code .panel-hex i:nth-child(2) { opacity: 0.2; transition-delay: 0.12s; }
+#splash.phase-code .panel-hex i:nth-child(3) { opacity: 0.62; transition-delay: 0.19s; }
+#splash.phase-code .panel-hex i:nth-child(4) { opacity: 0.16; transition-delay: 0.26s; }
+#splash.phase-code .panel-hex i:nth-child(5) { opacity: 0.44; transition-delay: 0.33s; }
+#splash.phase-code .panel-hex i:nth-child(6) { opacity: 0.26; transition-delay: 0.40s; }
+#splash.phase-code .panel-hex i:nth-child(7) { opacity: 0.55; transition-delay: 0.47s; }
+
+/* 窄屏没有横向余量，面板整体撤掉 */
+@media (max-width: 900px) {
+  .panel { display: none; }
+}
+
+/* ---------------- 阶段二：小字名称 + 代码 ---------------- */
+/* meta 绝对定位，脱离 stage 的居中计算，代码逐行增高时 logo 不会被顶动 */
+.splash-meta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(88vw, 480px);
+  transform: translate(-50%, var(--meta-offset));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.6s var(--ease), transform 0.7s var(--ease);
+}
+
+.splash-name {
+  display: flex;
+  gap: 0.1em;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+}
+.splash-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+#splash.phase-name .splash-letter {
+  opacity: 1;
+  transform: translateY(0);
+}
+#splash.phase-name .splash-letter:nth-child(1) { transition-delay: 0s; }
+#splash.phase-name .splash-letter:nth-child(2) { transition-delay: 0.09s; }
+#splash.phase-name .splash-letter:nth-child(3) { transition-delay: 0.18s; }
+#splash.phase-name .splash-letter:nth-child(4) { transition-delay: 0.27s; }
+#splash.phase-name .splash-letter:nth-child(5) { transition-delay: 0.36s; }
+
+.splash-line {
+  width: 0;
+  height: 1px;
+  background: var(--ink);
+  margin-top: 0.95rem;
+  opacity: 0.45;
+  transition: width 0.8s var(--ease) 0.45s;
+}
+#splash.phase-name .splash-line { width: 84px; }
+
+.splash-caption {
+  margin-top: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--grey-strong);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.6s var(--ease) 0.6s, transform 0.6s var(--ease) 0.6s;
+}
+#splash.phase-name .splash-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 宽度收到最长一行的实际宽度并整体居中，避免 100% 宽下文本贴在左侧、
+   视觉重心偏离 logo 中轴 */
+.splash-code {
+  width: min(88vw, 37ch);
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 6.8em;
+  margin-top: 1.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-align: left;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+#splash.phase-code .splash-code { opacity: 1; }
+
+.code-line {
+  display: block;
+  white-space: pre;
+}
+.code-line::before {
+  content: "> ";
+  color: var(--grey-strong);
+}
+.code-line.active .code-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  animation: blink 0.9s steps(1, end) infinite;
+}
+.code-cursor {
+  display: none;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ---------------- 阶段三：logo 放大，左右展开标题 ---------------- */
+.splash-side {
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transition:
+    opacity 0.9s var(--ease) 0.18s,
+    transform 1.1s var(--ease) 0.18s;
+}
+.splash-side-left {
+  grid-column: 1;
+  align-items: flex-end;
+  text-align: right;
+  transform: translateX(clamp(22px, 4vw, 52px));
+}
+.splash-side-right {
+  grid-column: 3;
+  align-items: flex-start;
+  text-align: left;
+  transform: translateX(clamp(-52px, -4vw, -22px));
+}
+/* 编号：主标题与副标题之间的中间层，避免 3.6 倍字号跳变 */
+.side-no {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  color: var(--grey-strong);
+}
+/* 主标题：加重 + 加字距，从「被放大的正文」拉到标题量级。
+   中文回退字体多数没有真 700，用 --font-display 指定带重字重的栈。 */
+.side-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.1vw, 2.7rem);
+  font-weight: 700;
+  letter-spacing: 0.085em;
+  line-height: 1.16;
+  /* 字距会在行尾多出一个间隙，两侧对齐时视觉上会偏，用负边距补掉 */
+  margin-right: -0.085em;
+}
+.splash-side-right .side-title {
+  margin-right: 0;
+  margin-left: -0.085em;
+}
+.side-sub {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+}
+
+#splash.phase-expand .splash-side {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* 三行各自错峰，读起来是「编号 → 标题 → 规格」的顺序 */
+.splash-side > span {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+#splash.phase-expand .side-no { opacity: 1; transition-delay: 0.3s; }
+#splash.phase-expand .side-title { opacity: 1; transition-delay: 0.42s; }
+#splash.phase-expand .side-sub { opacity: 1; transition-delay: 0.56s; }
+/* 放大与退场放在最后，靠源码顺序覆盖前面同权重的阶段规则 */
+#splash.phase-expand .splash-logo {
+  transform: scale(var(--logo-expand));
+  transition-duration: 1.2s;
+}
+#splash.phase-expand .splash-meta {
+  opacity: 0;
+  transform: translate(-50%, calc(var(--meta-offset) + 14px));
+  pointer-events: none;
+}
+
+/* ---------------- 底部状态块 ---------------- */
+/* meta 撤走后下半屏会空掉。单行文字只有 14px 高，填不满 400px 的空当，
+   所以做成三段有厚度的块。纵向位置跟随放大后的 logo 半径，不写死像素。 */
+.statusbar {
+  /* 与放大后 logo 底边的间距。矮屏由 @media (max-height) 收窄 */
+  --sb-gap: clamp(64px, 8vh, 108px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, calc(var(--logo-size) * var(--logo-expand) / 2 + var(--sb-gap)));
+  width: min(84vw, 920px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 2vh, 1.6rem);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+
+/* 第一段：主状态行 + 左右延伸细线 */
+.sb-main {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.8rem);
+}
+.sb-line {
+  flex: 1;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.2;
+  /* 由中心向两端生长 */
+  transform: scaleX(0);
+  transition: transform 1s var(--ease) 0.15s;
+}
+.sb-line:first-child { transform-origin: right center; }
+.sb-line:last-child { transform-origin: left center; }
+
+.sb-text {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.24em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.sb-seg {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.sb-dot {
+  opacity: 0;
+  color: var(--grey-strong);
+  transition: opacity 0.5s var(--ease);
+}
+
+/* 第二段：六列读数，对应分区页的六个模块 */
+.sb-cols {
+  width: min(100%, 720px);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+}
+.sb-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.sb-col b {
+  font-weight: 400;
+  color: var(--grey-strong);
+}
+.sb-col em {
+  font-style: normal;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+/* 第三段：刻度条，收住整块的下边界 */
+.sb-ticks {
+  width: min(100%, 560px);
+  height: 6px;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+.sb-ticks i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--ink) 0 1px,
+    transparent 1px 12px
+  );
+  opacity: 0.28;
+}
+
+/* ---- 进场编排：线 → 主文字 → 读数列 → 刻度 ---- */
+#splash.phase-expand .statusbar { opacity: 1; }
+#splash.phase-expand .sb-line { transform: scaleX(1); }
+#splash.phase-expand .sb-seg,
+#splash.phase-expand .sb-dot { opacity: 1; transform: translateY(0); }
+#splash.phase-expand .sb-seg:nth-child(1) { transition-delay: 0.3s; }
+#splash.phase-expand .sb-dot:nth-child(2) { transition-delay: 0.36s; }
+#splash.phase-expand .sb-seg:nth-child(3) { transition-delay: 0.4s; }
+#splash.phase-expand .sb-dot:nth-child(4) { transition-delay: 0.46s; }
+#splash.phase-expand .sb-seg:nth-child(5) { transition-delay: 0.5s; }
+
+#splash.phase-expand .sb-col { opacity: 1; transform: translateY(0); }
+#splash.phase-expand .sb-col:nth-child(1) { transition-delay: 0.52s; }
+#splash.phase-expand .sb-col:nth-child(2) { transition-delay: 0.57s; }
+#splash.phase-expand .sb-col:nth-child(3) { transition-delay: 0.62s; }
+#splash.phase-expand .sb-col:nth-child(4) { transition-delay: 0.67s; }
+#splash.phase-expand .sb-col:nth-child(5) { transition-delay: 0.72s; }
+#splash.phase-expand .sb-col:nth-child(6) { transition-delay: 0.77s; }
+
+#splash.phase-expand .sb-ticks { opacity: 1; transition-delay: 0.8s; }
+
+/* 矮屏：竖直空间不够时收窄间距并压掉刻度条，
+   否则状态块会压到底部刻度尺 .splash-rule-b 上 */
+@media (max-height: 820px) {
+  .statusbar {
+    --sb-gap: clamp(26px, 4vh, 52px);
+    gap: 0.7rem;
+  }
+  .sb-cols { font-size: 0.58rem; }
+  .sb-col { padding-top: 0.45rem; }
+  .sb-col em { font-size: 0.78rem; }
+  .sb-ticks { display: none; }
+}
+
+/* 窄屏：收掉英文副标题，保留中文主标题的左右结构 */
+@media (max-width: 680px) {
+  :root {
+    --logo-base: clamp(96px, 26vw, 140px);
+    --logo-expand: 1.45;
+  }
+  .splash-content {
+    --meta-offset: calc(var(--logo-size) / 2 + 0.8rem);
+    --stage-gap: 0.55rem;
+  }
+  .side-sub,
+  .side-no { display: none; }
+  .side-title { font-size: clamp(1rem, 3.8vw, 1.35rem); letter-spacing: 0.06em; }
+  .splash-code { font-size: 0.74rem; }
+  .statusbar { width: min(94vw, 420px); gap: 0.8rem; }
+  .sb-text { font-size: 0.58rem; letter-spacing: 0.1em; gap: 0.45em; }
+  .sb-cols { grid-template-columns: repeat(3, 1fr); gap: 0.5rem 0.4rem; font-size: 0.56rem; }
+  .sb-col em { font-size: 0.74rem; }
+  .sb-ticks { display: none; }
+}
+
+body.loading {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ================================================================
+   导航
+   ================================================================ */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.6rem 2.4rem;
+  mix-blend-mode: difference;
+}
+
+/* header 内所有前景色都用 --blend-src：difference 混合要求源色为亮色，
+   而 --paper 在深色模式下变近黑，会让标记与汉堡线一起消失。 */
+.mark {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--blend-src);
+}
+.mark-dot { color: var(--blend-src); }
+
+/* 右上角操作区：主题开关 + 菜单 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.menu-toggle {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  position: relative;
+}
+.menu-toggle span,
+.menu-toggle span::before,
+.menu-toggle span::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: var(--blend-src);
+  transition: transform 0.35s var(--ease), opacity 0.3s var(--ease), top 0.35s var(--ease);
+}
+.menu-toggle span { top: 20px; }
+.menu-toggle span::before { top: -7px; }
+.menu-toggle span::after { top: 7px; }
+
+.menu-toggle[aria-expanded="true"] span { background: transparent; }
+.menu-toggle[aria-expanded="true"] span::before {
+  top: 0;
+  transform: rotate(45deg);
+  background: var(--ink);
+}
+.menu-toggle[aria-expanded="true"] span::after {
+  top: 0;
+  transform: rotate(-45deg);
+  background: var(--ink);
+}
+.menu-toggle[aria-expanded="true"] { mix-blend-mode: normal; }
+
+/* ---------------- 主题开关 ---------------- */
+/* 半明半暗的圆：左半填充=当前浅色，深色模式整体转 180° 变成右半填充。
+   只有 JS 接管后才显示（body.has-theme-toggle），否则按钮点了没反应。 */
+.theme-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+}
+body.has-theme-toggle .theme-toggle { display: flex; }
+
+.theme-toggle i {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--blend-src);
+  border-radius: 50%;
+  overflow: hidden;
+  transition: transform 0.45s var(--ease);
+}
+/* 左半实心。用 inset 而非 width:50% 避免 1px 描边内侧留缝 */
+.theme-toggle i::after {
+  content: "";
+  position: absolute;
+  inset: -1px 50% -1px -1px;
+  background: var(--blend-src);
+}
+html[data-theme="dark"] .theme-toggle i {
+  transform: rotate(180deg);
+}
+
+/* ---------------- 全屏覆盖菜单 ---------------- */
+.overlay-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8rem 2.4rem 3rem;
+  clip-path: circle(0% at calc(100% - 3rem) 3rem);
+  /* visibility 延迟到收起动画结束后再切换，既保留动画又让菜单彻底脱离 Tab 序与读屏 */
+  visibility: hidden;
+  transition: clip-path 0.7s var(--ease), visibility 0s linear 0.7s;
+  pointer-events: none;
+}
+.overlay-nav.open {
+  clip-path: circle(150% at calc(100% - 3rem) 3rem);
+  visibility: visible;
+  transition: clip-path 0.7s var(--ease), visibility 0s linear 0s;
+  pointer-events: auto;
+}
+
+.overlay-list {
+  list-style: none;
+}
+.overlay-list li {
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+.overlay-list li:last-child { border-bottom: 1px solid var(--line); }
+.overlay-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  padding: 1.5rem 0;
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 500;
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+.overlay-list a::before {
+  content: attr(data-index);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--grey);
+}
+.overlay-list a:hover {
+  transform: translateX(0.6rem);
+  opacity: 0.55;
+}
+
+.overlay-foot {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--grey);
+  letter-spacing: 0.05em;
+}
+
+/* ================================================================
+   主体布局
+   ================================================================ */
+main { position: relative; z-index: 1; }
+
+section {
+  padding: 8rem 2.4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.num {
+  font-family: var(--font-mono);
+  color: var(--grey);
+  font-size: 0.8rem;
+  margin-right: 0.4rem;
+}
+
+/* ---------------- Hero ---------------- */
+.hero {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 6rem;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--grey);
+  margin-bottom: 1.6rem;
+}
+.hero-title {
+  font-size: clamp(2.6rem, 8vw, 6.4rem);
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.hero-title .line {
+  display: block;
+}
+.hero-title .line:nth-child(2) {
+  margin-left: clamp(0rem, 10vw, 6rem);
+  color: var(--grey);
+}
+.hero-desc {
+  max-width: 480px;
+  margin-top: 2.2rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+.hero-scroll {
+  margin-top: 5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--grey);
+}
+.hero-scroll i {
+  width: 1px;
+  height: 34px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.hero-scroll i::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0% { top: -100%; }
+  60% { top: 100%; }
+  100% { top: 100%; }
+}
+
+/* ---------------- 通用 section 标题 ---------------- */
+.section-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  margin-bottom: 3rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------------- 索引列表 ---------------- */
+.index-list {
+  list-style: none;
+}
+.index-item {
+  display: grid;
+  grid-template-columns: 3rem 1fr 2fr auto;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 1.8rem 0;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s var(--ease), padding-left 0.3s var(--ease);
+}
+.index-item:hover {
+  padding-left: 0.6rem;
+  background: var(--tint);
+}
+.index-no {
+  font-family: var(--font-mono);
+  color: var(--grey);
+  font-size: 0.85rem;
+}
+.index-name {
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+  font-weight: 500;
+}
+.index-desc {
+  color: var(--grey);
+  font-size: 0.92rem;
+}
+.index-year {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--grey);
+  text-align: right;
+}
+@media (max-width: 700px) {
+  .index-item {
+    grid-template-columns: 2.2rem 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .index-desc { grid-column: 2; }
+  .index-year { grid-column: 2; text-align: left; margin-top: 0.3rem; }
+}
+
+/* ---------------- Manifesto ---------------- */
+.manifesto-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4rem;
+}
+.manifesto-text {
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+.drop-cap {
+  float: left;
+  font-size: 3.4rem;
+  line-height: 0.8;
+  font-weight: 700;
+  padding-right: 0.5rem;
+  margin-top: 0.1rem;
+}
+@media (max-width: 800px) {
+  .manifesto-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* ---------------- 联系方式 ---------------- */
+.contact {
+  text-align: left;
+  padding-bottom: 10rem;
+}
+.contact-link {
+  display: inline-block;
+  font-size: clamp(1.8rem, 6vw, 3.4rem);
+  font-weight: 600;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0.3rem;
+  transition: opacity 0.3s var(--ease), letter-spacing 0.3s var(--ease);
+}
+.contact-link:hover {
+  opacity: 0.5;
+  letter-spacing: 0.02em;
+}
+.social {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--grey);
+}
+.social a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.social a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.social a:hover { color: var(--ink); }
+.social a:hover::after { transform: scaleX(1); }
+
+/* ---------------- Footer ---------------- */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2.4rem 2.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--grey);
+  border-top: 1px solid var(--line);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.back-top {
+  color: var(--ink);
+  transition: opacity 0.3s;
+}
+.back-top:hover { opacity: 0.5; }
+
+/* ================================================================
+   首页退场：点击轨道某一项 → 跳转到该子页面
+   ----------------------------------------------------------------
+   跨文档时旧页与新页不共存，所以不存在「元素从 A 飞到 B」。实际是：
+   旧页播退场 → 浏览器仍显示旧页最后一帧 → 新页首帧 → 硬切。
+   接缝的质量只取决于一件事：退场最后一帧是否等于新页首帧。
+
+   因此只有一个元素跨接缝旅行——被点那一项的三行块，它的结构与子页
+   .page-title 完全一致。其余（轨道环、刻度环、另外五项、logo）各自淡出。
+
+   旅行块用 position: fixed，因为视口坐标是两个文档唯一能对齐的坐标系。
+   终点取 page.css 的 --title-left / --title-top，两边共用同一变量。
+   注意：.stage 有 overflow:hidden，.stage-orbit 带 transform（会成为 fixed
+   的包含块），所以旅行块必须由 JS 移出该子树、挂到 body 下，否则会被裁掉。
+   ================================================================ */
+
+/* 退场期间锁滚动，避免中途滚动破坏 fixed 坐标的对齐前提 */
+body.leaving {
+  overflow: hidden;
+}
+
+/* 环、刻度、星球环、logo、名称、信息带：一起淡出 */
+body.leaving .orbit-ring,
+body.leaving .orbit-ticks,
+body.leaving .orbit-planet-ring,
+body.leaving .stage-logo-wrap,
+body.leaving .stage-about,
+body.leaving .stage-foot {
+  opacity: 0;
+  transition: opacity 0.26s var(--ease) 0.08s;
+}
+
+/* 未被点击的五项：更快退掉，把画面让给旅行块 */
+body.leaving .orbit-item:not(.is-travelling) .orbit-inner {
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+
+/* 被点项的原位块：旅行块是它的克隆，原位这份立即隐藏，
+   否则同一内容会出现两次。用 visibility 而非 display，
+   保留占位以免 orbit 布局在退场中重排。 */
+body.leaving .orbit-item.is-travelling .orbit-inner {
+  visibility: hidden;
+}
+
+/* 星球：退场时吸附到被点项方向后淡出（吸附由 JS 的 aim() 完成） */
+body.leaving .orbit-planet {
+  opacity: 0;
+  transition: opacity 0.22s var(--ease) 0.18s;
+}
+
+/* ---- 旅行块 ---- */
+/* JS 克隆 .orbit-inner，挂到 body，起点用行内 style 写实测的视口坐标，
+   然后加 .go 触发到终点的过渡。 */
+/* 两层：外层 .travel 负责整块位移与倾斜，内层每行负责「右对齐收成左对齐」。
+   分两层是因为两者都要用 transform，写在同一元素上会互相覆盖。
+
+   起点由 JS 以 --sx0/--sy0/--t0 写入（自定义属性，不是 left/top）。
+   行内的 left/top 会赢过任何类规则，所以起点不能直接写 left/top，
+   否则 .go 的终点值永远不生效。
+
+   --t0 是起飞时的倾斜角，取被点那一项的 --tilt。轨道项是斜的、子页标题块是平的，
+   旅行块若一直保持平的，起飞那一帧就与原位块错开（实测上下四项差 10~27px 的纵向、
+   左列三项差 80~220px 的横向）。带上倾斜起飞、飞行中转平，倾斜从「对不上的原因」
+   变成动画的一部分。transform-origin 必须是 0 0：JS 给的起点是「局部原点的屏幕位置」，
+   旋转中心若不在原点，同一组 translate 会落到别处。 */
+.travel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9997;   /* 低于 .noise(9998)，噪点仍然覆盖它 */
+  margin: 0;
+  width: max-content;
+  pointer-events: none;
+  transform-origin: 0 0;
+  /* 起点：JS 实测的视口坐标 + 该项的倾斜角 */
+  transform: translate(var(--sx0), var(--sy0)) rotate(var(--t0, 0deg));
+  /* 用 transform 而非 left/top：后者每帧触发布局 */
+  transition: transform var(--travel) var(--ease);
+}
+/* 终点：--title-* 由 style.css 的 :root 给出，与子页面标题块同源。
+   rotate(0) 显式写出，让倾斜在同一条过渡里收平。 */
+.travel.go {
+  transform: translate(var(--title-left), var(--title-top)) rotate(0deg);
+}
+.travel-inner {
+  display: grid;
+  gap: 0.28rem;
+  width: max-content;
+}
+/* 左列三项在 stage 上是右对齐的，旅行块统一改成左对齐（与子页一致）。
+   若直接切换 text-align，短行（编号）会横向跳一大截。改为：文字始终左对齐，
+   用 per-line 的 translateX 把每行推回它原本右对齐的位置，再过渡到 0。
+   --sx 由 JS 按每行实测宽度写入。 */
+.travel-inner {
+  text-align: left;
+}
+.travel-inner > * {
+  transform: translateX(var(--sx, 0px));
+  transition: transform var(--travel) var(--ease);
+}
+.travel.go .travel-inner > * {
+  transform: none;
+}
+
+/* 减弱动效：不做旅行，直接跳转（JS 侧同样判断） */
+@media (prefers-reduced-motion: reduce) {
+  .travel,
+  .travel-inner > * {
+    transition: none !important;
+  }
+  body.leaving .orbit-ring,
+  body.leaving .orbit-ticks,
+  body.leaving .orbit-planet-ring,
+  body.leaving .orbit-planet,
+  body.leaving .stage-logo-wrap,
+  body.leaving .stage-about,
+  body.leaving .stage-foot,
+  body.leaving .orbit-inner {
+    transition: none !important;
+  }
+}
+
+/* ================================================================
+   滚动揭示动画（由 JS 添加 .is-visible）
+   ================================================================ */
+.reveal-line,
+.reveal-item {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal-line.is-visible,
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* stagger for index items */
+.index-item.reveal-item:nth-child(1) { transition-delay: 0s; }
+.index-item.reveal-item:nth-child(2) { transition-delay: 0.08s; }
+.index-item.reveal-item:nth-child(3) { transition-delay: 0.16s; }
+.index-item.reveal-item:nth-child(4) { transition-delay: 0.24s; }
+
+@media (max-width: 600px) {
+  section { padding: 5rem 1.4rem; }
+  .site-header { padding: 1.2rem 1.4rem; }
+}
+
+/* ================================================================
+   减弱动效偏好：尊重系统级 prefers-reduced-motion
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+    transition-delay: 0s !important;
+  }
+
+  .reveal-line,
+  .reveal-item {
+    opacity: 1;
+    transform: none;
+  }
+  .index-item.reveal-item { transition-delay: 0s !important; }
+
+  .hero-scroll i::after { display: none; }
+  .code-cursor { animation: none !important; }
+
+  .statusbar,
+  .sb-line,
+  .sb-seg,
+  .sb-dot,
+  .sb-col,
+  .sb-ticks,
+  .splash-side > span {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .statusbar {
+    transform: translate(-50%, calc(var(--logo-size) * var(--logo-expand) / 2 + var(--sb-gap))) !important;
+  }
+  .sb-line { transform: scaleX(1) !important; }
+
+  /* 跨接缝装饰层：直接给到目标透明度，不做阶段推进 */
+  .deco .splash-grid { opacity: 0.045 !important; }
+  .deco .fr { opacity: 0.55 !important; transform: translate(0, 0) !important; }
+
+  /* 状态闪烁是持续动效，减弱动效下取消 */
+  .hud-v.flick { animation: none !important; }
+  .hud-bar i { transition: none !important; }
+}

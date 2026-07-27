@@ -1,0 +1,841 @@
+/* ============================================================
+   分区区块 — 承接开屏最后一帧
+   logo 位置与尺寸沿用 :root 的 --logo-final / --view-shift，
+   开屏黑幕上翻退场后，下方 logo 恰好落在同一处，视觉不跳。
+   六个二级标题按极坐标绕 logo 排布，成左右两道弧线。
+   ============================================================ */
+
+.stage {
+  position: relative;
+  /* 覆盖 section 的通用内边距与限宽，让深色底通栏 */
+  max-width: none;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+  /* 与下方 hero 同底色，用一条发丝线区隔 */
+  border-bottom: 1px solid var(--line);
+
+  /* 弧线半径：logo 半径 + 间隙，间隙随视口收放 */
+  --orbit-r: calc(var(--logo-final) / 2 + clamp(52px, 5vw, 76px));
+  /* 中间两项在最外侧，上下四项内收，形成弧线而非直线 */
+  --orbit-x-mid: var(--orbit-r);
+  --orbit-x-off: calc(var(--orbit-r) * 0.82);
+  --orbit-y: calc(var(--orbit-r) * 0.62);
+}
+
+/* ---------------- 中心 logo ---------------- */
+/* 与开屏共用 --view-shift，两者视觉中心重合 */
+.stage-orbit {
+  position: relative;
+  width: min(100%, 1180px);
+  height: clamp(420px, 62vh, 620px);
+  transform: translateY(calc(-1 * var(--view-shift)));
+}
+
+/* wrap 尺寸严格等于 logo，名称改为绝对定位挂在下方。
+   若名称参与 flex 居中，被居中的就是「logo+名称」整体，logo 会比开屏最后一帧偏高。 */
+.stage-logo-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--logo-final);
+  line-height: 0;
+}
+.stage-logo {
+  display: block;
+  /* 等于开屏放大后的视觉尺寸 */
+  width: 100%;
+  height: auto;
+}
+.stage-logo-name {
+  position: absolute;
+  top: calc(100% + 1.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 1.2;
+  font-size: clamp(1.15rem, 2.1vw, 1.62rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  white-space: nowrap;
+}
+
+/* ---------------- 轨道环：六项的公转轨迹 ---------------- */
+/* 六项原来是「绕 logo 摆放的六个文字块」，加环之后读成「环上的六个节点」。
+   半径与 --orbit-r 同源，屏宽变化时自动跟随，不写死像素。 */
+.orbit-ring,
+.orbit-ticks {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--orbit-r) * 2);
+  height: calc(var(--orbit-r) * 2);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+}
+/* 环改成 SVG：border 无法做部分描边，而「从 12 点描一圈」是六项入场的驱动。
+   无 viewBox，用户单位即 CSS 像素，所以 stroke-width:1 就是真 1px。 */
+.orbit-ring {
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  display: block;
+}
+/* 几何用 CSS 几何属性写，从 --orbit-r 派生，随视口跟随。
+   r 减 0.5px 让 1px 描边正好落在 --orbit-r 上（描边以路径为中线）。 */
+.orbit-ring-path {
+  r: calc(var(--orbit-r) - 0.5px);
+  cx: var(--orbit-r);
+  cy: var(--orbit-r);
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1px;
+  /* pathLength=1 把周长归一化成 1，所以 dash 段=1 即整圈、gap=1 足够藏住整圈。
+     必须显式写两个值：只写 "1" 时浏览器按「段1 隙1」重复，
+     且与归一化叠加后画出的是断续弧，不是整圈（实测 13/24 档）。 */
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  /* 起点从 3 点移到 12 点，与星球的 0°=12点 定义一致。
+     用 CSS transform 而非 SVG transform 属性，圆心用百分比即自身中心。 */
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+/* 刻度环：贴在轨道环外侧一圈短刻线。用 conic 打点 + 环形遮罩切出圆环带，
+   比逐个定位 60 根刻线省得多，且密度可由角度参数一处调。 */
+.orbit-ticks {
+  --tick-band: 7px;
+  transform: translate(-50%, -50%) scale(1.045);
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    var(--ink) 0deg 0.34deg,
+    transparent 0.34deg 6deg
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - var(--tick-band)),
+    #000 calc(50% - var(--tick-band) + 1px),
+    #000 50%,
+    transparent 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - var(--tick-band)),
+    #000 calc(50% - var(--tick-band) + 1px),
+    #000 50%,
+    transparent 50%
+  );
+}
+/* ---------------- 环描边扫描：六项入场的驱动 ----------------
+   时序：侧标题形变到位（约 0.38s）→ 环从 12 点顺时针描一圈（1.1s）
+   → 扫过某一项的角度时该项亮起。
+
+   各项极角是常数，不随视口变：--orbit-x-* / --orbit-y 都是 --orbit-r 的
+   固定倍数（1.00 / 0.82 / 0.62），比值与 r 无关。实测角度：
+     pos-4  52.91°  (14.70%)    pos-5  90.00°  (25.00%)
+     pos-6 127.09°  (35.30%)    pos-3 232.91°  (64.70%)
+     pos-2 270.00°  (75.00%)    pos-1 307.09°  (85.30%)
+   所以下面的 delay 可以写死，不需要 JS 量角度。改 --sweep 时这些要同步换。 */
+.stage { --sweep: 1100ms; --sweep-start: 0.1s; }
+
+body.stage-in .orbit-ring {
+  opacity: 0.15;
+  /* 环自身立刻可见，可见的是「正在被描出来的那一段」 */
+  transition-delay: 0s;
+}
+body.stage-in .orbit-ring-path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--sweep) linear var(--sweep-start);
+}
+/* 刻度环不参与扫描：它是 repeating-conic + 环形遮罩，要跟着扫得动画 conic
+   的角度停止点，裸 conic 不可过渡、需要 @property。收益不值这个复杂度，
+   改为描完之后整体淡入。 */
+body.stage-in .orbit-ticks {
+  opacity: 0.3;
+  transition-delay: calc(var(--sweep-start) + var(--sweep));
+}
+
+/* ---------------- 星球轨道环 + 像素星球 ---------------- */
+/* 半径取 logo 边缘与六项内缘的中点：实测 1920 时 logo 半径 192、
+   六项内缘 236，中点 214，星球（16px）占 206..222，两侧各留 14px。
+   1024 时带宽收到 26.7px，仍够 16px 星球通过。 */
+.stage {
+  --planet-r: calc((var(--logo-final) / 2 + var(--orbit-inner-edge)) / 2);
+  /* 六项内缘 ≈ orbit-r - 半个项宽的水平投影，实测取 orbit-r * 0.88 拟合 */
+  --orbit-inner-edge: calc(var(--orbit-r) * 0.88);
+}
+.orbit-planet-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--planet-r) * 2);
+  height: calc(var(--planet-r) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  /* 底部 158°..202° 是 logo 名称占的极角（实测 1920），挖掉 152°..208°，
+     两端各留 6° 余量，避免圆线切进字里。用 conic 描边 + 环带遮罩实现。 */
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--ink) 0deg 152deg,
+    transparent 152deg 208deg,
+    var(--ink) 208deg 360deg
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - 1px),
+    #000 calc(50% - 1px),
+    #000 50%,
+    transparent 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - 1px),
+    #000 calc(50% - 1px),
+    #000 50%,
+    transparent 50%
+  );
+}
+.orbit-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  line-height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  /* 无 JS 时的兜底位置：12 点。有 JS 时由 rAF 每帧覆写。 */
+  transform: translate(-50%, -50%) translateY(calc(-1 * var(--planet-r)));
+}
+.orbit-planet svg { display: block; }
+/* 星球环与星球排在扫描尾段之后：扫描本身已经是「一条线在绕圈」，
+   星球同时出现会有两个东西在转，读起来乱。 */
+body.stage-in .orbit-planet-ring {
+  opacity: 0.1;
+  transition-delay: calc(var(--sweep-start) + var(--sweep) * 0.9);
+}
+body.stage-in .orbit-planet {
+  opacity: 1;
+  transition-delay: calc(var(--sweep-start) + var(--sweep) + 0.1s);
+}
+
+/* ---------------- 六个二级标题：绕 logo 的弧线 ---------------- */
+/* 外层只负责定位与倾斜，入场动画交给 .orbit-inner，避免两套 transform 打架 */
+.orbit-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(150px, 16vw, 240px);
+}
+.orbit-inner {
+  display: grid;
+  gap: 0.28rem;
+  /* 位移已收成几厘米级的微移（由环描边点亮，不再跨屏滑动），时长相应收短。
+     opacity 保持 0.55s，与侧标题的形变交叠窗口对得上。 */
+  transition: transform 0.5s var(--ease), opacity 0.55s var(--ease);
+}
+
+/* 每行的网格项收成内容宽，并贴到该列的对齐边。
+   视觉与「网格项拉满 + text-align 浮在里面」完全等价（实测 1920→885 七档，
+   六项每行文字坐标位移 0.00px），但 getBoundingClientRect() 从此量的是文字盒
+   而不是被 stretch 的整宽盒。跨文档接缝的每行偏移全靠 rect 推算，
+   量错宽度会让左列三项横向偏 80~220px——这两行是那套测量的前提，不是样式偏好。 */
+.pos-1 .orbit-inner,
+.pos-2 .orbit-inner,
+.pos-3 .orbit-inner { justify-items: end; }
+.pos-4 .orbit-inner,
+.pos-5 .orbit-inner,
+.pos-6 .orbit-inner { justify-items: start; }
+
+.orbit-no {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+.orbit-title {
+  font-size: clamp(1.35rem, 2.7vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.orbit-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+
+/* 倾斜角单独抽成 --tilt。原因是跨文档接缝：子页标题块是平的，而轨道项是斜的，
+   斜块的三行文字在屏幕上各偏一个 x（实测 pos-1 三行散开约 8px），逐行对齐无从谈起。
+   倾斜写在 .orbit-item 上，和定位 translate 共用同一个 transform，无法只覆盖 rotate；
+   所以飞行期改为在子元素 .orbit-inner 上反向旋转抵消（见 html.nav-back 一节）。
+   变量在这里声明一次，正反两个方向都从这里取值，不会只改一头。 */
+.orbit-item { --tilt: 0deg; }
+
+/* 左列三项：右对齐贴向 logo，倾斜角沿弧线切线 */
+.pos-1, .pos-2, .pos-3 {
+  text-align: right;
+  transform-origin: 100% 50%;
+}
+.pos-1 {
+  --tilt: -7deg;
+  transform: translate(calc(-100% - var(--orbit-x-off)), calc(-50% - var(--orbit-y))) rotate(var(--tilt));
+}
+.pos-2 {
+  --tilt: 0deg;
+  transform: translate(calc(-100% - var(--orbit-x-mid)), -50%) rotate(var(--tilt));
+}
+.pos-3 {
+  --tilt: 7deg;
+  transform: translate(calc(-100% - var(--orbit-x-off)), calc(-50% + var(--orbit-y))) rotate(var(--tilt));
+}
+
+/* 右列三项：左对齐贴向 logo，倾斜角镜像 */
+.pos-4, .pos-5, .pos-6 {
+  text-align: left;
+  transform-origin: 0% 50%;
+}
+.pos-4 {
+  --tilt: 7deg;
+  transform: translate(var(--orbit-x-off), calc(-50% - var(--orbit-y))) rotate(var(--tilt));
+}
+.pos-5 {
+  --tilt: 0deg;
+  transform: translate(var(--orbit-x-mid), -50%) rotate(var(--tilt));
+}
+.pos-6 {
+  --tilt: -7deg;
+  transform: translate(var(--orbit-x-off), calc(-50% + var(--orbit-y))) rotate(var(--tilt));
+}
+
+/* 悬停：向 logo 方向靠近，并生长一条指向中心的细线 */
+.orbit-item::after {
+  content: "";
+  position: absolute;
+  bottom: -0.35rem;
+  width: 0;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.45;
+  transition: width 0.45s var(--ease);
+}
+.pos-1::after, .pos-2::after, .pos-3::after { right: 0; }
+.pos-4::after, .pos-5::after, .pos-6::after { left: 0; }
+.orbit-item:hover::after { width: 100%; }
+
+.pos-1:hover .orbit-inner,
+.pos-2:hover .orbit-inner,
+.pos-3:hover .orbit-inner { transform: translateX(0.55rem); }
+.pos-4:hover .orbit-inner,
+.pos-5:hover .orbit-inner,
+.pos-6:hover .orbit-inner { transform: translateX(-0.55rem); }
+
+/* 悬停某项时其余减淡，突出当前项 */
+.stage-orbit:hover .orbit-inner { opacity: 0.42; }
+.stage-orbit .orbit-item:hover .orbit-inner { opacity: 1; }
+
+/* ---------------- 关于（原 hero 标题） ---------------- */
+/* 必须 absolute。.stage 是 grid + place-items:center，改造前只有 .stage-orbit
+   一个在流子元素，所以被居中的就是它，logo 中心与开屏最后一帧严格重合。
+   若本元素留在流中，网格会变成两行、居中对象变成「orbit + 本元素」整体，
+   实测 1600x900 下 logo 中心从 cy=365.78 被顶到 279.04（偏 86.73px），
+   开屏溶解时 logo 会可见地跳一下。 */
+.stage-about {
+  position: absolute;
+  left: 50%;
+  /* 落在 orbit 弧线底边与信息带之间。滚动提示撤掉后这段是空的。 */
+  bottom: clamp(6.2rem, 9.5vh, 8.4rem);
+  transform: translateX(-50%);
+  width: min(88vw, 620px);
+  text-align: center;
+  font-size: clamp(1.05rem, 2vw, 1.42rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+body.stage-in .stage-about { opacity: 1; transition-delay: 0.7s; }
+
+/* ---------------- 底部信息带 ---------------- */
+/* orbit 弧线区底边约在屏高 67%，下方依次是「关于」与本带。
+   原先这里要跃过滚动提示才取 7.4rem 下限；提示已撤，改为贴底。 */
+.stage-foot {
+  position: absolute;
+  left: 50%;
+  bottom: 2.4rem;
+  transform: translateX(-50%);
+  width: min(78vw, 860px);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.7rem);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+.sf-line {
+  flex: 1;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.18;
+  transform: scaleX(0);
+  transition: transform 0.9s var(--ease);
+}
+.sf-line:first-child { transform-origin: right center; }
+.sf-line:last-child { transform-origin: left center; }
+
+.sf-text {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+.sf-dot { opacity: 0.55; }
+
+/* 实时时钟：秒位每秒变，等宽数字避免整条带左右抽动。
+   --font-mono 里 SF Mono / Consolas 本身等宽，但 tabular-nums 能在回退到
+   非等宽字体时也锁住数字宽度。min-width 兜住 "--:--:--" 到实际时间的切换。 */
+.sf-clock {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  min-width: 5.4em;
+  display: inline-block;
+  text-align: center;
+  /* 时钟比两侧静态标注略重，暗示它是活的 */
+  color: var(--ink);
+}
+
+/* 底部带排在扫描收尾，与最后一项（pos-1，1.04s）大致同时 */
+body.stage-in .stage-foot {
+  opacity: 1;
+  transition-delay: calc(var(--sweep-start) + var(--sweep) * 0.85);
+}
+body.stage-in .sf-line {
+  transform: scaleX(1);
+  transition-delay: calc(var(--sweep-start) + var(--sweep) * 0.9);
+}
+
+/* 矮屏：orbit 弧线区、关于、信息带三层争纵向空间。
+   先压「关于」的字号与两者间距，仍不够时（下一档）撤掉装饰性的信息带 ——
+   「关于」是 h1、承载真实内容，优先级高于纯装饰的读数带。 */
+@media (max-height: 760px) {
+  .stage-about {
+    bottom: clamp(5rem, 7.5vh, 6.4rem);
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  }
+  .stage-foot { gap: 0.7rem; }
+  .sf-text { font-size: 0.58rem; letter-spacing: 0.14em; gap: 0.55em; }
+}
+/* 极矮屏：三层放不下，撤掉信息带，保留「关于」 */
+@media (max-height: 660px) {
+  .stage-foot { display: none; }
+  .stage-about { bottom: 2.6rem; }
+}
+/* 更矮：logo 保持居中、随屏收得慢，而「关于」贴底不动，两者会撞。
+   实测 1600 宽下 logo 名称底边与「关于」顶边的真实间隙：
+   700px 窗口 +16px，620px 已经 −5px，500px 达 −62px（文字真重叠）。
+   这一档改为视觉隐藏：h1 仍在 DOM 里供读屏与收录，只是不渲染。
+   不用 display:none，那会让它对读屏也消失。 */
+@media (max-height: 590px) {
+  .stage-about {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+    /* 上面的入场过渡会把 opacity 压成 0，这里恢复，
+       否则读屏在某些实现下会跳过完全透明的元素 */
+    opacity: 1 !important;
+  }
+}
+
+/* ---------------- 向下滚动提示 ---------------- */
+.stage-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 2.4rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease) 1.35s;
+}
+.stage-scroll i {
+  width: 1px;
+  height: 32px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.stage-scroll i::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+
+/* ---------------- 入场：开屏退场后由 JS 加 body.stage-in ---------------- */
+/* logo 不做入场动画，它要跟开屏最后一帧严格对齐 */
+.orbit-item .orbit-inner {
+  opacity: 0;
+}
+
+/* 位置交接：开屏的左右侧标题落点几乎就是 pos-2 / pos-5 的落点
+   （1920 下 pos-5 只差 2px、pos-2 差 25px），所以中间两项原地淡入，
+   看起来是「侧标题的文字被换掉」，不是新元素飞进来。
+   上下四项从中间两项的位置向外展开，弧线是「长出来」的。 */
+.pos-2 .orbit-inner,
+.pos-5 .orbit-inner {
+  transform: none;
+}
+/* 其余四项：改由环描边点亮，所以必须几乎在原位淡入。
+   原先是从中间两项的位置大幅滑出（translate 到 --orbit-y 那么远），
+   那读起来是「从别处飞来」，与「被扫过的线点亮」矛盾——线扫到某个角度时，
+   那一项本就该已经在那个角度上。这里只留一点沿半径向外的微移，
+   给亮起一个方向感，不构成位移叙事。 */
+.pos-1 .orbit-inner { transform: translate(-6px, -4px); }
+.pos-3 .orbit-inner { transform: translate(-6px, 4px); }
+.pos-4 .orbit-inner { transform: translate(6px, -4px); }
+.pos-6 .orbit-inner { transform: translate(6px, 4px); }
+.stage-logo-name {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+
+body.stage-in .orbit-inner {
+  opacity: 1;
+  transform: none;
+}
+body.stage-in .stage-logo-name { opacity: 1; }
+body.stage-in .stage-scroll { opacity: 1; }
+
+/* 入场顺序改由环描边驱动：扫到哪一项，哪一项亮。
+   pos-2 / pos-5 是形变接手方，与侧标题同位，必须 0 延迟原地淡入 ——
+   它们不参与扫描点亮，否则会先消失再出现。
+   其余四项按各自极角占周长的比例排延迟（见上方角度表）：
+     pos-4 14.70% → 0.10 + 1.1×0.1470 = 0.26s
+     pos-6 35.30% → 0.49s
+     pos-3 64.70% → 0.81s
+     pos-1 85.30% → 1.04s
+   顺时针读起来是「右上 → 右下 → 左下 → 左上」，跟着线走一圈。 */
+body.stage-in .pos-2 .orbit-inner,
+body.stage-in .pos-5 .orbit-inner { transition-delay: 0s; }
+body.stage-in .pos-4 .orbit-inner { transition-delay: 0.26s; }
+body.stage-in .pos-6 .orbit-inner { transition-delay: 0.49s; }
+body.stage-in .pos-3 .orbit-inner { transition-delay: 0.81s; }
+body.stage-in .pos-1 .orbit-inner { transition-delay: 1.04s; }
+
+/* 名称压在扫描中段：太早会和形变抢注意力，太晚会让 logo 长时间无名 */
+body.stage-in .stage-logo-name { transition-delay: 0.54s; }
+body.stage-in .stage-scroll { transition-delay: 0.5s; }
+
+/* ============================================================
+   从子页面返回：html.nav-back
+   ------------------------------------------------------------
+   分工与正向相反：子页面什么都不飞（标题块原地留着当接缝），
+   首页首帧把「到达项」摆在同一组 --title-* 坐标上，然后在本文档内部
+   让它滑回轨道位置。位移发生在坐标已知的这一侧，用 FLIP 拿精确 delta，
+   不必在子页面里预测轨道项将来在哪。
+
+   html.nav-back  由 <head> 内联脚本在首帧前加，负责「跳过开屏 + 初始隐藏」
+   body.stage-back 由 script.js 在 FLIP 就位后加，负责推进整段编排
+   ============================================================ */
+
+/* 跳过开屏。必须 display:none 而不是 opacity：.splash-bg 是不透明 paper，
+   留着会盖住整屏。首帧前就得生效，否则会闪一下开屏底。 */
+html.nav-back .splash { display: none !important; }
+
+/* 首帧：除到达项外一切隐藏。轨道环回到未描状态。 */
+html.nav-back .orbit-ring { opacity: 0; }
+html.nav-back .orbit-ring-path { stroke-dashoffset: 1; }
+html.nav-back .orbit-ticks,
+html.nav-back .orbit-planet-ring,
+html.nav-back .orbit-planet,
+html.nav-back .stage-logo-name,
+html.nav-back .stage-about,
+html.nav-back .stage-foot { opacity: 0; }
+/* 六项统一压到 0，且清掉正向入场的位移——nav-back 的位移由 JS 行内给出 */
+html.nav-back .orbit-inner { opacity: 0; transform: none; }
+
+/* 到达项：首帧就可见，位置由 JS 写行内 transform 顶到接缝坐标。
+   每行的 --sx 从「负的局部偏移」（把右对齐的行拉回左缘，等于子页标题块的外观）
+   过渡到 0（轨道该有的位置），落地后摘类清掉 --sx，视觉等同。
+
+   不切 text-align：原先靠 text-align:left 强制左对齐、再用 innerW - 行宽 算补偿量，
+   而那两个宽度都取自被旋转污染的外接框，差值不对——落地摘类那一刻左列三项会瞬跳
+   80~216px。改成始终保持各列真正的对齐方式、只用 --sx 平移，就不存在两种对齐之间的换算。
+
+   transform-origin: 0 0 与 JS 侧的换算配套：JS 把「需要的屏幕位移」经旋转矩阵换算成
+   item 局部位移，旋转中心必须在局部原点，否则同一组 translate 会落到别处。
+
+   transition: none 是 FLIP 的必要条件，不是优化。.orbit-inner 有一条常驻的
+   transition: transform 0.5s，若不关掉，invert 那一步会被过渡捕获——元素会
+   「从轨道位置动画到接缝」，实际观感变成 轨道→接缝→轨道 来回跑一趟。
+   过渡由下面的 html.back-play 在 Play 那一帧重新打开。 */
+html.nav-back .orbit-item.is-arriving .orbit-inner {
+  /* 先保持透明：FLIP 的测量要等布局稳定（放在 rAF 里做）。
+     透明期间量完并 invert，再由 .back-ready 揭示，于是不会闪一帧轨道位置。 */
+  opacity: 0;
+  transform-origin: 0 0;
+  transition: none;
+}
+html.nav-back.back-ready .orbit-item.is-arriving .orbit-inner {
+  opacity: 1;
+}
+html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+  transform: translateX(var(--sx, 0px));
+  transition: none;
+}
+
+/* Play：JS 在下一帧同时加这个类并摘掉行内 transform，此时才有过渡 */
+html.nav-back.back-play .orbit-item.is-arriving .orbit-inner,
+html.nav-back.back-play .orbit-item.is-arriving .orbit-inner > * {
+  transition: transform var(--back-glide) var(--ease);
+}
+
+/* ---- 推进 ---- */
+.stage { --back-glide: 380ms; }
+
+/* 滑回落地后，环开始描，其余五项按各自角度亮起（延迟统一后推一个 glide） */
+body.stage-back .orbit-ring { opacity: 0.15; }
+body.stage-back .orbit-ring-path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--sweep) linear var(--back-glide);
+}
+body.stage-back .orbit-inner { opacity: 1; }
+body.stage-back .orbit-item:not(.is-arriving) .orbit-inner { transform: none; }
+body.stage-back .pos-4:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.16s); }
+body.stage-back .pos-5:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.28s); }
+body.stage-back .pos-6:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.39s); }
+body.stage-back .pos-3:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.71s); }
+body.stage-back .pos-2:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.83s); }
+body.stage-back .pos-1:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.94s); }
+
+body.stage-back .orbit-ticks {
+  opacity: 0.3;
+  transition-delay: calc(var(--back-glide) + var(--sweep));
+}
+body.stage-back .orbit-planet-ring {
+  opacity: 0.1;
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.9);
+}
+body.stage-back .orbit-planet {
+  opacity: 1;
+  transition-delay: calc(var(--back-glide) + var(--sweep));
+}
+body.stage-back .stage-logo-name { opacity: 1; transition-delay: var(--back-glide); }
+body.stage-back .stage-about { opacity: 1; transition-delay: calc(var(--back-glide) + 0.3s); }
+body.stage-back .stage-foot {
+  opacity: 1;
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.85);
+}
+body.stage-back .sf-line {
+  transform: scaleX(1);
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.9);
+}
+
+/* 减弱动效：不飞、不扫，直接全部就位 */
+@media (prefers-reduced-motion: reduce) {
+  html.nav-back .orbit-inner,
+  html.nav-back .stage-logo-name,
+  html.nav-back .stage-about,
+  html.nav-back .stage-foot { opacity: 1 !important; }
+  html.nav-back .orbit-ring { opacity: 0.15 !important; }
+  html.nav-back .orbit-ring-path { stroke-dashoffset: 0 !important; }
+  html.nav-back .orbit-ticks { opacity: 0.3 !important; }
+  html.nav-back .orbit-planet-ring { opacity: 0.1 !important; }
+  html.nav-back .orbit-planet { opacity: 1 !important; }
+  html.nav-back .orbit-item.is-arriving .orbit-inner {
+    transform: none !important;
+  }
+  html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+    transform: none !important;
+  }
+}
+
+/* 窄屏：六项是堆叠的两列/单列，不在圆上，飞回轨道没有意义。
+   退化成朴素淡入。 */
+@media (max-width: 720px) {
+  html.nav-back .orbit-item.is-arriving .orbit-inner {
+    transform: none !important;
+  }
+  html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+    transform: none !important;
+  }
+  body.stage-back .orbit-inner { transition-delay: 0.06s !important; }
+}
+
+/* ---------------- 窄屏：弧线收为两列，再收为单列 ---------------- */
+@media (max-width: 900px) {
+  .stage { --orbit-r: calc(var(--logo-final) / 2 + clamp(40px, 6vw, 56px)); }
+  .orbit-title { font-size: clamp(1.15rem, 3.3vw, 1.6rem); }
+  .orbit-sub { display: none; }
+}
+
+@media (max-width: 720px) {
+  /* 弧线已收成独立行的两列，六项不再在那个圆上，
+     环会变成一条穿过文字的孤线（实测 600px 宽时偏差已达 111px） */
+  .orbit-ring,
+  .orbit-ticks,
+  .orbit-planet-ring,
+  .orbit-planet { display: none; }
+
+  /* 环没了，扫描这个机制在这一档不存在。六项必须退化成朴素错峰淡入，
+     否则会按 0.26/0.49/0.81/1.04s 的角度延迟依次亮起，而屏幕上没有任何
+     线在扫——读起来是六行字莫名其妙地按怪异节奏出现。 */
+  .pos-1 .orbit-inner, .pos-2 .orbit-inner, .pos-3 .orbit-inner,
+  .pos-4 .orbit-inner, .pos-5 .orbit-inner, .pos-6 .orbit-inner {
+    transform: none;
+  }
+  body.stage-in .pos-1 .orbit-inner { transition-delay: 0.06s; }
+  body.stage-in .pos-2 .orbit-inner { transition-delay: 0.12s; }
+  body.stage-in .pos-3 .orbit-inner { transition-delay: 0.18s; }
+  body.stage-in .pos-4 .orbit-inner { transition-delay: 0.24s; }
+  body.stage-in .pos-5 .orbit-inner { transition-delay: 0.3s; }
+  body.stage-in .pos-6 .orbit-inner { transition-delay: 0.36s; }
+  body.stage-in .stage-foot { transition-delay: 0.42s; }
+
+  /* 极坐标在窄屏会挤到重叠，改回常规两列，logo 在上 */
+  .stage {
+    min-height: auto;
+    padding: 7rem 1.4rem 5rem;
+    place-items: stretch;
+  }
+  /* 六项是 .stage-orbit 的直接子元素，无法用单个 left/right 区域承载三项，
+     否则三项会挤进同一个网格单元互相重叠。这里按项给出独立行。 */
+  .stage-orbit {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "logo logo"
+      "i1 i4"
+      "i2 i5"
+      "i3 i6";
+    column-gap: 1.6rem;
+    row-gap: 2.2rem;
+    transform: none;
+  }
+  .stage-logo-wrap {
+    position: static;
+    grid-area: logo;
+    transform: none;
+    width: var(--logo-final);
+    justify-self: center;
+    margin: 0 auto 2.6rem;
+  }
+  .stage-logo-name {
+    position: static;
+    transform: none;
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .orbit-item {
+    position: static;
+    width: auto;
+    transform: none !important;
+  }
+  .pos-1, .pos-2, .pos-3 { justify-self: end; }
+  .pos-4, .pos-5, .pos-6 { justify-self: start; }
+  .pos-1 { grid-area: i1; }
+  .pos-2 { grid-area: i2; }
+  .pos-3 { grid-area: i3; }
+  .pos-4 { grid-area: i4; }
+  .pos-5 { grid-area: i5; }
+  .pos-6 { grid-area: i6; }
+  .orbit-sub { display: block; }
+  .stage-scroll { display: none; }
+
+  /* 窄屏 stage 已改成纵向堆叠（place-items:stretch、min-height:auto），
+     不再靠 grid 居中，所以「关于」可以回到流中。保持 absolute 会压住六项。 */
+  .stage-about {
+    position: static;
+    transform: none;
+    width: auto;
+    margin: 3.2rem auto 0;
+    text-align: center;
+  }
+  .stage-foot {
+    position: static;
+    width: auto;
+    margin: 2.4rem auto 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .stage-orbit {
+    grid-template-columns: 1fr;
+    grid-template-areas: "logo" "i1" "i2" "i3" "i4" "i5" "i6";
+    row-gap: 1.9rem;
+  }
+  .pos-1, .pos-2, .pos-3,
+  .pos-4, .pos-5, .pos-6 {
+    justify-self: center;
+    text-align: center;
+  }
+  .orbit-item::after { left: 50%; right: auto; transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-inner,
+  .stage-logo-name,
+  .stage-scroll,
+  .stage-about,
+  .stage-foot {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  .orbit-ring { opacity: 0.15 !important; transition: none !important; }
+  /* 不扫描，环直接整圈呈现 */
+  .orbit-ring-path {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+  .orbit-ticks { opacity: 0.3 !important; transition: none !important; }
+  /* 星球不做常驻公转（JS 侧同样判断），但 snap 是功能性反馈，保留 */
+  .orbit-planet-ring { opacity: 0.1 !important; transition: none !important; }
+  .orbit-planet { opacity: 1 !important; transition: none !important; }
+  .sf-line { transform: scaleX(1) !important; transition: none !important; }
+  .pos-1 .orbit-inner, .pos-2 .orbit-inner, .pos-3 .orbit-inner,
+  .pos-4 .orbit-inner, .pos-5 .orbit-inner, .pos-6 .orbit-inner {
+    transform: none !important;
+    transition-delay: 0s !important;
+  }
+  .stage-scroll i::after { display: none; }
+}
