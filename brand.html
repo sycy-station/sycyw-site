@@ -193,27 +193,43 @@
       <a class="ib-item" href="system-design.html" data-freq="88.1">
         <span class="ib-no">01</span>
         <span class="ib-title">系统设计</span>
+        <span class="ib-freq" aria-hidden="true">88.1</span>
       </a>
       <a class="ib-item" href="interaction.html" data-freq="91.5">
         <span class="ib-no">02</span>
         <span class="ib-title">交互研究</span>
+        <span class="ib-freq" aria-hidden="true">91.5</span>
       </a>
       <a class="ib-item is-current" href="brand.html" aria-current="page" data-freq="94.7">
         <span class="ib-no">03</span>
         <span class="ib-title">品牌语言</span>
+        <span class="ib-freq" aria-hidden="true">94.7</span>
       </a>
       <a class="ib-item" href="engineering.html" data-freq="98.3">
         <span class="ib-no">04</span>
         <span class="ib-title">前端工程</span>
+        <span class="ib-freq" aria-hidden="true">98.3</span>
       </a>
       <a class="ib-item" href="motion.html" data-freq="101.9">
         <span class="ib-no">05</span>
         <span class="ib-title">动效编排</span>
+        <span class="ib-freq" aria-hidden="true">101.9</span>
       </a>
       <a class="ib-item" href="archive.html" data-freq="104.6">
         <span class="ib-no">06</span>
         <span class="ib-title">实验归档</span>
+        <span class="ib-freq" aria-hidden="true">104.6</span>
       </a>
+
+        <!-- 刻度尺（调频盘）。静态输出，不由 script.js 创建：
+             原先 JS 建好再淡入，每次跨文档导航都重播一次，读成闪烁。
+             基准线与刻度是 .ib-scale 的两个伪元素（CSS 梯度），读数挂在
+             上面各项内部（.ib-freq），三者都不需要量像素。
+             .ib-scale-dense 是当前项那段加密刻度，位置由 script.js 写
+             --dx / --dw，因为它要在切换时滑移。 -->
+        <div class="ib-scale" aria-hidden="true">
+          <div class="ib-scale-dense"></div>
+        </div>
       </div>
     </div>
   </nav>

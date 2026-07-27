@@ -24,7 +24,13 @@
   z-index: 300;
   /* 让位给 header。高度取 style.css 的 --header-h（= padding*2 + 按钮高），
      不再手抄那个表达式——抄一遍就意味着改 header 时这里会脱节。 */
-  padding: var(--header-h) 2.4rem 0;
+  /* 横向留白不在这一层给：这层是通栏的 fixed 载体，限宽与内边距都交给
+     下面的 .ib-scroll，让它与 .page-main / .site-footer 的盒模型完全一致
+     （max-width: --shell + padding-inline: --shell-pad）。
+     在这里加 --shell-pad 会让 .ib-scroll 的居中基准变成「已扣掉留白的宽度」，
+     于是它的内容左缘落在 --shell 列的左缘上（1920 下 360）而不是内容左缘
+     （398.4），横条比标题块和 header 少缩一个 --shell-pad。 */
+  padding: var(--header-h) 0 0;
   pointer-events: none;
 }
 /* 滚动层。横向滚动放在这里而不是 .ib-track 上：
@@ -33,8 +39,11 @@
    把滚动挪到外层、并用 padding-bottom 把刻度尺纳入这层的裁剪区（裁剪发生在
    padding box 边缘），刻度尺就能留在 .ib-track 内、跟着内容一起滚。 */
 .ib-scroll {
-  max-width: 1200px;
+  /* 与 .page-main / .site-footer 同一套盒模型，六项的左缘才与标题块、
+     header 的标记落在同一条竖轴上 */
+  max-width: var(--shell);
   margin: 0 auto;
+  padding-inline: var(--shell-pad);
   pointer-events: auto;
   /* 窄屏横向滚动：六项中文标题带编号约 60 字宽，放不下 */
   overflow-x: auto;
@@ -53,8 +62,8 @@
      内容宽时由 max-content 跟着长，下边框与刻度尺才能覆盖全部六项。 */
   min-width: 100%;
   width: max-content;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: var(--bar-pad-b);
+  border-bottom: var(--bar-rule) solid var(--line);
 
   /* 星球槽位：星球停在当前项左侧的空隙里，但左起第一项左边没有空隙。
      预留这段内边距，让 01 成为当前项时星球也有地方站，不必压在编号上。
@@ -83,6 +92,9 @@
   white-space: nowrap;
   color: var(--grey-strong);
   transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
+  /* .ib-freq 的包含块：读数挂在各自的项里，靠 left:50% 对齐该项中心。
+     这样对齐由布局保证、首帧就正确，不需要 JS 量位置——见 .ib-freq。 */
+  position: relative;
 }
 .ib-no {
   font-family: var(--font-mono);
@@ -179,8 +191,12 @@ body.bar-slide .ib-planet {
    为什么是全宽而不是只在当前项下画一小段：整个量程都在场，当前位置才有
    参照。只画一段的话它是一枚孤立的碎片，传达不出刻度盘的意思。
 
-   刻度由 script.js 生成而不是写死在模板里：根数取决于实测宽度，
-   随视口变化。数字则来自 data-freq，仍是 pages.js 单一来源。
+   整条刻度尺是构建期静态输出的，不由 JS 创建：
+   原先由 script.js 生成、再靠 .is-ready 从 opacity 0 淡入，于是每次跨文档
+   导航都重播一次淡入——那正是切换时看到的闪烁。它是六页共有、逐字节相同的
+   家具，首帧就该在位，全程不动。
+   基准线与刻度用 CSS 梯度画，读数挂在各项里靠 left:50% 对齐该项中心，
+   两者都不需要量任何像素。JS 现在只管加密段落在哪一项（那一段要滑移）。
 
    本块所有元素都在 .ib-track 内（跟着横向滚动走），而 .ib-track 不裁剪，
    裁剪发生在 .ib-scroll 的 padding box——它的 padding-bottom 正好等于
@@ -196,11 +212,9 @@ body.bar-slide .ib-planet {
   right: 0;
   height: calc(var(--scale-h) - var(--scale-gap));
   pointer-events: none;
-  /* 与线同一条件显形，避免首帧刻度在 0 位闪一下 */
-  opacity: 0;
-  transition: opacity 0.3s var(--ease);
+  /* 没有淡入。原先这里是 opacity:0 + .is-ready 揭示，跨文档导航时每次重播，
+     读成闪烁。静态输出之后首帧即最终态。 */
 }
-.ib-scale.is-ready { opacity: 1; }
 
 /* 基准线：贯通整条量程，不断。
    刻度悬在空中会读成一串散落的短划，有了这条底线才成为一把尺。 */
@@ -242,11 +256,21 @@ body.bar-slide .ib-planet {
   background-repeat: no-repeat;
 }
 
-/* 读数：每项下方一个，非当前项压淡。
-   压淡而不是隐藏——整条量程的刻度值都可读，才像一把尺。 */
-.ib-scale b {
+/* 读数：每项一个，挂在该项内部，非当前项压淡。
+   压淡而不是隐藏——整条量程的刻度值都可读，才像一把尺。
+
+   为什么挂在 .ib-item 里而不是 .ib-scale 里：挂在项里只需 left:50% 就居中
+   于该项，对齐由布局保证、首帧即正确，且与项宽无关（哪天某一项标题字数不同
+   也不会错位）。放在刻度尺里则必须知道每项的中心坐标，那就得靠 JS 实测，
+   于是又回到「JS 生成 → 淡入 → 每次导航重播」的老路。
+
+   纵向从项底缘一路加到读数行：跨过横条下内边距、下边框、刻度尺让位，
+   再加读数在刻度尺内的偏移。四段都是变量，改任何一段读数都跟着走。 */
+.ib-freq {
   position: absolute;
-  top: 9px;
+  left: 50%;
+  top: calc(100% + var(--bar-pad-b) + var(--bar-rule)
+            + var(--scale-gap) + var(--freq-top));
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-weight: 400;
@@ -257,7 +281,21 @@ body.bar-slide .ib-planet {
   opacity: 0.32;
   transition: opacity 0.3s var(--ease), color 0.3s var(--ease);
 }
-.ib-scale b.is-cur {
+/* 当前项的读数加重。直接借用项上已有的 .is-current，不需要额外的类，
+   也不需要 JS 在落地时再点亮一次——构建期就带着，首帧即正确。 */
+.ib-item.is-current .ib-freq {
+  opacity: 1;
+  color: var(--ink);
+}
+
+/* 退场时把加重交给目标项。.is-target 由 script.js 在点击时打上，
+   是这套里唯一还需要 JS 的读数状态——.is-current 必须留在原处
+   （它同时承载 aria-current，不该在离开途中改语义）。 */
+body.leaving-sub .ib-item.is-current .ib-freq {
+  opacity: 0.32;
+  color: var(--grey-strong);
+}
+body.leaving-sub .ib-item.is-target .ib-freq {
   opacity: 1;
   color: var(--ink);
 }
@@ -289,6 +327,9 @@ body.bar-slide .ib-scale-dense {
    .ib-scroll 的 padding-bottom 一并收掉，不留空带。 */
 @media (max-width: 600px) {
   .ib-scale { display: none; }
+  /* 读数挂在各项内部、不是刻度尺的子元素，所以要单独撤。
+     漏了它的话刻度尺没了、六组数字还悬在横条下方。 */
+  .ib-freq { display: none; }
   .ib-scroll { padding-bottom: 0; }
 }
 
@@ -315,9 +356,9 @@ body.bar-slide .ib-scale-dense {
 /* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
    接缝处旅行块落在这里，两者重合。 */
 .page-main {
-  max-width: 1200px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: var(--title-top) 2.4rem 8rem;
+  padding: var(--title-top) var(--shell-pad) 8rem;
 }
 
 .page-title {
@@ -387,9 +428,9 @@ body.bar-slide .ib-scale-dense {
 /* ---------------- footer ---------------- */
 .site-footer {
   display: block;
-  max-width: 1200px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: 3rem 2.4rem 2.6rem;
+  padding: 3rem var(--shell-pad) 2.6rem;
   border-top: 1px solid var(--line);
 }
 .sf-contact {
@@ -427,14 +468,11 @@ body.bar-slide .ib-scale-dense {
   color: var(--grey);
 }
 
-@media (max-width: 600px) {
-  /* 竖向让位仍取 --header-h：它在窄屏已经跟着 --header-pad-y 变小了，
-     这里只需要收横向。原先写死 calc(1.2rem * 2 + 42px) 是第二处手抄。 */
-  .index-bar { padding-left: 1.4rem; padding-right: 1.4rem; }
-  .page-main { padding-left: 1.4rem; padding-right: 1.4rem; }
-  .site-footer { padding-left: 1.4rem; padding-right: 1.4rem; }
-  /* --title-left 的窄屏取值同样在 style.css 里改，保持单一来源 */
-}
+/* 窄屏的横向留白不在这里改：三处 padding 都已经从 --shell-pad 派生，
+   而 style.css 的 @media (max-width: 600px) 把 --shell-pad 收到 1.4rem，
+   header 与它们一起跟着变。--title-left 同理。
+   原先这里写死三行 1.4rem，加上 .index-bar 那份手抄的
+   calc(1.2rem * 2 + 42px)，是同一个值散在四处。 */
 
 /* ============================================================
    入场

@@ -63,12 +63,24 @@
   /* 画面整体上移量，开屏与分区页共用，保证两者视觉中心重合 */
   --view-shift: clamp(2vh, 4.5vh, 6vh);
 
+  /* ---- 内容列 ----
+     全站唯一的横向骨架：限宽 --shell、居中、左右各留 --shell-pad。
+     header、子页横条、标题块、正文、footer 全部从这两个值派生，
+     所以它们的左缘必然对齐。
+
+     原先 header 是通栏的（padding 从视口边缘起算），而正文在 1200px 居中列
+     内。1600px 视口下标记左缘 38.4、标题块左缘 398.4，差 360px——header 的
+     「森韵次元坞」与下方所有内容不在同一条竖轴上。而 1200px / 2.4rem 在两个
+     文件里各写了好几份，是同一个隐患的另一面。 */
+  --shell: 1200px;
+  --shell-pad: 2.4rem;
+
   /* ---- 跨文档接缝坐标 ----
      首页退场时旅行块飞到这里，子页面标题块首帧就在这里。
      必须定义在 style.css（两个文档都 link 它）而不是 page.css
      （只有子页 link），否则首页拿不到终点坐标。
-     左值 = section 内容列左缘：max-width:1200px + padding:2.4rem 居中。 */
-  --title-left: calc(max((100vw - 1200px) / 2, 0px) + 2.4rem);
+     左值 = 内容列左缘：--shell 限宽居中，再加 --shell-pad。 */
+  --title-left: calc(max((100vw - var(--shell)) / 2, 0px) + var(--shell-pad));
   --title-top: clamp(8.5rem, 17vh, 12rem);
   /* 旅行时长，退场与子页入场共用 */
   --travel: 380ms;
@@ -114,6 +126,14 @@
   /* 刻度间距。刻度用 repeating-linear-gradient 画（见 page.css 的
      .ib-scale::after），长刻度每五格一根，加密段取一半间距。 */
   --tick-step: 9px;
+
+  /* 横条自身的两个尺寸。提成变量是因为读数（.ib-freq）挂在各项里，
+     要从「项底缘」一路加到「刻度尺读数行」，途中要跨过这两段。
+     写死的话改横条内边距会让读数脱节。 */
+  --bar-pad-b: 0.85rem;   /* .ib-track 的下内边距 */
+  --bar-rule: 1px;        /* .ib-track 的下边框，也是刻度尺基准线所在 */
+  /* 读数行相对刻度尺顶部的偏移，与 .ib-scale b 的 top 同值 */
+  --freq-top: 9px;
 }
 
 /* 这里曾有一档 min-width:1000px 把 --title-top 减去 --bar-h，配合
@@ -123,7 +143,9 @@
 
 @media (max-width: 600px) {
   :root {
-    --title-left: 1.4rem;
+    /* 收内容列的左右留白。--title-left 会跟着算出 1.4rem
+       （100vw < --shell 时那个 max() 取 0），不必再单独写一遍。 */
+    --shell-pad: 1.4rem;
     /* 窄屏原本是 1.2rem，按同比例继续收 */
     --header-pad-y: 0.75rem;
   }
@@ -1217,12 +1239,18 @@ body.loading {
   right: 0;
   z-index: 500;
   display: flex;
-  /* 标记靠左、操作区靠右。宽屏下子页的横条会升进这一行的中间地带，
-     见 page.css 的 min-width:1000px 一节。 */
+  /* 标记靠左、操作区靠右 */
   justify-content: space-between;
   align-items: center;
-  /* 竖向 padding 走变量：横条的让位高度从同一个数派生 */
-  padding: var(--header-pad-y) 2.4rem;
+  /* 竖向 padding 走 --header-pad-y：横条的让位高度从同一个数派生。
+     横向不再从视口边缘起算，改成与正文同一内容列——否则 header 的
+     「森韵次元坞」与下方的标题块、横条、footer 全都不在一条竖轴上
+     （1600px 下实测差 360px）。
+     限宽用 padding 而非 max-width + margin:auto：这一层是通栏的
+     mix-blend-mode 与 fixed 定位载体，改成居中块会让 difference 的
+     作用范围也跟着收窄。 */
+  padding-block: var(--header-pad-y);
+  padding-inline: calc(max((100vw - var(--shell)) / 2, 0px) + var(--shell-pad));
   mix-blend-mode: difference;
   /* header 是全宽 fixed 层且 z-index 500，宽屏下子页的横条与它纵向重合。
      不关掉指针事件的话，中间那片空白会把横条六项的点击全吃掉——
@@ -1347,7 +1375,7 @@ html[data-theme="dark"] .theme-toggle i {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8rem 2.4rem 3rem;
+  padding: 8rem var(--shell-pad) 3rem;
   clip-path: circle(0% at calc(100% - 3rem) 3rem);
   /* visibility 延迟到收起动画结束后再切换，既保留动画又让菜单彻底脱离 Tab 序与读屏 */
   visibility: hidden;
@@ -1404,8 +1432,8 @@ html[data-theme="dark"] .theme-toggle i {
 main { position: relative; z-index: 1; }
 
 section {
-  padding: 8rem 2.4rem;
-  max-width: 1200px;
+  padding: 8rem var(--shell-pad);
+  max-width: var(--shell);
   margin: 0 auto;
 }
 
@@ -1422,12 +1450,12 @@ section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 2.4rem 2.6rem;
+  padding: 2rem var(--shell-pad) 2.6rem;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--grey);
   border-top: 1px solid var(--line);
-  max-width: 1200px;
+  max-width: var(--shell);
   margin: 0 auto;
 }
 
@@ -1575,10 +1603,10 @@ body.leaving .orbit-planet {
    .index-item 错峰延迟。 */
 
 @media (max-width: 600px) {
-  section { padding: 5rem 1.4rem; }
-  /* 竖向 padding 由 --header-pad-y 统一给（见 :root 的窄屏覆盖），
-     这里只收横向。 */
-  .site-header { padding-left: 1.4rem; padding-right: 1.4rem; }
+  section { padding: 5rem var(--shell-pad); }
+  /* header 的横向内边距由 --shell-pad 派生（见 :root 的窄屏覆盖里把它收到
+     1.4rem），窄屏下 100vw < --shell，那个 max() 取 0，于是 padding 就等于
+     --shell-pad——不需要在这里再写一遍。 */
 }
 
 /* ================================================================

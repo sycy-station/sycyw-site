@@ -89,15 +89,19 @@ const orbitItems = () =>
         </a>`).join("\n");
 
 // 子页顶部横条：当前页标记 aria-current，星球落在当前项编号前。
-// data-freq 是刻度尺（调频盘）上该项的读数，由 script.js 读出来生成标签。
-// 写在 DOM 上而不是在 script.js 里再抄一份数组：站点结构的唯一来源是 pages.js，
-// 抄一份就意味着加页面时要改两处。
+//
+// 刻度尺的读数（.ib-freq）在这里静态输出，不由 script.js 生成。
+// 原先是 JS 建好再淡入，于是每次跨文档导航都重播一次淡入，读成闪烁——
+// 它是六页共有、逐字节相同的家具，首帧就该在位。
+// data-freq 保留：script.js 判断加密段落在哪一项时要用。
+// 两者都取自 pages.js 的 freq 字段，站点结构仍是单一来源。
 const indexBar = (currentSlug) =>
   PAGES.map((p) => {
     const cur = p.slug === currentSlug;
     return `      <a class="ib-item${cur ? " is-current" : ""}" href="${p.slug}.html"${cur ? ' aria-current="page"' : ""} data-freq="${p.freq}">
         <span class="ib-no">${p.no}</span>
         <span class="ib-title">${p.title}</span>
+        <span class="ib-freq" aria-hidden="true">${p.freq}</span>
       </a>`;
   }).join("\n");
 

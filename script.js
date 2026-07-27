@@ -587,63 +587,23 @@
   };
 
   /* ---------------- 刻度尺（调频盘） ---------------- */
-  /* 横条下方一条等距刻度带，每项下方一个 FM 频率读数（来自 data-freq，
-     经 build.js 从 pages.js 的 freq 字段写进 DOM）。当前项那段刻度加密加深。
+  /* 刻度尺本身是构建期静态输出的（见 build/src/page.html）：
+       .ib-scale 的 ::before / ::after 用 CSS 梯度画基准线与刻度
+       每项的读数 .ib-freq 挂在该项内部，靠 left:50% 对齐项中心
 
-     刻度根数取决于实测宽度、随视口变化，所以在这里生成而不是写死在模板里。
-     读数仍来自 DOM 属性，站点结构的单一来源没有被破坏。 */
-  let barScale = null;
+     原先整块由 JS 创建、再靠 .is-ready 从 opacity 0 淡入，于是每次跨文档
+     导航都重播一次淡入——那正是切换时看到的闪烁。改成静态之后首帧即最终态，
+     六页之间这一层完全不动。
+
+     JS 在这里只剩一件事：加密段（当前项那段密刻度）的位置。
+     它必须在切换时滑移，所以位置得实测。 */
   let barDense = null;
 
   const initBarScale = () => {
-    const track = document.querySelector(".ib-track");
-    const items = [...document.querySelectorAll(".ib-item")];
+    barDense = document.querySelector(".ib-scale-dense");
     const current = document.querySelector(".ib-item.is-current");
-    if (!track || !items.length || !current) return;
-
-    barScale = document.createElement("div");
-    barScale.className = "ib-scale";
-    barScale.setAttribute("aria-hidden", "true");   // 纯装饰，读屏跳过
-
-    // 基准线与刻度都由 CSS 画（.ib-scale 的 ::before / ::after，用
-    // repeating-linear-gradient）。这里不再逐根生成 <i>：
-    //   梯度是连续的，间距不会因逐个取整而参差——原先按整数 px 放置，
-    //     实测相邻间距在 8/9px 之间跳，看上去是不匀的散划
-    //   根数不再取决于视口，resize 时只需重算读数位置，不必重建刻度
-    // JS 只管两件与内容有关的事：每项的读数、加密段落在哪一项。
-
-    // 每项一个读数，居中对齐该项
-    items.forEach((it) => {
-      const box = localBox(it);
-      const b = document.createElement("b");
-      b.textContent = it.getAttribute("data-freq") || "";
-      b.style.left = (box.left + box.width / 2).toFixed(2) + "px";
-      if (it === current) b.classList.add("is-cur");
-      barScale.appendChild(b);
-    });
-
-    barDense = document.createElement("div");
-    barDense.className = "ib-scale-dense";
-    barScale.appendChild(barDense);
-
-    track.appendChild(barScale);
+    if (!barDense || !current) return;
     placeDense(current);
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => barScale.classList.add("is-ready"));
-    });
-  };
-
-  // 视口变化后重算读数位置。刻度与基准线是 CSS 梯度，跟着元素宽度自适应，
-  // 不用管。整块重建比逐个改简单，且读数条目本就只有六个。
-  // 重建后直接 is-ready，不重播淡入——那会读成一次无来由的闪动。
-  const rebuildScale = () => {
-    if (!barScale) return;
-    barScale.remove();
-    barScale = null;
-    barDense = null;
-    initBarScale();
-    if (barScale) barScale.classList.add("is-ready");
   };
 
   // 加密段跟着当前项走
@@ -654,13 +614,15 @@
     barDense.style.setProperty("--dw", box.width.toFixed(2) + "px");
   };
 
-  // 读数的强调随当前项转移
+  /* 退场时把读数的加重交给目标项。
+     常态下加重由 CSS 的 .ib-item.is-current .ib-freq 给出，构建期就带着；
+     这里只在离开途中临时标记目标项。不动 .is-current——它同时承载
+     aria-current，不该在离开途中改语义。 */
   const emphasizeFreq = (item) => {
-    if (!barScale || !item) return;
-    const freq = item.getAttribute("data-freq");
-    barScale.querySelectorAll("b").forEach((b) => {
-      b.classList.toggle("is-cur", b.textContent === freq);
+    document.querySelectorAll(".ib-item.is-target").forEach((el) => {
+      el.classList.remove("is-target");
     });
+    if (item) item.classList.add("is-target");
   };
 
   // 三者一起就位
@@ -697,16 +659,12 @@
 
     // 视口变化后重量。此刻没有 body.bar-slide，星球与加密段都是瞬时归位；
     // 线的 --mx 本就无过渡，--clip 不变所以不会重播揭示。
+    // 刻度尺不用管：基准线与刻度是 CSS 梯度、跟着元素宽度自适应，
+    // 读数挂在各项内部靠 left:50% 对齐，两者都不含实测值。
     let rt = 0;
     window.addEventListener("resize", () => {
       clearTimeout(rt);
-      rt = setTimeout(() => {
-        const cur = document.querySelector(".ib-item.is-current");
-        placeBoth(cur);
-        // 刻度与读数的位置全是实测值，视口变了必须重算。
-        // 整块重建比逐个改简单，且刻度根数本身也会变。
-        rebuildScale();
-      }, 120);
+      rt = setTimeout(() => placeBoth(document.querySelector(".ib-item.is-current")), 120);
     });
   };
 
