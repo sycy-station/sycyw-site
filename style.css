@@ -1243,14 +1243,12 @@ body.loading {
   justify-content: space-between;
   align-items: center;
   /* 竖向 padding 走 --header-pad-y：横条的让位高度从同一个数派生。
-     横向不再从视口边缘起算，改成与正文同一内容列——否则 header 的
-     「森韵次元坞」与下方的标题块、横条、footer 全都不在一条竖轴上
-     （1600px 下实测差 360px）。
-     限宽用 padding 而非 max-width + margin:auto：这一层是通栏的
-     mix-blend-mode 与 fixed 定位载体，改成居中块会让 difference 的
-     作用范围也跟着收窄。 */
-  padding-block: var(--header-pad-y);
-  padding-inline: calc(max((100vw - var(--shell)) / 2, 0px) + var(--shell-pad));
+     横向从视口边缘起算，标记贴左、操作区贴右——header 是通栏的一层，
+     两端各据一角是它本来的形态。
+     曾经改成与正文同一内容列（让标记与标题块同轴），但那会把两个按钮
+     从屏幕右角拉进内容列里，首页尤其明显。现在改由横条升进这一行来
+     取得对齐关系，见 page.css 的 min-width 断点。 */
+  padding: var(--header-pad-y) var(--shell-pad);
   mix-blend-mode: difference;
   /* header 是全宽 fixed 层且 z-index 500，宽屏下子页的横条与它纵向重合。
      不关掉指针事件的话，中间那片空白会把横条六项的点击全吃掉——

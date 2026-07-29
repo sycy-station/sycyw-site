@@ -345,12 +345,48 @@ body.bar-slide .ib-scale-dense {
   .ib-track { padding-left: 0; }
 }
 
-/* 曾经有一档「横条升进 header 同一行」（min-width:1000px）已撤。
-   整体压得太靠上，顶部三样东西（标记、六项、两个按钮）挤在一行里，
-   横条失去了自己的呼吸空间。回到两行：header 一行，横条一行。
-   连带撤掉的还有 style.css 里那个把 --title-top 减去 --bar-h 的同名断点。
-   实现细节（header 需要 pointer-events:none 等）留着仍然正确，
-   见 style.css 的 .site-header。 */
+/* ---------------- 宽屏：横条升进 header 同一行 ----------------
+   顶部一行：标记（贴左） | 六项 + 刻度尺（居中） | 主题开关与汉堡（贴右）。
+   横条与标记、两个按钮竖向平齐。
+
+   与上一版同名布局的关键差别：--title-top 不动。
+   上一版顺手把它减去了 --bar-h，正文跟着上移一整行，整体压得太靠上；
+   这次只让横条上去，正文的纵向位置保持原样。
+
+   横条不能真的塞进 .site-header：那里有 mix-blend-mode: difference，
+   六项文字会被反色。所以两者仍是各自独立的 fixed 层，只是纵向重合。
+   header z-index 500 > 横条 300，所以 header 必须 pointer-events:none，
+   否则它中间那片空白会吃掉六项的点击（见 style.css 的 .site-header）。
+
+   本块必须排在 .ib-marker / .ib-planet / .ib-scale 的基础规则之后：
+   媒体查询不增加特异度，写在前面的话基础规则的 top 会靠源码顺序赢回去
+   ——上一版实测星球因此跑到了行顶而不是行中。 */
+@media (min-width: 1000px) {
+  .index-bar {
+    /* 不再给 header 让位，改为与它同高 */
+    padding-top: 0;
+  }
+  .ib-scroll {
+    /* 撑满 header 那一行的高度，内容竖向居中，六项因此与标记平齐。
+       padding-bottom 仍要留给刻度尺，所以高度是「行高 + 刻度尺」。 */
+    height: calc(var(--header-h) + var(--scale-h));
+    display: flex;
+    align-items: center;
+  }
+  .ib-track {
+    align-items: baseline;
+    /* 把六项自身的中心对到行中心。
+       滚动层居中的是轨道整个盒子，而盒子里六项下方还有 --bar-pad-b 的
+       内边距与 --bar-rule 的边框，于是六项被抬到了行中心之上，实测差
+       7.3px = (13.6 + 1) / 2。
+       这里取全值而不是那 7.3：align-items:center 会把 margin 计入外尺寸
+       再重新居中，所以 margin 只生效一半——写半值只补了 3.6px，实测仍差
+       3.7px。写全值正好补满。
+       不改成「轨道撑满整行 + align-items:center」：那样下边框会落到行底，
+       而六项在行中，发丝线与刻度尺就从文字下方脱开了。 */
+    margin-top: calc(var(--bar-pad-b) + var(--bar-rule));
+  }
+}
 
 /* ---------------- 标题块 ---------------- */
 /* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
