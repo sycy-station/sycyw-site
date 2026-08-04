@@ -1,14 +1,12 @@
 <noscript>
-  <!-- 子页面没有开屏，只需把依赖 JS 的入场与揭示直接就位。
-       无脚本时 html.nav-enter 也加不上，所以入场那套本就不会生效，
-       这里主要负责滚动揭示与自定义光标。 -->
+
   <style>
     .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
+
+    .ab-node:not(:last-child)::after { transform: none !important; }
     .cursor { display: none !important; }
     .theme-toggle { display: none !important; }
-    /* 当前项下划线原本是 .is-current::after，不依赖 JS。改成可滑移的
-       .ib-marker 实体元素后由 script.js 创建，无脚本时就没有了——
-       当前项只剩 color 加重，辨识度不够。这里把伪元素那版补回来。 */
+
     .ib-item.is-current { position: relative; }
     .ib-item.is-current::after {
       content: "";
@@ -17,5 +15,5 @@
       height: 1px;
       background: var(--ink);
     }
-  </style>
+</style>
 </noscript>

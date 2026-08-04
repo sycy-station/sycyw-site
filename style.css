@@ -1,152 +1,59 @@
-/* ============================================================
-   CES — 极简黑白官网框架
-   设计原则：留白 / 秩序 / 无多余装饰
-   ============================================================ */
-
 :root {
   color-scheme: light;
-
   --ink: #0a0a0a;
   --paper: #f4f3ef;
   --grey: #8c8c86;
-  /* 浅底上的小字灰：--grey 对 paper 仅 3.05:1，不足正文对比度要求 */
   --grey-strong: #6a6a63;
   --line: rgba(10, 10, 10, 0.14);
-
-  /* ---- 派生色：深色模式要整组换掉，所以不再散落写 rgba(10,10,10,…) ----
-     改动这几个值请同时看 theme.css 的深色调色板。 */
-  /* 读数行的点线引导，比 --line 重一档 */
   --line-strong: rgba(10, 10, 10, 0.28);
-  /* 列表悬停的极淡底色 */
   --tint: rgba(10, 10, 10, 0.02);
-  /* 正文两档：hero 描述略浅，manifesto 略重 */
   --text-soft: #3a3a38;
   --text-body: #2b2b29;
-  /* 大屏参考线三档（wide.css 用） */
   --guide-major: rgba(10, 10, 10, 1);
   --guide-minor: rgba(10, 10, 10, 0.42);
   --guide-h: rgba(10, 10, 10, 0.5);
-
-  /* mix-blend-mode: difference 的源色。difference 要求源色为亮色才能在两种
-     底色上都反出可见结果，所以这个值在浅色/深色下都不变，不跟着 --paper 走。 */
   --blend-src: #f4f3ef;
-
-  /* 噪点层：深色下黑点 multiply 会几乎失效，改白点 screen */
   --noise-dot: #000;
   --noise-blend: multiply;
   --noise-opacity: 0.035;
-
-  /* 蜂巢底纹的 SVG 描边色写死在 data URI 里，无法用变量。
-     深色下整层 invert(1) 把黑线翻成白线，省掉第二份 data URI。 */
   --grid-invert: none;
-
-  /* 像素星球的三档灰，受光面在左上。
-     不直接复用 --grey/--grey-strong/--ink：深色下那三个的明暗顺序会反过来，
-     星球的受光方向就跟着翻了。这里显式给出由亮到暗的斜坡。 */
   --planet-1: #8c8c86;
   --planet-2: #6a6a63;
   --planet-3: #0a0a0a;
-
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --font-sans: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
-  /* 展示用字体栈：优先带真 700 字重的中文黑体，避免浏览器合成假粗 */
+
   --font-display: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
     "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-
-  /* logo 尺寸基准：开屏放大后的视觉尺寸 = 分区页 logo 尺寸，两处共用同一数值，
-     开屏退场时 logo 不会发生尺寸或位置跳变 */
   --logo-base: clamp(120px, 20vw, 248px);
   --logo-expand: 1.55;
   --logo-final: calc(var(--logo-base) * var(--logo-expand));
-
-  /* 画面整体上移量，开屏与分区页共用，保证两者视觉中心重合 */
   --view-shift: clamp(2vh, 4.5vh, 6vh);
-
-  /* ---- 内容列 ----
-     全站唯一的横向骨架：限宽 --shell、居中、左右各留 --shell-pad。
-     header、子页横条、标题块、正文、footer 全部从这两个值派生，
-     所以它们的左缘必然对齐。
-
-     原先 header 是通栏的（padding 从视口边缘起算），而正文在 1200px 居中列
-     内。1600px 视口下标记左缘 38.4、标题块左缘 398.4，差 360px——header 的
-     「森韵次元坞」与下方所有内容不在同一条竖轴上。而 1200px / 2.4rem 在两个
-     文件里各写了好几份，是同一个隐患的另一面。 */
   --shell: 1200px;
   --shell-pad: 2.4rem;
-
-  /* ---- 跨文档接缝坐标 ----
-     首页退场时旅行块飞到这里，子页面标题块首帧就在这里。
-     必须定义在 style.css（两个文档都 link 它）而不是 page.css
-     （只有子页 link），否则首页拿不到终点坐标。
-     左值 = 内容列左缘：--shell 限宽居中，再加 --shell-pad。 */
-  --title-left: calc(max((100vw - var(--shell)) / 2, 0px) + var(--shell-pad));
+  --shell-sub: min(92vw, 1800px);
+  --title-left: calc(max((100vw - var(--shell-sub)) / 2, 0px) + var(--shell-pad));
   --title-top: clamp(8.5rem, 17vh, 12rem);
-  /* 旅行时长，退场与子页入场共用 */
   --travel: 380ms;
-
-  /* 横条上「线由左向右伸出」的时长。比 --travel 短：星球先到位，
-     线随即抽出，两者是先后而不是并行——并行会读成两个东西各自在动。 */
   --reveal: 300ms;
-  /* 伸出用一条只减速的缓动。--ease 是 in-out，起步慢，
-     会让「抽出」这个动作前段发虚。 */
   --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
-
-  /* ---- header 几何，唯一来源 ----
-     子页的 .index-bar 要压在 header 下方，原先 page.css 里写的是
-     calc(1.6rem * 2 + 42px)——手抄了一遍 header 的 padding 与按钮高。
-     两处各写一份，改 header 就会让横条脱节（要么压上去、要么留空隙）。
-     提成变量后 header 自己与横条都从这里派生，改一个数即可整体上移。
-     42px 是 .menu-toggle / .theme-toggle 的固定高，是 header 内最高的元素。 */
   --header-pad-y: 1rem;
   --header-btn: 42px;
   --header-h: calc(var(--header-pad-y) * 2 + var(--header-btn));
-
-  /* 子页横条自占一行时的高度（内容 35px + 下内边距 0.85rem）。
-     曾用于「横条升进 header 同一行」那一档给 --title-top 做减量，
-     该布局已撤。保留是因为它仍是横条真实高度的唯一记录，
-     将来要算「横条底到标题顶还剩多少」时用得上。 */
   --bar-h: calc(35px + 0.85rem);
-
-  /* 横条上星球标记的槽位宽度（星球 16px + 两侧呼吸）。
-     .ib-track 用它做 padding-left，保证第一项成为当前项时星球也有地方站。 */
   --planet-slot: 21px;
-
-  /* 横条下方刻度尺占的纵向空间。
-     .ib-scroll 用它做 padding-bottom 把刻度尺纳入裁剪区（裁剪发生在
-     padding box 边缘），.ib-scale 用它做自身高度——两处同值，所以走变量。
-     构成：--scale-gap 让位 + 刻度 6px + 读数一行约 9px，留一点余量。 */
   --scale-h: 24px;
-
-  /* 刻度尺与当前项下划线之间的让位。
-     两者原先都从轨道下缘起算，实测加密段压在线上 2.5px，糊成一团分不清
-     哪条是下划线、哪些是刻度。 */
   --scale-gap: 3px;
-
-  /* 刻度间距。刻度用 repeating-linear-gradient 画（见 page.css 的
-     .ib-scale::after），长刻度每五格一根，加密段取一半间距。 */
   --tick-step: 9px;
-
-  /* 横条自身的两个尺寸。提成变量是因为读数（.ib-freq）挂在各项里，
-     要从「项底缘」一路加到「刻度尺读数行」，途中要跨过这两段。
-     写死的话改横条内边距会让读数脱节。 */
-  --bar-pad-b: 0.85rem;   /* .ib-track 的下内边距 */
-  --bar-rule: 1px;        /* .ib-track 的下边框，也是刻度尺基准线所在 */
-  /* 读数行相对刻度尺顶部的偏移，与 .ib-scale b 的 top 同值 */
+  --bar-pad-b: 0.85rem;
+  --bar-rule: 1px;
   --freq-top: 9px;
 }
 
-/* 这里曾有一档 min-width:1000px 把 --title-top 减去 --bar-h，配合
-   「横条升进 header 同一行」的布局。整体压得太靠上，已撤。
-   --title-top 现在全尺寸统一取 clamp 那个值，横条自占一行。
-   --bar-h 仍在用（见下方说明）。 */
-
 @media (max-width: 600px) {
   :root {
-    /* 收内容列的左右留白。--title-left 会跟着算出 1.4rem
-       （100vw < --shell 时那个 max() 取 0），不必再单独写一遍。 */
     --shell-pad: 1.4rem;
-    /* 窄屏原本是 1.2rem，按同比例继续收 */
     --header-pad-y: 0.75rem;
   }
 }
@@ -155,11 +62,11 @@
 
 html {
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* 旧版 Edge / IE */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 html::-webkit-scrollbar {
-  display: none; /* Chrome / Edge / Safari */
+  display: none;
 }
 
 body {
@@ -184,24 +91,20 @@ a {
   color: var(--paper);
 }
 
-/* 键盘焦点可见性：鼠标点击不出现，仅键盘导航时出现 */
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 4px;
 }
-/* header 整体走 difference 混合，描边也会被反色。用 --blend-src 作源色，
-   反出来才是与底色对立的深/浅描边；用 ink 会反成同色系，几乎看不见。 */
+
 .site-header :focus-visible {
   outline-color: var(--blend-src);
 }
 
-/* 隐藏光标只在 JS 成功接管后生效，避免脚本失效时无光标可用 */
 body.has-custom-cursor,
 body.has-custom-cursor .menu-toggle {
   cursor: none;
 }
 
-/* ---------------- 噪点纹理，避免纯平面塑料感 ---------------- */
 .noise {
   position: fixed;
   inset: 0;
@@ -214,7 +117,6 @@ body.has-custom-cursor .menu-toggle {
   background-size: 3px 3px;
 }
 
-/* ---------------- 自定义反色光标 ---------------- */
 .cursor {
   position: fixed;
   top: 0;
@@ -222,15 +124,16 @@ body.has-custom-cursor .menu-toggle {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  /* difference 混合下源色须为亮色：浅底得到深色光标，深底得到亮色光标。
-     用 --blend-src 而非 --paper：深色模式下 --paper 变成近黑，
-     difference 会得到几乎不变的底色，光标直接消失。 */
   background: var(--blend-src);
   mix-blend-mode: difference;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
   transition: width 0.25s var(--ease), height 0.25s var(--ease);
+  opacity: 0;
+}
+.cursor.is-live {
+  opacity: 1;
 }
 .cursor.hovering {
   width: 46px;
@@ -241,24 +144,12 @@ body.has-custom-cursor .menu-toggle {
   body { cursor: auto; }
 }
 
-/* ================================================================
-   开屏动画
-   ================================================================ */
 .splash {
   position: fixed;
   inset: 0;
   z-index: 10000;
 }
 
-/* ---------------- 退场：分层溶解，不是幕布位移 ----------------
-   幕布位移会让开屏 logo 飞走、露出底下另一个一样的 logo，接缝暴露。
-   改成按「离视觉中心的远近」错峰淡出：最外层的大屏参考线先走，
-   然后四角读数与面板，最后侧标题与状态块。
-   .splash-logo 全程不淡出——它和 .stage-logo 像素级重合，
-   由 finishSplash 在同一帧里直接切换，观众抓不到切换点。
-   蜂巢与四角括号已移出 splash，全程不参与退场。 */
-/* .wide 现在有后景副本要接手，所以必须与 .splash-bg 同步同速，
-   不能像原来那样先走——否则前景已淡出、后景还被 bg 挡着，两侧会闪一下空 */
 #splash.leave.leave .wide {
   opacity: 0;
   transition: opacity 0.42s var(--ease) 0.12s;
@@ -279,17 +170,12 @@ body.has-custom-cursor .menu-toggle {
   opacity: 0;
   transition: opacity 0.26s var(--ease);
 }
-/* 侧标题与状态块最后走，和 orbit 项的淡入交叠 */
+
 #splash.leave.leave .splash-side {
   opacity: 0;
-  /* 用 linear 而非 --ease：--ease 是 cubic-bezier(0.22,1,0.36,1)，前 17% 的时间
-     就走完 46% 的不透明度，用在纯淡出上近乎硬切。形变期需要匀速减弱。
-     延迟 0.18s 让形变先被看见，0.3s 走完，收尾与形变终点（0.38s）基本齐平。 */
   transition: opacity 0.3s linear 0.18s;
 }
-/* 语义修正后（侧标题就是六项里的两项，见 build/pages.js 的 SPLASH_SIDES），
-   编号与副标题的字形也与 orbit 完全一致，不再需要「先快速退掉」这个权宜。
-   三行一起参与形变：编号收到 .orbit-no 规格，副标题收到 .orbit-sub 规格。 */
+
 #splash.leave.leave .side-no {
   font-size: 0.72rem;
   letter-spacing: 0.16em;
@@ -304,20 +190,12 @@ body.has-custom-cursor .menu-toggle {
     font-size 0.36s var(--ease) 0.02s,
     letter-spacing 0.36s var(--ease) 0.02s;
 }
-/* 主标题：字号与字距向 .orbit-title 规格收（clamp 参数与它完全一致）。
-   侧标题中心与 pos-2 / pos-5 仅差 6px，收到同一规格后两者重叠。
-   语义修正后两边是同一个词（交互研究 / 动效编排），所以这里真的是
-   「同一行字被收小并移位」，不再有第二个词淡入。
-   font-weight 700→500 浏览器会取整跳变，但同帧有字号在连续变，跳变不显。 */
+
 #splash.leave.leave .side-title {
   font-size: clamp(1.35rem, 2.7vw, 2.35rem);
   font-weight: 500;
   letter-spacing: 0.04em;
-  /* 字距补偿跟着收，否则两侧对齐的边缘会在形变中漂一下 */
   margin-right: -0.04em;
-  /* 横向对位：侧标题右缘落在栅格列边界上，pos-2 右缘落在 50% - orbit_r 上，
-     两者差 --stage-gap - clamp(52px,5vw,76px)（栅格式相减后 logo 项全部抵消，
-     实测 960..1920 八档误差 ≤0.1px）。末项 0.04em 补形变后的字距补偿。 */
   transform: translateX(calc(var(--stage-gap) - clamp(52px, 5vw, 76px) - 0.04em));
   transition:
     font-size 0.36s var(--ease) 0.02s,
@@ -328,7 +206,6 @@ body.has-custom-cursor .menu-toggle {
 #splash.leave.leave .splash-side-right .side-title {
   margin-right: 0;
   margin-left: -0.04em;
-  /* 右侧镜像 */
   transform: translateX(calc(clamp(52px, 5vw, 76px) - var(--stage-gap) + 0.04em));
   transition:
     font-size 0.36s var(--ease) 0.02s,
@@ -340,13 +217,12 @@ body.has-custom-cursor .menu-toggle {
   opacity: 0;
   transition: opacity 0.3s var(--ease) 0.16s;
 }
-/* 底色与 stage 同为 --paper，淡出时下方同色接住，视觉上无变化 */
+
 #splash.leave.leave .splash-bg {
   opacity: 0;
   transition: opacity 0.42s var(--ease) 0.12s;
 }
-/* 前景的蜂巢与括号：和 .splash-bg 同步同速淡出。
-   底下 .deco 那份透明度相同、位置相同，露出来时读不出交替。 */
+
 #splash.leave.leave .splash-grid,
 #splash.leave.leave .fr {
   opacity: 0;
@@ -360,28 +236,17 @@ body.has-custom-cursor .menu-toggle {
   background: var(--paper);
 }
 
-/* ================================================================
-   开屏技术质感层
-   借用工业/实验室面板的结构语言：蜂巢网格、角括号、刻度、扫描线、准星、
-   四角读数。全部保持黑白，不引入第二色，靠线宽与透明度分层。
-   ================================================================ */
-
-/* 跨接缝装饰层容器：挂在 .stage 内，随页面滚走。
-   stage 首屏 min-height:100vh 且 scrollY=0，所以 inset:0 正好等于视口。 */
 .deco {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  /* 必须锁死一个视口高，不能用 inset:0。窄屏下 stage 内容会超过 100vh，
-     inset:0 会让这层跟着长高，底部两个括号掉到视口外，接缝处就跳了。 */
   height: 100vh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
 }
 
-/* 蜂巢网格：平顶六边形，瓦片 66 x 38.11 */
 .splash-grid {
   position: absolute;
   inset: 0;
@@ -390,36 +255,20 @@ body.has-custom-cursor .menu-toggle {
   opacity: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='66.00' height='38.11' viewBox='0 0 66.00 38.11'%3E%3Cg fill='none' stroke='%230a0a0a' stroke-width='1'%3E%3Cpath d='M22.00 0.00L11.00 19.05L-11.00 19.05L-22.00 0.00L-11.00 -19.05L11.00 -19.05Z'/%3E%3Cpath d='M22.00 38.11L11.00 57.16L-11.00 57.16L-22.00 38.11L-11.00 19.05L11.00 19.05Z'/%3E%3Cpath d='M55.00 19.05L44.00 38.11L22.00 38.11L11.00 19.05L22.00 0.00L44.00 0.00Z'/%3E%3Cpath d='M88.00 0.00L77.00 19.05L55.00 19.05L44.00 0.00L55.00 -19.05L77.00 -19.05Z'/%3E%3Cpath d='M88.00 38.11L77.00 57.16L55.00 57.16L44.00 38.11L55.00 19.05L77.00 19.05Z'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 66px 38.11px;
-  /* 描边色写死在 data URI 里，深色模式靠整层反色翻成白线。
-     透明像素反色后仍透明，只有线本身受影响。 */
   filter: var(--grid-invert);
-  /* 中心亮、四周淡出，避免网格抢 logo 的注意力 */
   mask-image: radial-gradient(ellipse 78% 68% at 50% 46%, #000 0%, rgba(0,0,0,0.45) 52%, transparent 82%);
   -webkit-mask-image: radial-gradient(ellipse 78% 68% at 50% 46%, #000 0%, rgba(0,0,0,0.45) 52%, transparent 82%);
   transition: opacity 1.1s var(--ease);
 }
-/* 开屏里那份（前景）：溶解时淡出 */
+
 #splash.phase-logo .splash-grid { opacity: 0.075; }
 #splash.phase-expand .splash-grid { opacity: 0.045; }
 
-/* .deco 里那份（后景，跨接缝存活）：不是 #splash 后代，靠 body 上的类驱动。
-   开屏期间它被不透明的 .splash-bg 完全挡住，只在 bg 淡出后露出来。
-
-   两档取值：
-     开屏前段（sp-logo/name/code）  亮，只在开屏期间存在
-     常驻态（deco-on）              压暗，把注意力交还中心
-
-   常驻态用 body.deco-on 而不是枚举 sp-expand / sp-leave / stage-in。
-   原先是枚举，于是从子页返回首页那条路径（加的是 body.stage-back，
-   开屏整套被跳过、setPhase 一次都不跑）一个都没命中——实测返回后
-   蜂巢、四角括号、两侧参考线与边缘带六层全是 opacity:0。
-   枚举进入路径的写法注定会漏，改成单一语义类：谁想让装饰在场就加它。 */
 body.sp-logo .deco .splash-grid,
 body.sp-name .deco .splash-grid,
 body.sp-code .deco .splash-grid { opacity: 0.075; }
 body.deco-on .deco .splash-grid { opacity: 0.045; }
 
-/* 四角括号：分两段边框绘制 L 形 */
 .splash-frame {
   position: absolute;
   inset: clamp(14px, 2.2vw, 30px);
@@ -441,9 +290,7 @@ body.deco-on .deco .splash-grid { opacity: 0.045; }
   opacity: 0.55;
   transform: translate(0, 0);
 }
-/* 四角括号只有一档取值，全程 0.55，所以直接认 deco-on。
-   前段那三个 sp-* 也并进来：它们出现在 deco-on 之前，
-   括号要从 sp-logo 就在场。 */
+
 body.sp-logo .deco .fr,
 body.sp-name .deco .fr,
 body.sp-code .deco .fr,
@@ -452,7 +299,6 @@ body.deco-on .deco .fr {
   transform: translate(0, 0);
 }
 
-/* 上下刻度尺：等距细线，steps 感由固定间距本身提供 */
 .splash-rule {
   position: absolute;
   left: 50%;
@@ -472,12 +318,10 @@ body.deco-on .deco .fr {
 .splash-rule-t { top: clamp(30px, 4.4vw, 56px); }
 .splash-rule-b {
   bottom: clamp(30px, 4.4vw, 56px);
-  /* 下方刻度向下生长，与上方镜像 */
   transform: translateX(-50%) scaleY(-1);
 }
 #splash.phase-name .splash-rule { opacity: 0.3; }
 
-/* ---------------- 四角读数 ---------------- */
 .hud {
   position: absolute;
   inset: clamp(14px, 2.2vw, 30px);
@@ -499,7 +343,7 @@ body.deco-on .deco .fr {
   gap: 0.5em;
   white-space: nowrap;
 }
-/* 让读数贴在角括号内侧 */
+
 .hud-tl { top: 0; left: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
 .hud-tr { top: 0; right: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
 .hud-bl { bottom: 0; left: calc(clamp(22px, 3vw, 40px) + 0.9rem); }
@@ -515,7 +359,7 @@ body.deco-on .deco .fr {
 .hud-v {
   color: var(--ink);
 }
-/* 状态切换时短暂闪烁，用 steps 制造硬切而非渐变 */
+
 .hud-v.flick {
   animation: hudFlick 0.26s steps(2, end) 2;
 }
@@ -535,11 +379,9 @@ body.deco-on .deco .fr {
   width: 0;
   height: 100%;
   background: var(--ink);
-  /* 分段跳进，机械感 */
   transition: width 0.45s steps(6, end);
 }
 
-/* ---------------- logo 准星 ---------------- */
 .reticle {
   position: absolute;
   inset: -14px;
@@ -552,7 +394,7 @@ body.deco-on .deco .fr {
   opacity: 0.62;
   transform: scale(1);
 }
-/* 放大阶段准星让位，避免与外扩的侧标题争夺空间 */
+
 #splash.phase-expand .reticle {
   opacity: 0;
   transform: scale(1.1);
@@ -568,7 +410,6 @@ body.deco-on .deco .fr {
 .rt-bl { bottom: 0; left: 0; border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); }
 .rt-br { bottom: 0; right: 0; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); }
 
-/* 四边中点刻线，强化「被测量」的意味 */
 .rt-tick {
   position: absolute;
   background: var(--ink);
@@ -581,7 +422,6 @@ body.deco-on .deco .fr {
 .rt-tick-l { left: -3px; }
 .rt-tick-r { right: -3px; }
 
-/* 窄屏读数收缩：坐标串最长，先让它退场，避免左下与右下读数相撞 */
 @media (max-width: 520px) {
   .hud { font-size: 0.6rem; letter-spacing: 0.12em; }
   .hud-coord { display: none; }
@@ -592,7 +432,6 @@ body.deco-on .deco .fr {
   .hud-tr .hud-k { display: none; }
 }
 
-/* caption 的方括号 */
 .cap-br {
   color: var(--grey-strong);
   opacity: 0.7;
@@ -605,19 +444,12 @@ body.deco-on .deco .fr {
   display: grid;
   place-items: center;
   color: var(--ink);
-
-  /* 尺寸取自 :root 基准，与分区页共用 */
   --logo-size: var(--logo-base);
-  /* 偏移跟随 logo 半径，logo 放大时小字与它的间距保持恒定，不再被写死 */
   --meta-offset: calc(var(--logo-size) / 2 + 1rem);
   --stage-gap: clamp(1rem, 3.5vw, 3.2rem);
-
-  /* 整体上移，与分区页的 --view-shift 一致 */
   transform: translateY(calc(-1 * var(--view-shift)));
 }
 
-/* ---------------- 阶段一：logo 入场 ---------------- */
-/* 三栏网格让 logo 始终占据视觉中心，侧栏预留位置但初始收拢隐藏 */
 .splash-stage {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -626,7 +458,7 @@ body.deco-on .deco .fr {
   width: min(96vw, 1040px);
   transition: gap 1.2s var(--ease);
 }
-/* scale 不改变布局盒，放大时须把溢出的半宽补进 gap，否则侧标题会压到 logo 上 */
+
 #splash.phase-expand .splash-stage {
   gap: calc(var(--stage-gap) + var(--logo-size) * (var(--logo-expand) - 1) / 2);
 }
@@ -655,17 +487,8 @@ body.deco-on .deco .fr {
   filter: blur(0);
 }
 
-
-/* ================================================================
-   左右数据面板
-   expand 之前左右两栏是空的，这里用实验室面板的语言把它填起来：
-   括号轨 + 竖排序列号 + 数据条 + 六边形单元格阵列。
-   与侧标题占同一网格单元，expand 时面板退场、侧标题进场，交替不重叠。
-   ================================================================ */
 .panel {
   grid-row: 1;
-  /* 宽度写死而非跟随栏宽：expand 时 gap 变化会压缩栏宽，
-     跟随会让面板在淡出的同一帧被挤窄，产生可见抖动 */
   width: clamp(164px, 19.5vw, 268px);
   display: flex;
   gap: 0.85rem;
@@ -673,7 +496,7 @@ body.deco-on .deco .fr {
   opacity: 0;
   transition: opacity 0.7s var(--ease), transform 0.9s var(--ease);
 }
-/* 贴向 logo 一侧，而不是居中在空栏里 */
+
 .panel-left {
   grid-column: 1;
   justify-self: end;
@@ -689,7 +512,7 @@ body.deco-on .deco .fr {
   opacity: 1;
   transform: translateX(0);
 }
-/* 放大阶段整块退场，把栏位交还侧标题 */
+
 #splash.phase-expand .panel {
   opacity: 0;
   transition-duration: 0.5s, 0.5s;
@@ -697,7 +520,6 @@ body.deco-on .deco .fr {
 #splash.phase-expand .panel-left { transform: translateX(-14px); }
 #splash.phase-expand .panel-right { transform: translateX(14px); }
 
-/* ---------------- 刻度轨 + 竖排序列号 ---------------- */
 .panel-rail {
   position: relative;
   flex: none;
@@ -705,7 +527,7 @@ body.deco-on .deco .fr {
   display: flex;
   justify-content: center;
 }
-/* 竖向刻度：等距横线，靠固定间距体现「量具」感 */
+
 .panel-rail i {
   width: 7px;
   height: 100%;
@@ -725,14 +547,11 @@ body.deco-on .deco .fr {
   letter-spacing: 0.22em;
   color: var(--grey-strong);
   white-space: nowrap;
-  /* 竖排：旋转后以中心为轴归位 */
   transform: translate(-50%, -50%) rotate(-90deg);
   background: var(--paper);
   padding: 0.35em 0.2em;
 }
 
-/* ---------------- 面板主体 ---------------- */
-/* 用左边框加上下短臂构成括号，而非闭合矩形，保持通透 */
 .panel-body {
   position: relative;
   flex: 1;
@@ -778,7 +597,6 @@ body.deco-on .deco .fr {
 }
 .panel-foot { opacity: 0.75; }
 
-/* ---------------- 数据条：分段跳进 ---------------- */
 .panel-bars {
   display: flex;
   flex-direction: column;
@@ -800,7 +618,6 @@ body.deco-on .deco .fr {
 #splash.phase-name .panel-bars i:nth-child(4) { transition-delay: 0.32s; }
 #splash.phase-name .panel-bars i:nth-child(5) { transition-delay: 0.41s; }
 
-/* ---------------- 读数行：虚线引导 + 键值对 ---------------- */
 .panel-read {
   display: flex;
   flex-direction: column;
@@ -823,7 +640,7 @@ body.deco-on .deco .fr {
   color: var(--grey-strong);
   flex: none;
 }
-/* 键与值之间用点线牵引，账目/仪表读数的排版惯例 */
+
 .panel-read b::after {
   content: "";
   display: inline-block;
@@ -851,7 +668,6 @@ body.deco-on .deco .fr {
 #splash.phase-name .panel-read > span:nth-child(2) { transition-delay: 0.6s; }
 #splash.phase-name .panel-read > span:nth-child(3) { transition-delay: 0.7s; }
 
-/* ---------------- 六边形单元格阵列 ---------------- */
 .panel-hex {
   display: flex;
   gap: 4px;
@@ -861,11 +677,10 @@ body.deco-on .deco .fr {
   height: 15px;
   background: var(--ink);
   opacity: 0;
-  /* 平顶六边形 */
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   transition: opacity 0.4s steps(2, end);
 }
-/* code 阶段逐格点亮，深浅交替避免读成实心块 */
+
 #splash.phase-code .panel-hex i:nth-child(1) { opacity: 0.5; transition-delay: 0.05s; }
 #splash.phase-code .panel-hex i:nth-child(2) { opacity: 0.2; transition-delay: 0.12s; }
 #splash.phase-code .panel-hex i:nth-child(3) { opacity: 0.62; transition-delay: 0.19s; }
@@ -874,13 +689,10 @@ body.deco-on .deco .fr {
 #splash.phase-code .panel-hex i:nth-child(6) { opacity: 0.26; transition-delay: 0.40s; }
 #splash.phase-code .panel-hex i:nth-child(7) { opacity: 0.55; transition-delay: 0.47s; }
 
-/* 窄屏没有横向余量，面板整体撤掉 */
 @media (max-width: 900px) {
   .panel { display: none; }
 }
 
-/* ---------------- 阶段二：小字名称 + 代码 ---------------- */
-/* meta 绝对定位，脱离 stage 的居中计算，代码逐行增高时 logo 不会被顶动 */
 .splash-meta {
   position: absolute;
   left: 50%;
@@ -942,8 +754,6 @@ body.deco-on .deco .fr {
   transform: translateY(0);
 }
 
-/* 宽度收到最长一行的实际宽度并整体居中，避免 100% 宽下文本贴在左侧、
-   视觉重心偏离 logo 中轴 */
 .splash-code {
   width: min(88vw, 37ch);
   margin-left: auto;
@@ -981,7 +791,6 @@ body.deco-on .deco .fr {
   50% { opacity: 0; }
 }
 
-/* ---------------- 阶段三：logo 放大，左右展开标题 ---------------- */
 .splash-side {
   grid-row: 1;
   display: flex;
@@ -1004,7 +813,7 @@ body.deco-on .deco .fr {
   text-align: left;
   transform: translateX(clamp(-52px, -4vw, -22px));
 }
-/* 编号：主标题与副标题之间的中间层，避免 3.6 倍字号跳变 */
+
 .side-no {
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -1012,15 +821,13 @@ body.deco-on .deco .fr {
   letter-spacing: 0.28em;
   color: var(--grey-strong);
 }
-/* 主标题：加重 + 加字距，从「被放大的正文」拉到标题量级。
-   中文回退字体多数没有真 700，用 --font-display 指定带重字重的栈。 */
+
 .side-title {
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 3.1vw, 2.7rem);
   font-weight: 700;
   letter-spacing: 0.085em;
   line-height: 1.16;
-  /* 字距会在行尾多出一个间隙，两侧对齐时视觉上会偏，用负边距补掉 */
   margin-right: -0.085em;
 }
 .splash-side-right .side-title {
@@ -1038,7 +845,7 @@ body.deco-on .deco .fr {
   opacity: 1;
   transform: translateX(0);
 }
-/* 三行各自错峰，读起来是「编号 → 标题 → 规格」的顺序 */
+
 .splash-side > span {
   opacity: 0;
   transition: opacity 0.6s var(--ease);
@@ -1046,7 +853,7 @@ body.deco-on .deco .fr {
 #splash.phase-expand .side-no { opacity: 1; transition-delay: 0.3s; }
 #splash.phase-expand .side-title { opacity: 1; transition-delay: 0.42s; }
 #splash.phase-expand .side-sub { opacity: 1; transition-delay: 0.56s; }
-/* 放大与退场放在最后，靠源码顺序覆盖前面同权重的阶段规则 */
+
 #splash.phase-expand .splash-logo {
   transform: scale(var(--logo-expand));
   transition-duration: 1.2s;
@@ -1057,11 +864,7 @@ body.deco-on .deco .fr {
   pointer-events: none;
 }
 
-/* ---------------- 底部状态块 ---------------- */
-/* meta 撤走后下半屏会空掉。单行文字只有 14px 高，填不满 400px 的空当，
-   所以做成三段有厚度的块。纵向位置跟随放大后的 logo 半径，不写死像素。 */
 .statusbar {
-  /* 与放大后 logo 底边的间距。矮屏由 @media (max-height) 收窄 */
   --sb-gap: clamp(64px, 8vh, 108px);
   position: absolute;
   left: 50%;
@@ -1077,7 +880,6 @@ body.deco-on .deco .fr {
   transition: opacity 0.8s var(--ease);
 }
 
-/* 第一段：主状态行 + 左右延伸细线 */
 .sb-main {
   width: 100%;
   display: flex;
@@ -1089,7 +891,6 @@ body.deco-on .deco .fr {
   height: 1px;
   background: var(--ink);
   opacity: 0.2;
-  /* 由中心向两端生长 */
   transform: scaleX(0);
   transition: transform 1s var(--ease) 0.15s;
 }
@@ -1118,7 +919,6 @@ body.deco-on .deco .fr {
   transition: opacity 0.5s var(--ease);
 }
 
-/* 第二段：六列读数，对应分区页的六个模块 */
 .sb-cols {
   width: min(100%, 720px);
   display: grid;
@@ -1150,7 +950,6 @@ body.deco-on .deco .fr {
   color: var(--ink);
 }
 
-/* 第三段：刻度条，收住整块的下边界 */
 .sb-ticks {
   width: min(100%, 560px);
   height: 6px;
@@ -1169,7 +968,6 @@ body.deco-on .deco .fr {
   opacity: 0.28;
 }
 
-/* ---- 进场编排：线 → 主文字 → 读数列 → 刻度 ---- */
 #splash.phase-expand .statusbar { opacity: 1; }
 #splash.phase-expand .sb-line { transform: scaleX(1); }
 #splash.phase-expand .sb-seg,
@@ -1190,8 +988,26 @@ body.deco-on .deco .fr {
 
 #splash.phase-expand .sb-ticks { opacity: 1; transition-delay: 0.8s; }
 
-/* 矮屏：竖直空间不够时收窄间距并压掉刻度条，
-   否则状态块会压到底部刻度尺 .splash-rule-b 上 */
+#splash.skip.phase-expand .splash-logo {
+  transition-duration: 0.42s;
+}
+
+#splash.skip.phase-expand .splash-side {
+  opacity: 0;
+  transition: none;
+}
+#splash.skip.phase-expand .statusbar {
+  opacity: 0;
+  transition: none;
+}
+
+#splash.skip.phase-expand .splash-meta {
+  transition-duration: 0.34s, 0.34s;
+}
+#splash.skip.phase-expand .panel {
+  transition-duration: 0.3s, 0.3s;
+}
+
 @media (max-height: 820px) {
   .statusbar {
     --sb-gap: clamp(26px, 4vh, 52px);
@@ -1203,7 +1019,6 @@ body.deco-on .deco .fr {
   .sb-ticks { display: none; }
 }
 
-/* 窄屏：收掉英文副标题，保留中文主标题的左右结构 */
 @media (max-width: 680px) {
   :root {
     --logo-base: clamp(96px, 26vw, 140px);
@@ -1229,9 +1044,6 @@ body.loading {
   height: 100vh;
 }
 
-/* ================================================================
-   导航
-   ================================================================ */
 .site-header {
   position: fixed;
   top: 0;
@@ -1239,21 +1051,10 @@ body.loading {
   right: 0;
   z-index: 500;
   display: flex;
-  /* 标记靠左、操作区靠右 */
   justify-content: space-between;
   align-items: center;
-  /* 竖向 padding 走 --header-pad-y：横条的让位高度从同一个数派生。
-     横向从视口边缘起算，标记贴左、操作区贴右——header 是通栏的一层，
-     两端各据一角是它本来的形态。
-     曾经改成与正文同一内容列（让标记与标题块同轴），但那会把两个按钮
-     从屏幕右角拉进内容列里，首页尤其明显。现在改由横条升进这一行来
-     取得对齐关系，见 page.css 的 min-width 断点。 */
   padding: var(--header-pad-y) var(--shell-pad);
   mix-blend-mode: difference;
-  /* header 是全宽 fixed 层且 z-index 500，宽屏下子页的横条与它纵向重合。
-     不关掉指针事件的话，中间那片空白会把横条六项的点击全吃掉——
-     实测「element intercepts pointer events」，六项完全点不动。
-     子元素各自恢复 auto。 */
   pointer-events: none;
 }
 .mark,
@@ -1261,20 +1062,10 @@ body.loading {
   pointer-events: auto;
 }
 
-/* ---- 首页：标记撤掉 ----
-   首页的标记 href="index.html" 指向你正待着的这一页，是纯冗余；
-   而 .stage-logo-name 就是同样的「森韵次元坞」，同轴出现两次只是累赘。
-   用 display:none 而非 visibility:hidden——它在首页没有任何用途，
-   不该留在无障碍树和 Tab 序里。
-   注意 display:none 会把它整个移出 flex 布局，此时 space-between 只剩
-   一个子元素、会把操作区放在 flex-start。靠右由 .header-actions 的
-   margin-left:auto 保证，不是靠 space-between。 */
 html[data-page="stage"] .mark {
   display: none;
 }
 
-/* header 内所有前景色都用 --blend-src：difference 混合要求源色为亮色，
-   而 --paper 在深色模式下变近黑，会让标记与汉堡线一起消失。 */
 .mark {
   font-size: 1.05rem;
   font-weight: 700;
@@ -1283,15 +1074,10 @@ html[data-page="stage"] .mark {
 }
 .mark-dot { color: var(--blend-src); }
 
-/* 右上角操作区：主题开关 + 菜单 */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 0.2rem;
-  /* 靠右不能只依赖 space-between：首页的 .mark 是 display:none，被整个移出
-     flex 布局，只剩一个子元素时 space-between 会把它放在 flex-start，
-     于是首页的两个按钮跑到了左上角。margin-left:auto 在「有兄弟」和
-     「独子」两种情况下都把它推到右侧，不必按页面分支。 */
   margin-left: auto;
 }
 
@@ -1330,9 +1116,6 @@ html[data-page="stage"] .mark {
 }
 .menu-toggle[aria-expanded="true"] { mix-blend-mode: normal; }
 
-/* ---------------- 主题开关 ---------------- */
-/* 半明半暗的圆：左半填充=当前浅色，深色模式整体转 180° 变成右半填充。
-   只有 JS 接管后才显示（body.has-theme-toggle），否则按钮点了没反应。 */
 .theme-toggle {
   display: none;
   width: 42px;
@@ -1353,7 +1136,7 @@ body.has-theme-toggle .theme-toggle { display: flex; }
   overflow: hidden;
   transition: transform 0.45s var(--ease);
 }
-/* 左半实心。用 inset 而非 width:50% 避免 1px 描边内侧留缝 */
+
 .theme-toggle i::after {
   content: "";
   position: absolute;
@@ -1364,7 +1147,6 @@ html[data-theme="dark"] .theme-toggle i {
   transform: rotate(180deg);
 }
 
-/* ---------------- 全屏覆盖菜单 ---------------- */
 .overlay-nav {
   position: fixed;
   inset: 0;
@@ -1375,7 +1157,6 @@ html[data-theme="dark"] .theme-toggle i {
   justify-content: space-between;
   padding: 8rem var(--shell-pad) 3rem;
   clip-path: circle(0% at calc(100% - 3rem) 3rem);
-  /* visibility 延迟到收起动画结束后再切换，既保留动画又让菜单彻底脱离 Tab 序与读屏 */
   visibility: hidden;
   transition: clip-path 0.7s var(--ease), visibility 0s linear 0.7s;
   pointer-events: none;
@@ -1424,9 +1205,6 @@ html[data-theme="dark"] .theme-toggle i {
   letter-spacing: 0.05em;
 }
 
-/* ================================================================
-   主体布局
-   ================================================================ */
 main { position: relative; z-index: 1; }
 
 section {
@@ -1435,15 +1213,6 @@ section {
   margin: 0 auto;
 }
 
-/* ---------------- 单页时代的区块样式已移除 ----------------
-   多页改造后 .hero / .section-title / .index-list / .manifesto / .contact
-   这五个区块的 DOM 已不存在（索引变成首页轨道 + 子页横条，观点并入 archive
-   页的 PAGES.manifesto，联系方式并入 footer 的 .sf-contact）。
-   对应样式连同 .num / .drop-cap / .social / .back-top 一并删除。
-   需要翻旧实现见 git 首个提交里的 index.orig.html.bak。
-   ------------------------------------------------------------------- */
-
-/* ---------------- Footer ---------------- */
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -1457,28 +1226,10 @@ section {
   margin: 0 auto;
 }
 
-/* ================================================================
-   首页退场：点击轨道某一项 → 跳转到该子页面
-   ----------------------------------------------------------------
-   跨文档时旧页与新页不共存，所以不存在「元素从 A 飞到 B」。实际是：
-   旧页播退场 → 浏览器仍显示旧页最后一帧 → 新页首帧 → 硬切。
-   接缝的质量只取决于一件事：退场最后一帧是否等于新页首帧。
-
-   因此只有一个元素跨接缝旅行——被点那一项的三行块，它的结构与子页
-   .page-title 完全一致。其余（轨道环、刻度环、另外五项、logo）各自淡出。
-
-   旅行块用 position: fixed，因为视口坐标是两个文档唯一能对齐的坐标系。
-   终点取 page.css 的 --title-left / --title-top，两边共用同一变量。
-   注意：.stage 有 overflow:hidden，.stage-orbit 带 transform（会成为 fixed
-   的包含块），所以旅行块必须由 JS 移出该子树、挂到 body 下，否则会被裁掉。
-   ================================================================ */
-
-/* 退场期间锁滚动，避免中途滚动破坏 fixed 坐标的对齐前提 */
 body.leaving {
   overflow: hidden;
 }
 
-/* 环、刻度、星球环、logo、名称、信息带：一起淡出 */
 body.leaving .orbit-ring,
 body.leaving .orbit-ticks,
 body.leaving .orbit-planet-ring,
@@ -1489,56 +1240,33 @@ body.leaving .stage-foot {
   transition: opacity 0.26s var(--ease) 0.08s;
 }
 
-/* 未被点击的五项：更快退掉，把画面让给旅行块 */
 body.leaving .orbit-item:not(.is-travelling) .orbit-inner {
   opacity: 0;
   transition: opacity 0.2s var(--ease);
 }
 
-/* 被点项的原位块：旅行块是它的克隆，原位这份立即隐藏，
-   否则同一内容会出现两次。用 visibility 而非 display，
-   保留占位以免 orbit 布局在退场中重排。 */
 body.leaving .orbit-item.is-travelling .orbit-inner {
   visibility: hidden;
 }
 
-/* 星球：退场时吸附到被点项方向后淡出（吸附由 JS 的 aim() 完成） */
 body.leaving .orbit-planet {
   opacity: 0;
   transition: opacity 0.22s var(--ease) 0.18s;
 }
 
-/* ---- 旅行块 ---- */
-/* JS 克隆 .orbit-inner，挂到 body，起点用行内 style 写实测的视口坐标，
-   然后加 .go 触发到终点的过渡。 */
-/* 两层：外层 .travel 负责整块位移与倾斜，内层每行负责「右对齐收成左对齐」。
-   分两层是因为两者都要用 transform，写在同一元素上会互相覆盖。
-
-   起点由 JS 以 --sx0/--sy0/--t0 写入（自定义属性，不是 left/top）。
-   行内的 left/top 会赢过任何类规则，所以起点不能直接写 left/top，
-   否则 .go 的终点值永远不生效。
-
-   --t0 是起飞时的倾斜角，取被点那一项的 --tilt。轨道项是斜的、子页标题块是平的，
-   旅行块若一直保持平的，起飞那一帧就与原位块错开（实测上下四项差 10~27px 的纵向、
-   左列三项差 80~220px 的横向）。带上倾斜起飞、飞行中转平，倾斜从「对不上的原因」
-   变成动画的一部分。transform-origin 必须是 0 0：JS 给的起点是「局部原点的屏幕位置」，
-   旋转中心若不在原点，同一组 translate 会落到别处。 */
 .travel {
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 9997;   /* 低于 .noise(9998)，噪点仍然覆盖它 */
+  z-index: 9997;
   margin: 0;
   width: max-content;
   pointer-events: none;
   transform-origin: 0 0;
-  /* 起点：JS 实测的视口坐标 + 该项的倾斜角 */
   transform: translate(var(--sx0), var(--sy0)) rotate(var(--t0, 0deg));
-  /* 用 transform 而非 left/top：后者每帧触发布局 */
   transition: transform var(--travel) var(--ease);
 }
-/* 终点：--title-* 由 style.css 的 :root 给出，与子页面标题块同源。
-   rotate(0) 显式写出，让倾斜在同一条过渡里收平。 */
+
 .travel.go {
   transform: translate(var(--title-left), var(--title-top)) rotate(0deg);
 }
@@ -1547,10 +1275,7 @@ body.leaving .orbit-planet {
   gap: 0.28rem;
   width: max-content;
 }
-/* 左列三项在 stage 上是右对齐的，旅行块统一改成左对齐（与子页一致）。
-   若直接切换 text-align，短行（编号）会横向跳一大截。改为：文字始终左对齐，
-   用 per-line 的 translateX 把每行推回它原本右对齐的位置，再过渡到 0。
-   --sx 由 JS 按每行实测宽度写入。 */
+
 .travel-inner {
   text-align: left;
 }
@@ -1562,7 +1287,6 @@ body.leaving .orbit-planet {
   transform: none;
 }
 
-/* 减弱动效：不做旅行，直接跳转（JS 侧同样判断） */
 @media (prefers-reduced-motion: reduce) {
   .travel,
   .travel-inner > * {
@@ -1580,9 +1304,6 @@ body.leaving .orbit-planet {
   }
 }
 
-/* ================================================================
-   滚动揭示动画（由 JS 添加 .is-visible）
-   ================================================================ */
 .reveal-line,
 .reveal-item {
   opacity: 0;
@@ -1595,21 +1316,10 @@ body.leaving .orbit-planet {
   transform: translateY(0);
 }
 
-/* .reveal-item 目前全站没有 DOM 使用（子页正文还是占位），
-   但 script.js 的 initReveal 在选择器里带着它，且这是子页填内容时
-   最自然的逐项揭示钩子，所以基础规则留着，只删掉针对已撤区块的
-   .index-item 错峰延迟。 */
-
 @media (max-width: 600px) {
   section { padding: 5rem var(--shell-pad); }
-  /* header 的横向内边距由 --shell-pad 派生（见 :root 的窄屏覆盖里把它收到
-     1.4rem），窄屏下 100vw < --shell，那个 max() 取 0，于是 padding 就等于
-     --shell-pad——不需要在这里再写一遍。 */
 }
 
-/* ================================================================
-   减弱动效偏好：尊重系统级 prefers-reduced-motion
-   ================================================================ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
@@ -1647,11 +1357,9 @@ body.leaving .orbit-planet {
   }
   .sb-line { transform: scaleX(1) !important; }
 
-  /* 跨接缝装饰层：直接给到目标透明度，不做阶段推进 */
   .deco .splash-grid { opacity: 0.045 !important; }
   .deco .fr { opacity: 0.55 !important; transform: translate(0, 0) !important; }
 
-  /* 状态闪烁是持续动效，减弱动效下取消 */
   .hud-v.flick { animation: none !important; }
   .hud-bar i { transition: none !important; }
 }

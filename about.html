@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-wide="off" data-page="sub" data-slug="about">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我们 — 森韵次元坞</title>
+<meta name="description" content="我们是谁，从哪里来，往哪里去">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="森韵次元坞">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="关于我们 — 森韵次元坞">
+<meta property="og:description" content="我们是谁，从哪里来，往哪里去">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="关于我们 — 森韵次元坞">
+<meta name="twitter:description" content="我们是谁，从哪里来，往哪里去">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stage.css">
+
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="page.css">
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("ces-theme");
+      if (t === "dark" || t === "light") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {
+    }
+  })();
+</script>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add("js-enter");
+
+    setTimeout(function () {
+      root.classList.add("page-ready");
+    }, 1400);
+
+    try {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    } catch (e) {}
+
+    var raw = null;
+    try {
+      raw = sessionStorage.getItem("ces-nav");
+      sessionStorage.removeItem("ces-nav");
+    } catch (e) {
+      return;
+    }
+    if (!raw) return;
+    var sig;
+    try {
+      sig = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+
+    var age = Date.now() - (sig.ts || 0);
+    if (age < 0 || age > 2500) return;
+    if (sig.slug !== root.getAttribute("data-slug")) return;
+
+    if (sig.from === "stage") {
+      root.classList.add("nav-enter");
+    } else if (sig.from === "sub-sub") {
+      root.classList.add("nav-sub");
+    }
+  })();
+</script>
+
+<noscript>
+
+  <style>
+    .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
+
+    .ab-node:not(:last-child)::after { transform: none !important; }
+    .cursor { display: none !important; }
+    .theme-toggle { display: none !important; }
+
+    .ib-item.is-current { position: relative; }
+    .ib-item.is-current::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -0.85rem;
+      height: 1px;
+      background: var(--ink);
+    }
+</style>
+</noscript>
+
+</head>
+<body>
+
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
+        <i aria-hidden="true"></i>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="overlay-nav" id="overlayNav" aria-hidden="true" aria-label="主导航">
+
+    <ol class="overlay-list">
+      <li><a href="system-design.html" data-index="01">系统设计</a></li>
+      <li><a href="interaction.html" data-index="02">交互研究</a></li>
+      <li><a href="brand.html" data-index="03">品牌语言</a></li>
+      <li><a href="about.html" data-index="04">关于我们</a></li>
+      <li><a href="motion.html" data-index="05">动效编排</a></li>
+      <li><a href="archive.html" data-index="06">实验归档</a></li>
+    </ol>
+    <div class="overlay-foot">
+      <span class="clock" id="clock">--:--:--</span>
+      <span>Shanghai, CN</span>
+    </div>
+  </nav>
+
+
+  <nav class="index-bar" aria-label="分区索引">
+    <div class="ib-scroll">
+      <div class="ib-track">
+      <a class="ib-item" href="system-design.html" data-freq="88.1">
+        <span class="ib-no">01</span>
+        <span class="ib-title">系统设计</span>
+        <span class="ib-freq" aria-hidden="true">88.1</span>
+      </a>
+      <a class="ib-item" href="interaction.html" data-freq="91.5">
+        <span class="ib-no">02</span>
+        <span class="ib-title">交互研究</span>
+        <span class="ib-freq" aria-hidden="true">91.5</span>
+      </a>
+      <a class="ib-item" href="brand.html" data-freq="94.7">
+        <span class="ib-no">03</span>
+        <span class="ib-title">品牌语言</span>
+        <span class="ib-freq" aria-hidden="true">94.7</span>
+      </a>
+      <a class="ib-item is-current" href="about.html" aria-current="page" data-freq="98.3">
+        <span class="ib-no">04</span>
+        <span class="ib-title">关于我们</span>
+        <span class="ib-freq" aria-hidden="true">98.3</span>
+      </a>
+      <a class="ib-item" href="motion.html" data-freq="101.9">
+        <span class="ib-no">05</span>
+        <span class="ib-title">动效编排</span>
+        <span class="ib-freq" aria-hidden="true">101.9</span>
+      </a>
+      <a class="ib-item" href="archive.html" data-freq="104.6">
+        <span class="ib-no">06</span>
+        <span class="ib-title">实验归档</span>
+        <span class="ib-freq" aria-hidden="true">104.6</span>
+      </a>
+
+        <div class="ib-scale" aria-hidden="true">
+          <div class="ib-scale-dense"></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-main" id="top">
+
+    <header class="page-title" id="pageTitle">
+      <span class="pt-no">04</span>
+      <h1 class="pt-name">关于我们</h1>
+      <span class="pt-sub">ABOUT&nbsp;US</span>
+    </header>
+
+    <p class="page-desc reveal-line">我们是谁，从哪里来，往哪里去</p>
+
+    <section class="page-body about-body">
+
+     <div class="about-main">
+
+      <section class="ab-block">
+        <header class="ab-head">
+          <span class="ab-kicker">OUR&nbsp;STORY</span>
+          <h2 class="ab-title">我们的故事</h2>
+        </header>
+        <div class="ab-prose">
+          <p>起初只是两个人和一份不肯将就的清单。我们在各自的岗位上反复遇到同一件事：一个界面被交付出去，看起来是完成了，可它没有被认真地想过——间距是随手给的，过渡是插件带的，状态是漏掉的。</p>
+          <p>于是我们决定自己来。不追逐流行的视觉语言，也不堆叠不必要的装饰，把力气花在留白、节奏和秩序上。第一个项目没有预算，只有一个愿意等我们把细节做对的客户。</p>
+          <p>后来的每一年都在验证同一件事：克制不是少做，而是把该做的做到位。</p>
+        </div>
+      </section>
+
+      <section class="ab-block">
+        <header class="ab-head">
+          <span class="ab-kicker">OUR&nbsp;MISSION</span>
+          <h2 class="ab-title">我们的使命</h2>
+        </header>
+        <div class="ab-prose">
+          <p class="ab-lead">让复杂的系统对使用它的人保持诚实。</p>
+          <p>界面应当清楚地说明它能做什么、正在做什么、做完之后发生了什么。不夸大，也不隐瞒。我们把这件事拆成三条准则，落到每一次交付里。</p>
+        </div>
+
+        <ol class="ab-creed" role="list">
+          <li class="reveal-item">
+            <span class="abc-no">01</span>
+            <div class="abc-body">
+              <h3 class="abc-title">克制先于表达</h3>
+              <p>能不加的一律不加。一个页面的好坏不取决于用了多少组件。</p>
+            </div>
+          </li>
+          <li class="reveal-item">
+            <span class="abc-no">02</span>
+            <div class="abc-body">
+              <h3 class="abc-title">设计与工程之间没有边界</h3>
+              <p>加载速度、首帧、可访问性，都是体验的一部分，不是上线前才想的事。</p>
+            </div>
+          </li>
+          <li class="reveal-item">
+            <span class="abc-no">03</span>
+            <div class="abc-body">
+              <h3 class="abc-title">长期胜过漂亮</h3>
+              <p>交付的东西要能被别人接手，三年之后仍然讲得通。</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="ab-block">
+        <header class="ab-head">
+          <span class="ab-kicker">MILESTONES</span>
+          <h2 class="ab-title">发展历程</h2>
+        </header>
+
+        <ol class="ab-timeline" role="list">
+          <li class="ab-node reveal-item">
+            <span class="abn-year">2021</span>
+            <div class="abn-body">
+              <h3 class="abn-title">成立</h3>
+              <p>两个人、一间租来的房间。接下第一个没有预算的项目。</p>
+            </div>
+          </li>
+          <li class="ab-node reveal-item">
+            <span class="abn-year">2022</span>
+            <div class="abn-body">
+              <h3 class="abn-title">第一套设计系统交付</h3>
+              <p>把零散的页面收敛成一套可复用的组件与规范，客户的迭代周期缩短了一半。</p>
+            </div>
+          </li>
+          <li class="ab-node reveal-item">
+            <span class="abn-year">2023</span>
+            <div class="abn-body">
+              <h3 class="abn-title">团队扩充到六人</h3>
+              <p>设计与前端坐在一起工作，不再有「设计稿交付」这道墙。</p>
+            </div>
+          </li>
+          <li class="ab-node reveal-item">
+            <span class="abn-year">2024</span>
+            <div class="abn-body">
+              <h3 class="abn-title">方法开始跨行业复制</h3>
+              <p>同一套工作方式在电商、工具、内容三类产品上都成立，它不再依赖具体行业。</p>
+            </div>
+          </li>
+          <li class="ab-node is-now reveal-item">
+            <span class="abn-year">2026</span>
+            <div class="abn-body">
+              <h3 class="abn-title">现在</h3>
+              <p>还是那件事：让复杂的系统对人保持诚实。</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+     </div>
+
+      <aside class="about-aside" aria-label="公司概况">
+        <span class="aa-kicker">VITALS</span>
+        <dl class="aa-grid">
+          <div class="aa-cell">
+            <dt>成立</dt>
+            <dd>2021</dd>
+          </div>
+          <div class="aa-cell">
+            <dt>团队</dt>
+            <dd>06</dd>
+          </div>
+          <div class="aa-cell">
+            <dt>交付</dt>
+            <dd>40+</dd>
+          </div>
+          <div class="aa-cell">
+            <dt>据点</dt>
+            <dd>上海</dd>
+          </div>
+        </dl>
+        <span class="aa-coord">31.23N&nbsp;121.47E</span>
+        <span class="aa-rule" aria-hidden="true"></span>
+        <p class="aa-note">设计与前端坐在一起工作，<br>没有「设计稿交付」那道墙。</p>
+      </aside>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="sf-contact">
+      <a class="footer-mail" href="mailto:hello@ces.studio">hello@ces.studio</a>
+      <div class="footer-social">
+        <a href="#">微博</a>
+        <a href="#">GitHub</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+
+    <div class="sf-meta">
+      <span>© 2024 森韵次元坞</span>
+      <span class="sf-rev">REV&nbsp;2.31</span>
+    </div>
+  </footer>
+
+
+  <script src="script.js">
+</script>
+</body>
+</html>

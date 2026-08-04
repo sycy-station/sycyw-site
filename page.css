@@ -1,51 +1,28 @@
-/* ============================================================
-   子页面模板
-   ------------------------------------------------------------
-   顶部横向索引 + 标题块 + 正文 + 全站 footer。
+html[data-page="sub"] {
+  --fs-mono-2xs: clamp(0.62rem, 0.532rem + 0.118vw, 0.72rem);
+  --fs-mono-xs: clamp(0.68rem, 0.592rem + 0.118vw, 0.78rem);
+  --fs-mono-sm: clamp(0.78rem, 0.656rem + 0.165vw, 0.92rem);
+  --fs-body-sm: clamp(0.92rem, 0.717rem + 0.271vw, 1.15rem);
+  --fs-body: clamp(1rem, 0.753rem + 0.329vw, 1.28rem);
+  --fs-title-sm: clamp(1rem, 0.824rem + 0.235vw, 1.2rem);
+  --fs-title: clamp(1.2rem, 0.582rem + 0.824vw, 1.9rem);
+}
 
-   跨文档接缝的关键在 --title-* 三个变量：
-   首页退场时被点那一项旅行到这组坐标，子页面首帧把标题块放在同一坐标。
-   两个文档都 link 本文件，所以取值必然一致，不需要 JS 量任何像素。
-   改这三个值会同时改变退场终点与子页起点，不会只改一头。
-   ============================================================ */
-
-/* --title-left / --title-top / --travel 定义在 style.css 的 :root。
-   两个文档都 link style.css，所以取值必然一致——首页退场的终点
-   与本页标题块的起点是同一个数，不需要 JS 量任何像素。 */
-
-/* ---------------- 顶部横向索引 ---------------- */
-/* 轨道在子页面上的形态。不从弧线形变过来——轨道属于枢纽、横条属于页面，
-   两者是不同层级的导航物，各自淡出淡入在语义上更诚实。 */
 .index-bar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 300;
-  /* 让位给 header。高度取 style.css 的 --header-h（= padding*2 + 按钮高），
-     不再手抄那个表达式——抄一遍就意味着改 header 时这里会脱节。 */
-  /* 横向留白不在这一层给：这层是通栏的 fixed 载体，限宽与内边距都交给
-     下面的 .ib-scroll，让它与 .page-main / .site-footer 的盒模型完全一致
-     （max-width: --shell + padding-inline: --shell-pad）。
-     在这里加 --shell-pad 会让 .ib-scroll 的居中基准变成「已扣掉留白的宽度」，
-     于是它的内容左缘落在 --shell 列的左缘上（1920 下 360）而不是内容左缘
-     （398.4），横条比标题块和 header 少缩一个 --shell-pad。 */
   padding: var(--header-h) 0 0;
   pointer-events: none;
 }
-/* 滚动层。横向滚动放在这里而不是 .ib-track 上：
-   规范规定一轴为 auto/scroll 时另一轴的 visible 会被强制算成 auto，
-   所以带滚动的元素必然裁竖向。刻度尺长在线的下方，会被裁掉。
-   把滚动挪到外层、并用 padding-bottom 把刻度尺纳入这层的裁剪区（裁剪发生在
-   padding box 边缘），刻度尺就能留在 .ib-track 内、跟着内容一起滚。 */
+
 .ib-scroll {
-  /* 与 .page-main / .site-footer 同一套盒模型，六项的左缘才与标题块、
-     header 的标记落在同一条竖轴上 */
   max-width: var(--shell);
   margin: 0 auto;
   padding-inline: var(--shell-pad);
   pointer-events: auto;
-  /* 窄屏横向滚动：六项中文标题带编号约 60 字宽，放不下 */
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -58,29 +35,12 @@
   display: flex;
   align-items: baseline;
   gap: clamp(1.1rem, 2.6vw, 2.4rem);
-  /* 内容窄时撑满滚动层，safe center 才有居中的余地；
-     内容宽时由 max-content 跟着长，下边框与刻度尺才能覆盖全部六项。 */
   min-width: 100%;
   width: max-content;
   padding-bottom: var(--bar-pad-b);
   border-bottom: var(--bar-rule) solid var(--line);
-
-  /* 星球槽位：星球停在当前项左侧的空隙里，但左起第一项左边没有空隙。
-     预留这段内边距，让 01 成为当前项时星球也有地方站，不必压在编号上。
-     取值 = 星球 16px + 两侧各约 2.5px 呼吸。 */
   padding-left: var(--planet-slot);
-
-  /* 六项居中，与首页的中心构图对齐（首页 logo / 名称 / 标语中心全在 50%）。
-     必须是 safe center 而不是 center：普通 center 配 overflow-x 时，
-     溢到左侧的内容会永久滚不回来——实测 480px 下首项落在 left:-65，
-     而 scrollLeft 已是 0、最大只能滚 88，「01 系统设计」彻底不可达。
-     safe 关键字在空间不足时自动退回 flex-start，首项始终能滚到。
-     不支持 safe 的旧引擎会整条声明失效，落回上面的默认左对齐——
-     也就是改动前的行为，不会退化成不可达。 */
   justify-content: safe center;
-
-  /* .ib-marker / .ib-planet / .ib-scale 三者的包含块。放在滚动层内是有意的：
-     窄屏横向滚动时它们要跟着内容走，不能钉在视口上。 */
   position: relative;
 }
 
@@ -92,8 +52,6 @@
   white-space: nowrap;
   color: var(--grey-strong);
   transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
-  /* .ib-freq 的包含块：读数挂在各自的项里，靠 left:50% 对齐该项中心。
-     这样对齐由布局保证、首帧就正确，不需要 JS 量位置——见 .ib-freq。 */
   position: relative;
 }
 .ib-no {
@@ -107,24 +65,13 @@
 }
 .ib-item:hover { color: var(--ink); }
 
-/* 当前项：加重。星球由 JS 插在编号前，见 script.js */
 .ib-item.is-current {
   color: var(--ink);
 }
 
-/* ---- 当前项标记：一条由左向右伸出的线 ----
-   原先是 .is-current::after，伪元素长在各自的项上，跨页时只能「这边消失、
-   那边出现」。改成 .ib-track 里唯一的一条实体线，由 JS 写 --mx / --mw
-   把它摆到当前项下方——六页的横条 DOM 逐字节相同，所以两个文档都算得出
-   彼此的坐标，与 --title-* 共享接缝坐标是同一个手法。
-
-   线本身不横向滑：那样它和星球是两个东西并排平移，读起来像整块搬家。
-   改成「星球先走到位，线随即由左向右抽出」，两个动作有先后、有主从。
-   由 JS 加 .is-ready 才显形：首帧还没量到坐标，先亮着会在 left:0 闪一下。
-   无 JS 时它永远不出现，此时当前项仍有 color 加重可辨，见 noscript。 */
 .ib-marker {
   position: absolute;
-  bottom: -1px;              /* 压在 .ib-track 的下边框上 */
+  bottom: -1px;
   left: 0;
   height: 1px;
   width: var(--mw, 0px);
@@ -132,92 +79,39 @@
   transform: translateX(var(--mx, 0px));
   opacity: 0;
   pointer-events: none;
-
-  /* 由左向右伸出，而不是整条线跟着星球横向滑。
-     用 clip-path 而不是 scaleX：后者会把线上的刻度与数字一起压扁
-     （见下面 .ib-ruler），clip 只是遮挡，内容几何不变。
-     --clip 由 JS 从 100%（全遮）改成 0%（全露），触发揭示。 */
   clip-path: inset(0 var(--clip, 100%) 0 0);
-
-  /* 过渡只挂在 clip-path 上，不挂 transform。
-     --mx（位移）因此是瞬时的：线直接出现在目标项下方，不从旧项爬过去。
-     这条无条件生效而不是挂在 body.bar-slide 下——到达时（无论从首页、
-     从别的子页，还是冷启动）线都该抽出一次，而 --mx 在 resize 重量时
-     变化不触发任何动画，正是想要的。 */
   transition: clip-path var(--reveal) var(--ease-out);
 }
 .ib-marker.is-ready { opacity: 1; }
-/* ---- 星球：脱离布局流，横向滑到当前项 ----
-   原先它插在当前项的编号前，占 16px 布局宽 + 项内 gap 约 6px，
-   让当前项从 83px 变成 105px。后果是每次换当前项，那 22px 的宽度
-   也换位置——实测旧当前项与新当前项之间的项横向跳 22px（480px 下 21px）。
-   一个号称「全程不动的家具」其实在重排，这才是切换显得生硬的主因；
-   星球本身的淡出淡入只是表象。
 
-   改成 .ib-track 内的绝对定位元素后：
-     六项宽度恒定 83px，重排彻底消失
-     星球可以自由滑移，成为切换时唯一在走的东西
-     横条总宽反而窄 22px，窄屏溢出压力略减
-   落点在当前项左侧，距项左缘 2~5px，见 script.js 的 placeMarker。 */
 .ib-planet {
   position: absolute;
-  /* 与项内文字的基线视觉对齐。项高 20px，星球 16px，居中偏上一点 */
   top: 2px;
   left: 0;
   width: 16px;
   height: 16px;
   line-height: 0;
-  /* --px 由 JS 写：当前项左缘往左退一个星球宽加呼吸间距 */
   transform: translateX(var(--px, 0px));
   opacity: 0;
   pointer-events: none;
 }
 .ib-planet svg { display: block; }
-/* 与下划线同一条件显形：首帧还没量到坐标，先亮着会在 left:0 闪一下 */
+
 .ib-planet.is-ready { opacity: 1; }
-/* 滑移只在同层级切换时发生。星球先走（--travel），线随后抽出（--reveal），
-   两者是先后而不是并行。 */
+
 body.bar-slide .ib-planet {
   transition: transform var(--travel) var(--ease);
 }
 
-/* ============================================================
-   刻度尺（调频盘）
-   ------------------------------------------------------------
-   横条下方一条等距刻度带，每一项下方标一个 FM 频率读数（取自 pages.js 的
-   freq 字段，经 data-freq 传到 DOM）。当前项那一段刻度加密并加深，
-   读成「调到了这一档」。
-
-   为什么是全宽而不是只在当前项下画一小段：整个量程都在场，当前位置才有
-   参照。只画一段的话它是一枚孤立的碎片，传达不出刻度盘的意思。
-
-   整条刻度尺是构建期静态输出的，不由 JS 创建：
-   原先由 script.js 生成、再靠 .is-ready 从 opacity 0 淡入，于是每次跨文档
-   导航都重播一次淡入——那正是切换时看到的闪烁。它是六页共有、逐字节相同的
-   家具，首帧就该在位，全程不动。
-   基准线与刻度用 CSS 梯度画，读数挂在各项里靠 left:50% 对齐该项中心，
-   两者都不需要量任何像素。JS 现在只管加密段落在哪一项（那一段要滑移）。
-
-   本块所有元素都在 .ib-track 内（跟着横向滚动走），而 .ib-track 不裁剪，
-   裁剪发生在 .ib-scroll 的 padding box——它的 padding-bottom 正好等于
-   --scale-h，把刻度尺纳进可见区。
-   ============================================================ */
 .ib-scale {
   position: absolute;
-  /* 从轨道下边框再往下让 --scale-gap。
-     不让位的话加密段会压在 .ib-marker 上（实测重叠 2.5px），
-     下划线与刻度糊成一团。 */
   top: calc(100% + var(--scale-gap));
   left: 0;
   right: 0;
   height: calc(var(--scale-h) - var(--scale-gap));
   pointer-events: none;
-  /* 没有淡入。原先这里是 opacity:0 + .is-ready 揭示，跨文档导航时每次重播，
-     读成闪烁。静态输出之后首帧即最终态。 */
 }
 
-/* 基准线：贯通整条量程，不断。
-   刻度悬在空中会读成一串散落的短划，有了这条底线才成为一把尺。 */
 .ib-scale::before {
   content: "";
   position: absolute;
@@ -228,13 +122,6 @@ body.bar-slide .ib-planet {
   background: var(--line);
 }
 
-/* 刻度：两层等距梯度，短刻度每 --tick-step、长刻度每五格一根。
-   用 repeating-linear-gradient 而不是一根根生成 <i>：
-     梯度本身是连续的，间距不会因逐个取整而参差（原先 JS 按整数 px
-     放置，实测相邻间距在 8/9px 之间跳）
-     根数不再取决于视口，resize 时不必重建 DOM
-     六页的刻度图案完全一致，跨文档切换时这一层读不出变化
-   1px 的硬边用 0 与 1px 两个色标夹出，不做插值，所以不会发虚。 */
 .ib-scale::after {
   content: "";
   position: absolute;
@@ -243,11 +130,11 @@ body.bar-slide .ib-planet {
   right: 0;
   height: 6px;
   background-image:
-    /* 长刻度 */
+
     repeating-linear-gradient(to right,
       var(--line-strong) 0 1px,
       transparent 1px calc(var(--tick-step) * 5)),
-    /* 短刻度 */
+
     repeating-linear-gradient(to right,
       var(--line-strong) 0 1px,
       transparent 1px var(--tick-step));
@@ -256,16 +143,6 @@ body.bar-slide .ib-planet {
   background-repeat: no-repeat;
 }
 
-/* 读数：每项一个，挂在该项内部，非当前项压淡。
-   压淡而不是隐藏——整条量程的刻度值都可读，才像一把尺。
-
-   为什么挂在 .ib-item 里而不是 .ib-scale 里：挂在项里只需 left:50% 就居中
-   于该项，对齐由布局保证、首帧即正确，且与项宽无关（哪天某一项标题字数不同
-   也不会错位）。放在刻度尺里则必须知道每项的中心坐标，那就得靠 JS 实测，
-   于是又回到「JS 生成 → 淡入 → 每次导航重播」的老路。
-
-   纵向从项底缘一路加到读数行：跨过横条下内边距、下边框、刻度尺让位，
-   再加读数在刻度尺内的偏移。四段都是变量，改任何一段读数都跟着走。 */
 .ib-freq {
   position: absolute;
   left: 50%;
@@ -281,16 +158,12 @@ body.bar-slide .ib-planet {
   opacity: 0.32;
   transition: opacity 0.3s var(--ease), color 0.3s var(--ease);
 }
-/* 当前项的读数加重。直接借用项上已有的 .is-current，不需要额外的类，
-   也不需要 JS 在落地时再点亮一次——构建期就带着，首帧即正确。 */
+
 .ib-item.is-current .ib-freq {
   opacity: 1;
   color: var(--ink);
 }
 
-/* 退场时把加重交给目标项。.is-target 由 script.js 在点击时打上，
-   是这套里唯一还需要 JS 的读数状态——.is-current 必须留在原处
-   （它同时承载 aria-current，不该在离开途中改语义）。 */
 body.leaving-sub .ib-item.is-current .ib-freq {
   opacity: 0.32;
   color: var(--grey-strong);
@@ -300,14 +173,9 @@ body.leaving-sub .ib-item.is-target .ib-freq {
   color: var(--ink);
 }
 
-/* 加密段：盖在当前项那一段上的一块密刻度，宽度与该项等宽。
-   同样用梯度，间距是基准的一半，颜色加深——读成「这一档被调到了」。
-   与星球共用 --travel 与缓动一起滑移：两者是同一次「调频」的两个指示，
-   不同步会读成各自在动。
-   基准线在 .ib-scale::before 上、加密段不覆盖它，所以那条底线全程连续。 */
 .ib-scale-dense {
   position: absolute;
-  top: 1px;                  /* 让开基准线那 1px，不盖住它 */
+  top: 1px;
   left: 0;
   height: 5px;
   width: var(--dw, 0px);
@@ -321,78 +189,67 @@ body.bar-slide .ib-scale-dense {
   transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
 }
 
-/* ---- 移动端：撤掉刻度尺 ----
-   窄屏横条本就要横向滚动，再叠一层刻度与六组数字太喵；
-   480px 下六项读数还会互相重叠。此时仍保留那条揭示线与 color 加重。
-   .ib-scroll 的 padding-bottom 一并收掉，不留空带。 */
+@media (max-width: 860px) {
+  .ab-creed {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+  }
+}
+
 @media (max-width: 600px) {
   .ib-scale { display: none; }
-  /* 读数挂在各项内部、不是刻度尺的子元素，所以要单独撤。
-     漏了它的话刻度尺没了、六组数字还悬在横条下方。 */
+
   .ib-freq { display: none; }
   .ib-scroll { padding-bottom: 0; }
 }
 
-/* ---- 移动端：撤掉星球 ----
-   窄屏空隙只有 18px，星球 16px 塞进去两边各余 1px，视觉上是硬挤；
-   而且此时横条本身要横向滚动，多一个装饰只是负担。
-   撤掉后当前项靠 color 加重与下方那条线辨识，足够了。
-   JS 侧不再需要判断——.ib-planet 仍会被创建，只是不显示，
-   这样 resize 跨过断点时不必重建元素。--planet-slot 那段
-   padding 也一并收掉，六项能多用 21px。 */
 @media (max-width: 600px) {
   .ib-planet { display: none; }
   .ib-track { padding-left: 0; }
+
+  .ab-block + .ab-block { margin-top: 3.2rem; }
+  .ab-head { margin-bottom: 1.5rem; gap: 0.7rem; }
+  .ab-kicker { gap: 0.65rem; letter-spacing: 0.18em; }
+
+  .ab-creed {
+    grid-template-columns: 1fr;
+    gap: 1.7rem;
+    margin-top: 2.2rem;
+    padding-top: 1.6rem;
+  }
+
+  .ab-timeline {
+    --tl-rail: 3.6rem;
+    --tl-inset: 1.1rem;
+    --tl-gap: 2.1rem;
+    padding-left: calc(var(--tl-rail) + var(--tl-inset));
+  }
+  .ab-node::before { left: calc(-1 * var(--tl-inset) - var(--tl-dot) / 2); }
+  .ab-node:not(:last-child)::after { left: calc(-1 * var(--tl-inset) - 0.5px); }
+  .abn-year {
+    left: calc(-1 * (var(--tl-rail) + var(--tl-inset)));
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
 }
 
-/* ---------------- 宽屏：横条升进 header 同一行 ----------------
-   顶部一行：标记（贴左） | 六项 + 刻度尺（居中） | 主题开关与汉堡（贴右）。
-   横条与标记、两个按钮竖向平齐。
-
-   与上一版同名布局的关键差别：--title-top 不动。
-   上一版顺手把它减去了 --bar-h，正文跟着上移一整行，整体压得太靠上；
-   这次只让横条上去，正文的纵向位置保持原样。
-
-   横条不能真的塞进 .site-header：那里有 mix-blend-mode: difference，
-   六项文字会被反色。所以两者仍是各自独立的 fixed 层，只是纵向重合。
-   header z-index 500 > 横条 300，所以 header 必须 pointer-events:none，
-   否则它中间那片空白会吃掉六项的点击（见 style.css 的 .site-header）。
-
-   本块必须排在 .ib-marker / .ib-planet / .ib-scale 的基础规则之后：
-   媒体查询不增加特异度，写在前面的话基础规则的 top 会靠源码顺序赢回去
-   ——上一版实测星球因此跑到了行顶而不是行中。 */
 @media (min-width: 1000px) {
   .index-bar {
-    /* 不再给 header 让位，改为与它同高 */
     padding-top: 0;
   }
   .ib-scroll {
-    /* 撑满 header 那一行的高度，内容竖向居中，六项因此与标记平齐。
-       padding-bottom 仍要留给刻度尺，所以高度是「行高 + 刻度尺」。 */
     height: calc(var(--header-h) + var(--scale-h));
     display: flex;
     align-items: center;
   }
   .ib-track {
     align-items: baseline;
-    /* 把六项自身的中心对到行中心。
-       滚动层居中的是轨道整个盒子，而盒子里六项下方还有 --bar-pad-b 的
-       内边距与 --bar-rule 的边框，于是六项被抬到了行中心之上，实测差
-       7.3px = (13.6 + 1) / 2。
-       这里取全值而不是那 7.3：align-items:center 会把 margin 计入外尺寸
-       再重新居中，所以 margin 只生效一半——写半值只补了 3.6px，实测仍差
-       3.7px。写全值正好补满。
-       不改成「轨道撑满整行 + align-items:center」：那样下边框会落到行底，
-       而六项在行中，发丝线与刻度尺就从文字下方脱开了。 */
     margin-top: calc(var(--bar-pad-b) + var(--bar-rule));
   }
 }
 
-/* ---------------- 标题块 ---------------- */
-/* 三行结构与首页 .orbit-inner 完全一致（编号 / 中文 / 英文），
-   接缝处旅行块落在这里，两者重合。 */
 .page-main {
-  max-width: var(--shell);
+  max-width: var(--shell-sub);
   margin: 0 auto;
   padding: var(--title-top) var(--shell-pad) 8rem;
 }
@@ -400,8 +257,6 @@ body.bar-slide .ib-scale-dense {
 .page-title {
   display: grid;
   gap: 0.28rem;
-  /* 旅行块是 max-content 宽，这里也收成 max-content，
-     否则两者的文字起点相同但盒宽不同，将来加背景/边框会露馅 */
   width: max-content;
   max-width: 100%;
 }
@@ -411,7 +266,7 @@ body.bar-slide .ib-scale-dense {
   letter-spacing: 0.16em;
   color: var(--grey-strong);
 }
-/* 字号与 .orbit-title 的 clamp 参数完全一致，接缝处不发生字号跳变 */
+
 .pt-name {
   font-size: clamp(1.35rem, 2.7vw, 2.35rem);
   font-weight: 500;
@@ -431,12 +286,11 @@ body.bar-slide .ib-scale-dense {
 .page-desc {
   margin-top: 2.4rem;
   max-width: 34em;
-  font-size: 1.05rem;
+  font-size: clamp(1.05rem, 0.75rem + 0.400vw, 1.39rem);
   line-height: 1.7;
   color: var(--text-soft);
 }
 
-/* ---------------- 正文占位 ---------------- */
 .page-body {
   margin-top: 5rem;
   padding-top: 2.4rem;
@@ -447,7 +301,7 @@ body.bar-slide .ib-scale-dense {
   align-items: center;
   gap: 1.2rem;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--fs-mono-xs);
   letter-spacing: 0.2em;
   color: var(--grey-strong);
 }
@@ -461,10 +315,291 @@ body.bar-slide .ib-scale-dense {
   letter-spacing: 0.04em;
 }
 
-/* ---------------- footer ---------------- */
+.about-body {
+  border-top: 0;
+  padding-top: 0;
+  counter-reset: ab;
+}
+.ab-block + .ab-block {
+  margin-top: 4.4rem;
+}
+
+@media (min-width: 1080px) {
+  .about-body {
+    display: grid;
+    grid-template-columns: 1fr clamp(15rem, 24vw, 26rem);
+    gap: 0 clamp(3rem, 5vw, 5.5rem);
+    align-items: start;
+  }
+}
+
+.ab-block {
+  counter-increment: ab;
+}
+.ab-head {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 1.9rem;
+}
+
+.ab-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+}
+.ab-kicker::before {
+  content: counter(ab, decimal-leading-zero);
+  letter-spacing: 0.16em;
+  color: var(--ink);
+}
+.ab-kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.ab-title {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.ab-prose {
+  font-size: var(--fs-body);
+  max-width: 34em;
+}
+
+.ab-prose p:not(.ab-lead) {
+  font-size: 1em;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+.ab-prose p + p {
+  margin-top: 1.1rem;
+}
+
+.ab-lead {
+  max-width: 24em;
+  font-size: clamp(1.28rem, 0.468rem + 1.082vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.ab-lead + p {
+  margin-top: 1.6rem;
+}
+
+.ab-creed {
+  margin-top: 2.8rem;
+  padding-top: 1.9rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.2rem;
+  list-style: none;
+}
+.ab-creed li {
+  display: grid;
+  gap: 0.7rem;
+}
+.abc-no {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+  line-height: 1.6;
+}
+.abc-title {
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.abc-body p {
+  margin-top: 0.5rem;
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+.about-aside {
+  margin-top: 3.6rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+}
+.aa-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+}
+
+.aa-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.2rem 1.4rem;
+  width: 100%;
+  max-width: 22rem;
+}
+.aa-cell {
+  display: grid;
+  gap: 0.34rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.aa-cell dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+.aa-cell dd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-title-sm);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.aa-coord {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+}
+
+.aa-rule {
+  width: 2.4rem;
+  height: 1px;
+  background: var(--line-strong);
+}
+.aa-note {
+  max-width: 22em;
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+@media (min-width: 1080px) {
+  .about-aside {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    position: sticky;
+    top: calc(var(--header-h) + 2.6rem);
+    gap: 1.5rem;
+  }
+
+  .aa-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.4rem 1.6rem;
+    max-width: none;
+  }
+  .aa-note {
+    max-width: none;
+  }
+  .aa-note br {
+    display: none;
+  }
+}
+
+.ab-timeline {
+  --tl-rail: clamp(5.4rem, 4.5rem + 1.13vw, 6.4rem);
+  --tl-inset: 2rem;
+  --tl-gap: clamp(2.6rem, 2.15rem + 0.59vw, 3.1rem);
+  --tl-row: calc(var(--fs-title-sm) * 1.6);
+  --tl-dot: 9px;
+  margin-top: 0.4rem;
+  padding-left: calc(var(--tl-rail) + var(--tl-inset));
+  list-style: none;
+}
+
+.ab-node {
+  position: relative;
+}
+.ab-node + .ab-node {
+  margin-top: var(--tl-gap);
+}
+
+.ab-node::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--tl-inset) - var(--tl-dot) / 2);
+  top: calc(var(--tl-row) / 2 - var(--tl-dot) / 2);
+  width: var(--tl-dot);
+  height: var(--tl-dot);
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--paper);
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.ab-node:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--tl-inset) - 0.5px);
+  top: calc(var(--tl-row) / 2 + var(--tl-dot) / 2);
+  bottom: calc(-1 * var(--tl-gap) - var(--tl-row) / 2 + var(--tl-dot) / 2);
+  width: 1px;
+  background: var(--line-strong);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s var(--ease);
+}
+.ab-node.is-visible:not(:last-child)::after {
+  transform: scaleY(1);
+}
+
+.abn-year {
+  position: absolute;
+  left: calc(-1 * (var(--tl-rail) + var(--tl-inset)));
+  top: 0;
+  width: calc(var(--tl-rail) - var(--tl-dot));
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  letter-spacing: 0.1em;
+  line-height: var(--tl-row);
+  color: var(--grey-strong);
+}
+.abn-title {
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: var(--tl-row);
+  color: var(--ink);
+}
+.abn-body p {
+  margin-top: 0.45rem;
+  max-width: 32em;
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+.ab-node.is-now::before {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.ab-node.is-now .abn-year {
+  color: var(--ink);
+}
+
 .site-footer {
   display: block;
-  max-width: var(--shell);
+  max-width: var(--shell-sub);
   margin: 0 auto;
   padding: 3rem var(--shell-pad) 2.6rem;
   border-top: 1px solid var(--line);
@@ -478,7 +613,7 @@ body.bar-slide .ib-scale-dense {
   padding-bottom: 2.6rem;
 }
 .footer-mail {
-  font-size: clamp(1.3rem, 3.4vw, 2rem);
+  font-size: clamp(1.3rem, 0.506rem + 1.059vw, 2.2rem);
   font-weight: 600;
   border-bottom: 1px solid var(--ink);
   padding-bottom: 0.2rem;
@@ -489,7 +624,7 @@ body.bar-slide .ib-scale-dense {
   display: flex;
   gap: 1.6rem;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: var(--fs-mono-sm);
   color: var(--grey);
 }
 .footer-social a { transition: color 0.3s var(--ease); }
@@ -500,28 +635,10 @@ body.bar-slide .ib-scale-dense {
   justify-content: space-between;
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: var(--fs-mono-sm);
   color: var(--grey);
 }
 
-/* 窄屏的横向留白不在这里改：三处 padding 都已经从 --shell-pad 派生，
-   而 style.css 的 @media (max-width: 600px) 把 --shell-pad 收到 1.4rem，
-   header 与它们一起跟着变。--title-left 同理。
-   原先这里写死三行 1.4rem，加上 .index-bar 那份手抄的
-   calc(1.2rem * 2 + 42px)，是同一个值散在四处。 */
-
-/* ============================================================
-   入场
-   ------------------------------------------------------------
-   两条路径：
-     html.nav-enter   从首页点进来。标题块已在接缝位置（旅行块刚好落在
-                      这里），所以标题不做动画；只让横条与正文接着进场。
-     无 nav-enter     直接深链进入。标题块也需要自持的入场，
-                      否则冷启动会是静止的一屏。
-   nav-enter 由 nav-signal 内联脚本在首帧前挂上，1.4s 后兜底摘除。
-   ============================================================ */
-
-/* ---- 冷启动：标题块与正文一起淡入 ---- */
 .page-title,
 .page-desc,
 .page-body,
@@ -530,9 +647,6 @@ body.bar-slide .ib-scale-dense {
   --enter-shift: 14px;
 }
 
-/* 所有初始隐藏态都挂在 .js-enter 下。这个类由 nav-signal 内联脚本
-   无条件加上（在首帧前），所以脚本没跑 = 类不存在 = 内容默认可见。
-   反过来做（默认隐藏、JS 移除 .no-js）在脚本失效时会留一片空白。 */
 html.js-enter:not(.nav-enter) .page-title {
   opacity: 0;
   transform: translateY(var(--enter-shift));
@@ -543,15 +657,11 @@ html.js-enter:not(.nav-enter).page-ready .page-title {
   transform: none;
 }
 
-/* ---- 从首页来：标题块首帧就位、不动 ----
-   旅行块停在与它重合的位置，所以这里任何位移都会被看成跳变。 */
 html.nav-enter .page-title {
   opacity: 1;
   transform: none;
 }
 
-/* ---- 两条路径共用：横条与正文 ----
-   横条不从轨道形变过来，就是淡入 + 轻微下移。 */
 html.js-enter .index-bar,
 html.js-enter .page-desc,
 html.js-enter .page-body,
@@ -567,35 +677,23 @@ html.page-ready .site-footer {
   opacity: 1;
   transform: none;
 }
-/* 错峰：横条先、描述次之、正文与 footer 最后 */
+
 html.page-ready .index-bar { transition-delay: 0.06s; }
 html.page-ready .page-desc { transition-delay: 0.18s; }
 html.page-ready .page-body { transition-delay: 0.28s; }
 html.page-ready .site-footer { transition-delay: 0.34s; }
 
-/* 从首页来时整体压缩延迟：用户已经看了 420ms 退场，不该再等一轮 */
 html.nav-enter.page-ready .index-bar { transition-delay: 0.02s; }
 html.nav-enter.page-ready .page-desc { transition-delay: 0.1s; }
 html.nav-enter.page-ready .page-body { transition-delay: 0.18s; }
 html.nav-enter.page-ready .site-footer { transition-delay: 0.22s; }
 
-/* 从另一个子页来：同样压缩。冷启动那套（0.06/0.18/0.28/0.34s 配 0.6s 过渡，
-   合计约 940ms）是给「第一次见到这个站」准备的；同层级切换时用户已经
-   在站内，横条也没动过，等一轮完整错峰只会读成迟滞。
-   横条不列在这里——它在这条路径上根本不参与入场。 */
 html.nav-sub.page-ready .page-title { transition-delay: 0s; }
 html.nav-sub.page-ready .page-desc { transition-delay: 0.08s; }
 html.nav-sub.page-ready .page-body { transition-delay: 0.15s; }
 html.nav-sub.page-ready .site-footer { transition-delay: 0.19s; }
 
-/* ============================================================
-   子页面退场：点击 header 标记回首页
-   ------------------------------------------------------------
-   标题块不动——它就是接缝，首页首帧会把到达项摆在同一坐标接住。
-   其余各自淡出。飞行在首页文档里做（见 stage.css 的 html.nav-back）。
-   ============================================================ */
 body.leaving-back {
-  /* 锁滚动：接缝坐标的对齐前提是 scrollY 不再变化 */
   overflow: hidden;
 }
 body.leaving-back .index-bar {
@@ -612,28 +710,18 @@ body.leaving-back .site-footer {
   opacity: 0;
   transition: opacity 0.2s var(--ease);
 }
-/* 标题块明确不参与。写出来是为了防止将来给 .page-* 加通用退场时误伤。 */
+
 body.leaving-back .page-title { opacity: 1; }
 
-/* ============================================================
-   子页面之间的退场：点击横条某一项，或覆盖菜单里的另一个子页
-   ------------------------------------------------------------
-   与回首页那条路径的关键区别：横条整条不动。
-   六页的横条 HTML 逐字节相同，唯一变化的是 .is-current 落在哪一项——
-   所以它该是跨接缝存活的家具，而不是每次导航都淡出再淡入的内容。
-   （改动前它每次都闪一下，这是这条路径上最刺眼的一层。）
-   动的只有两样：标记滑向新项、标题与正文快速淡出。
-   ============================================================ */
 body.leaving-sub {
-  /* 锁滚动：标记坐标是相对横条量的，滚动中途变化会让落点算偏 */
   overflow: hidden;
 }
-/* 横条明确不参与退场。写出来同样是为了防止将来误伤。 */
+
 body.leaving-sub .index-bar {
   opacity: 1;
   transform: none;
 }
-/* 标题与正文：比回首页那条更快，因为这次没有旅行块要等 */
+
 body.leaving-sub .page-title,
 body.leaving-sub .page-desc,
 body.leaving-sub .page-body {
@@ -645,9 +733,6 @@ body.leaving-sub .site-footer {
   transition: opacity 0.16s var(--ease);
 }
 
-/* ---- 从另一个子页来：横条首帧就位、不动，只播标题与正文 ----
-   html.nav-sub 由 nav-signal 内联脚本在首帧前挂上。
-   这一条必须比下面通用的 .js-enter 规则更具体，否则横条会跟着淡入。 */
 html.nav-sub .index-bar {
   opacity: 1;
   transform: none;
@@ -665,22 +750,17 @@ html.nav-sub .index-bar {
   body.leaving-sub .site-footer {
     transition: none !important;
   }
-  /* 标记、星球、刻度尺直接就位，不播揭示、不滑 */
+
   .ib-marker { transition: none !important; clip-path: none !important; }
   body.bar-slide .ib-planet,
   body.bar-slide .ib-scale-dense { transition: none !important; }
   .ib-scale { opacity: 1 !important; transition: none !important; }
 }
 
-/* ---------------- 横条随滚动隐去 ----------------
-   向下滚时上移隐去，向上滚时回来。阅读时把屏幕还给内容，需要导航时一上滚就有。
-   必须放在入场规则之后：两者都写 transform/opacity，选择器特异度相同（0,2,1），
-   靠源码顺序决胜。写在前面会被入场的 .page-ready 规则盖掉。 */
 html.page-ready .index-bar {
   transition: transform 0.42s var(--ease), opacity 0.3s var(--ease);
 }
 html.page-ready body.bar-hidden .index-bar {
-  /* 位移要盖过自身整高（padding + 内容 + 下边框），留 4px 余量 */
   transform: translateY(calc(-100% - 4px));
   opacity: 0;
 }
@@ -695,13 +775,17 @@ html.page-ready body.bar-hidden .index-bar {
     transform: none !important;
     transition: none !important;
   }
-  /* 标记仍要显形（它是「你在哪」的指示，属功能而非装饰），只是不做过渡。
-     clip-path 也要撤掉：JS 若没来得及把 --clip 改成 0%，线会一直被全遮。 */
+
   .ib-marker { transition: none !important; clip-path: none !important; }
   .ib-planet { transition: none !important; }
   .ib-scale { opacity: 1 !important; transition: none !important; }
   .ib-scale-dense { transition: none !important; }
-  /* 隐去本身是功能性的（让出阅读空间），保留，只是不做过渡 */
+
+  .ab-node:not(:last-child)::after {
+    transform: none !important;
+    transition: none !important;
+  }
+
   html.page-ready body.bar-hidden .index-bar {
     transform: translateY(calc(-100% - 4px)) !important;
     opacity: 0 !important;

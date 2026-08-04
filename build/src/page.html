@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<!-- data-wide="off" 留着是声明意图：子页不要大屏装饰层。
-     实际上 head 里已经不加载 wide.css 了，这个属性现在没有对应的规则，
-     但若哪天子页想开装饰层，改这里 + 补一行 link 就够。 -->
+
 <html lang="zh-CN" data-wide="off" data-page="sub" data-slug="{{ slug }}">
 <head>
 {{> head }}
@@ -15,28 +13,11 @@
 
 {{> header }}
 
-  <!-- 顶部横向索引：轨道在子页面上的形态。
-       当前项由 build 时打 .is-current + aria-current，星球落在它编号前。
-       窄屏横向滚动（见 page.css）。
-
-       .ib-scroll 这层包裹是必需的，不是多余嵌套：
-       横向滚动要 overflow-x:auto，而规范规定另一轴的 visible 会被强制算成
-       auto，所以带滚动的元素必然裁竖向（否则冒出一条竖滚动条）。
-       刻度尺长在线的下方，正好在被裁的那片——第一版把它放在 .ib-track 里，
-       刻度全不见了。把滚动移到外层、让 .ib-track 不再裁剪，刻度尺就能留在
-       track 内（窄屏滚动时跟着内容走，不会与六项错位）。
-       .ib-marker / .ib-planet / .ib-scale 三者都由 script.js 追加到 .ib-track。 -->
   <nav class="index-bar" aria-label="分区索引">
     <div class="ib-scroll">
       <div class="ib-track">
 {{ indexBar }}
 
-        <!-- 刻度尺（调频盘）。静态输出，不由 script.js 创建：
-             原先 JS 建好再淡入，每次跨文档导航都重播一次，读成闪烁。
-             基准线与刻度是 .ib-scale 的两个伪元素（CSS 梯度），读数挂在
-             上面各项内部（.ib-freq），三者都不需要量像素。
-             .ib-scale-dense 是当前项那段加密刻度，位置由 script.js 写
-             --dx / --dw，因为它要在切换时滑移。 -->
         <div class="ib-scale" aria-hidden="true">
           <div class="ib-scale-dense"></div>
         </div>
@@ -46,9 +27,6 @@
 
   <main class="page-main" id="top">
 
-    <!-- 标题块：结构与 .orbit-inner 的三行完全一致（编号 / 中文 / 英文），
-         首页退场时那一项旅行到这里，接缝处两者重合。
-         纵向位置由 --title-top 决定，与退场终点共用同一变量。 -->
     <header class="page-title" id="pageTitle">
       <span class="pt-no">{{ no }}</span>
       <h1 class="pt-name">{{ title }}</h1>
@@ -57,19 +35,13 @@
 
     <p class="page-desc reveal-line">{{ desc }}</p>
 
-    <!-- 壳子阶段：内容待补。模板结构定下来之后往这里填。 -->
-    <section class="page-body">
-      <div class="pb-placeholder reveal-line">
-        <span class="pbp-label">CONTENT&nbsp;/&nbsp;PENDING</span>
-        <span class="pbp-line"></span>
-        <span class="pbp-text">这一页的内容待补。</span>
-      </div>
-    </section>
+{{ pageBody }}
 
   </main>
 
 {{> footer }}
 
-  <script src="script.js"></script>
+  <script src="script.js">
+</script>
 </body>
 </html>
