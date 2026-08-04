@@ -3,21 +3,14 @@
 <title>{{ pageTitle }}</title>
 <meta name="description" content="{{ pageDesc }}">
 
-<!-- 站点图标：由 build/icons.py 从 assets/logo.png 派生，全部垫了 --paper
-     底色（logo 是纯黑 + 透明，留透明的话深色浏览器 UI 上就看不见了）。
-     改 logo 后重跑 python build/icons.py 即可，无需手工导出。 -->
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-<!-- 浏览器 UI 配色跟随两套调色板，取值与 style.css / theme.css 的 --paper 一致 -->
 <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)">
 
-<!-- 分享卡片。canonical / og:url / og:image 要求绝对地址，所以这三条只在
-     pages.js 配了 SITE_URL 时才输出——域名填错比不填更糟（会把爬虫指到
-     别人家去）。其余几条与域名无关，任何情况下都给。 -->
 {{ canonical }}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="森韵次元坞">
@@ -33,12 +26,10 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="stage.css">
 {{ wideCss }}
-<!-- 深色模式调色板，可整行删除 -->
+
 <link rel="stylesheet" href="theme.css">
 {{ extraCss }}
-<!-- 主题必须在首帧前定好，否则深色偏好的用户会先看到一帧白底。
-     故意内联且放在样式表之后：这段极短，阻塞可忽略。
-     无此脚本时 theme.css 的 @media 仍会跟随系统，只是失去手动选择。 -->
+
 <script>
   (function () {
     try {
@@ -47,7 +38,6 @@
         document.documentElement.setAttribute("data-theme", t);
       }
     } catch (e) {
-      /* 隐私模式下 localStorage 可能抛异常，落回系统偏好即可 */
     }
   })();
 </script>

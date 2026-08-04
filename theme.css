@@ -1,32 +1,8 @@
-/* ============================================================
-   深色模式调色板
-   ------------------------------------------------------------
-   三档取值，优先级由低到高：
-     1) :root                     浅色，定义在 style.css
-     2) @media (prefers-color-scheme: dark)   跟随系统
-     3) html[data-theme="dark|light"]         用户在页面上的显式选择
-
-   第 3 档由 index.html <head> 里的内联脚本在首帧前写入，避免闪白。
-   一旦用户点过开关，data-theme 就固定住，系统偏好不再生效。
-
-   撤回方式：删除本文件 + index.html 的 <link>、内联脚本、
-   .theme-toggle 按钮，以及 script.js 的主题那一段。
-   style.css 里新增的派生变量可以留着，浅色取值与原先硬编码值等价。
-
-   注意 --blend-src 不在这里覆盖：mix-blend-mode: difference 需要亮色源，
-   两种模式下都得是 #f4f3ef，跟着 --paper 走会让光标和 header 消失。
-   ============================================================ */
-
-/* 暖调深色：--paper 原本是暖白 #f4f3ef，纯黑配纯白会显得比浅色版冷，
-   所以深底带一点暖（#0d0d0c），文字用暖白（#eeede7）。 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-
     --ink: #eeede7;
     --paper: #0d0d0c;
-    /* 深底上灰的明暗关系反转：--grey-strong 要比 --grey 更亮才更清晰。
-       #a3a29a 对 #0d0d0c 约 7.4:1，#7d7c75 约 4.6:1。 */
     --grey: #7d7c75;
     --grey-strong: #a3a29a;
     --line: rgba(238, 237, 231, 0.16);
@@ -37,26 +13,18 @@
     --guide-major: rgba(238, 237, 231, 0.9);
     --guide-minor: rgba(238, 237, 231, 0.36);
     --guide-h: rgba(238, 237, 231, 0.44);
-
     --noise-dot: #fff;
     --noise-blend: screen;
     --noise-opacity: 0.05;
-
     --grid-invert: invert(1);
-
-    /* 由亮到暗的斜坡保持不变，只是整体挪到深底能看清的区间。
-       受光面仍在左上：--planet-1 最亮，--planet-3 最暗。 */
     --planet-1: #e6e5df;
     --planet-2: #9b9a93;
     --planet-3: #55544e;
   }
 }
 
-/* 显式选择：与上面 @media 内取值完全一致，只是选择器权重更高，
-   且不受系统偏好影响。改配色时两处要同步。 */
 html[data-theme="dark"] {
   color-scheme: dark;
-
   --ink: #eeede7;
   --paper: #0d0d0c;
   --grey: #7d7c75;
@@ -69,21 +37,15 @@ html[data-theme="dark"] {
   --guide-major: rgba(238, 237, 231, 0.9);
   --guide-minor: rgba(238, 237, 231, 0.36);
   --guide-h: rgba(238, 237, 231, 0.44);
-
   --noise-dot: #fff;
   --noise-blend: screen;
   --noise-opacity: 0.05;
-
   --grid-invert: invert(1);
-
   --planet-1: #e6e5df;
   --planet-2: #9b9a93;
   --planet-3: #55544e;
 }
 
-/* ---------------- logo ---------------- */
-/* logo.png 是深色线稿，深底上直接反色。它是唯一的位图资源，
-   没有深色版本，invert 比再出一张图省事，且和蜂巢底纹用的是同一手法。 */
 html[data-theme="dark"] .splash-logo,
 html[data-theme="dark"] .stage-logo {
   filter: invert(1);
@@ -94,8 +56,7 @@ html[data-theme="dark"] .stage-logo {
     filter: invert(1);
   }
 }
-/* 开屏 logo 入场带 blur，与上面的 invert 是同一个 filter 属性，
-   后者会整条覆盖掉前者。深色下把两个函数写在一起，保留入场模糊。 */
+
 html[data-theme="dark"] .splash-logo {
   filter: invert(1) blur(7px);
 }
@@ -111,11 +72,6 @@ html[data-theme="dark"] #splash.phase-logo .splash-logo {
   }
 }
 
-/* ---------------- 主题切换时的过渡 ---------------- */
-/* 只给大面积色块加过渡，避免切换瞬间整页硬跳。
-   不用通配选择器：会把开屏那套精细编排的 transition 全部覆盖掉。
-   .switching 由 script.js 在切换时短暂挂上，切换结束即摘除，
-   所以这条过渡不会干扰页面自身的动画。 */
 html.theme-switching body,
 html.theme-switching .stage,
 html.theme-switching .splash-bg,
