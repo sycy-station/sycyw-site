@@ -1117,16 +1117,101 @@ section {
 }
 
 .site-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem var(--shell-pad) 2.6rem;
+  display: block;
+  padding: 2.6rem var(--shell-pad) 2rem;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--grey);
   border-top: 1px solid var(--line);
   max-width: var(--shell);
   margin: 0 auto;
+}
+
+/* §5.3 页脚四栏：品牌 / 快速链接 / 联系方式 / 社交渠道 */
+.sf-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.4rem;
+  padding-bottom: 2.2rem;
+  border-bottom: 1px solid var(--line);
+}
+.sf-brand-link {
+  font-size: 1.02rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.sf-brand-link:hover {
+  opacity: 0.72;
+}
+.sf-intro {
+  margin-top: 0.7rem;
+  max-width: 24em;
+  line-height: 1.7;
+}
+.sf-links-title {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+  margin-bottom: 0.8rem;
+}
+.sf-links ul,
+.sf-contact ul,
+.sf-social ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+.sf-links a,
+.sf-contact a,
+.sf-social a {
+  color: var(--grey);
+  text-decoration: none;
+  transition: color 0.25s var(--ease);
+}
+.sf-links a:hover,
+.sf-contact a:hover,
+.sf-social a:hover {
+  color: var(--ink);
+}
+.sf-pending {
+  opacity: 0.6;
+}
+.sf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.6rem;
+  align-items: center;
+  padding-top: 1.6rem;
+}
+.sf-legal {
+  display: flex;
+  gap: 1.2rem;
+  margin-left: auto;
+}
+.sf-legal a {
+  color: var(--grey);
+  text-decoration: none;
+}
+.sf-legal a:hover {
+  color: var(--ink);
+}
+@media (max-width: 860px) {
+  .sf-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .sf-grid {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+  }
+  .sf-legal {
+    margin-left: 0;
+  }
 }
 
 body.leaving {

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import { Block, Prose, CardGrid, Steps, StatusRow, Empty, Actions } from '@/components/Section';
+import { Block, Prose, CardGrid, Steps, StatusRow, Empty, Actions, PageHero } from '@/components/Section';
 import Filter from '@/components/Filter';
 import { getPage } from '@/data/pages';
 import {
@@ -11,6 +11,7 @@ import {
   JOBS_EMPTY_NOTE,
   JOBS_EMPTY_TITLE,
   JOIN_CTA,
+  JOIN_HERO,
   PROCESS,
 } from '@/data/join';
 
@@ -20,6 +21,12 @@ export const metadata: Metadata = {
   title: page.title,
   description: page.seoDescription,
   alternates: { canonical: page.canonicalPath },
+  openGraph: {
+    title: `${page.title} — 森韵次元坞`,
+    description: page.seoDescription,
+    url: page.canonicalPath,
+    images: [{ url: JOIN_HERO.heroImage, alt: JOIN_HERO.heroImageAlt }],
+  },
 };
 
 export default function JoinPage() {
@@ -27,6 +34,11 @@ export default function JoinPage() {
 
   return (
     <PageShell page={page}>
+      <PageHero
+        description={JOIN_HERO.heroDescription}
+        image={JOIN_HERO.heroImage}
+        imageAlt={JOIN_HERO.heroImageAlt}
+      />
       <Block kicker="CULTURE" title="团队文化">
         <CardGrid
           items={[...CULTURE]

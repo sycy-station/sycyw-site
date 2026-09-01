@@ -128,13 +128,16 @@ type CardItem = {
   text: string;
   extra?: ReactNode;
 };
-/** 卡片网格沿用 .ab-creed 视觉（编号 + 标题 + 说明），非固定三列 */
+/**
+ * 卡片网格沿用 .ab-creed 视觉（编号 + 标题 + 说明）。
+ * 列数经 --cols 变量传给 CSS，窄屏媒体查询可正常降级为单列。
+ */
 export function CardGrid({ items, columns = 3 }: { items: CardItem[]; columns?: 2 | 3 | 4 }) {
   return (
     <ol
       className="ab-creed"
       role="list"
-      style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+      style={{ '--cols': columns } as React.CSSProperties}
     >
       {items.map((item) => (
         <li key={item.key} className="reveal-item">
@@ -159,25 +162,67 @@ export function Empty({ title, note }: { title?: string; note: string }) {
   );
 }
 
+type PageHeroProps = {
+  description: string;
+  image: string;
+  imageAlt: string;
+};
+
+/**
+ * 子页首屏：摘要 + 主视觉图（需求 §6.2A/§7.2A/§8.2A/§9.2A）。
+ * hero 标题与 PageShell 的 .page-desc 文案一致，故不再重复渲染，
+ * 页面保持唯一 h1（.pt-name）。
+ */
+export function PageHero({ description, image, imageAlt }: PageHeroProps) {
+  const scope = useRef<HTMLElement>(null);
+  useReveal(scope);
+
+  return (
+    <section className="page-hero" ref={scope}>
+      <p className="ph-desc reveal-item">{description}</p>
+      {/* 尺寸由 CSS 控制，避免 next/image 布局接管黑白编辑式排版 */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="ph-image reveal-item" src={image} alt={imageAlt} loading="eager" />
+    </section>
+  );
+}
+
 type ProductRowProps = {
   no: string;
   category: string;
   name: string;
   status: string;
   description: string;
+  image: string;
+  imageAlt: string;
   features: { title: string; description: string }[];
   actions: { label: string; url: string | null }[];
 };
 
-/** 产品行：左栏品牌区（编号/分类/名称/状态徽标）+ 右栏描述与特性列表 */
-export function ProductRow({ no, category, name, status, description, features, actions }: ProductRowProps) {
+/** 产品行：左栏品牌区（编号/分类/名称/状态徽标/产品图）+ 右栏描述与特性列表 */
+export function ProductRow({
+  no,
+  category,
+  name,
+  status,
+  description,
+  image,
+  imageAlt,
+  features,
+  actions,
+}: ProductRowProps) {
   return (
     <article className="prd-row reveal-item">
       <div className="prd-brand">
-        <span className="prd-no">{no}</span>
-        <span className="prd-cat">{category}</span>
+        <div className="prd-meta">
+          <span className="prd-no">{no}</span>
+          <span className="prd-cat">{category}</span>
+        </div>
         <h3 className="prd-name">{name}</h3>
         <span className="prd-status">{status}</span>
+        {/* 尺寸由 CSS 控制，维持黑白编辑式排版 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="prd-image" src={image} alt={imageAlt} loading="lazy" />
       </div>
       <div className="prd-detail">
         <p className="prd-desc">{description}</p>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import { Block, Prose, Creed, Timeline } from '@/components/Section';
+import { Block, Prose, Creed, Timeline, PageHero } from '@/components/Section';
 import { ABOUT } from '@/data/about';
 import { getPage } from '@/data/pages';
 
@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: page.title,
   description: page.seoDescription,
   alternates: { canonical: page.canonicalPath },
+  openGraph: {
+    title: `${page.title} — 森韵次元坞`,
+    description: page.seoDescription,
+    url: page.canonicalPath,
+    images: [{ url: ABOUT.hero.heroImage, alt: ABOUT.hero.heroImageAlt }],
+  },
 };
 
 export default function AboutPage() {
@@ -17,8 +23,18 @@ export default function AboutPage() {
 
   return (
     <PageShell page={page} bodyClass="about-body">
+      <PageHero
+        description={ABOUT.hero.heroDescription}
+        image={ABOUT.hero.heroImage}
+        imageAlt={ABOUT.hero.heroImageAlt}
+      />
+
       <div className="about-main">
         <Block kicker="OUR STORY" title={ABOUT.story.sectionTitle}>
+          {ABOUT.story.storyImage && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img className="story-image reveal-item" src={ABOUT.story.storyImage} alt={ABOUT.story.storyImageAlt ?? ''} />
+          )}
           <Prose paragraphs={ABOUT.story.storyParagraphs} />
         </Block>
 
@@ -51,16 +67,8 @@ export default function AboutPage() {
         <span className="aa-kicker">VITALS</span>
         <dl className="aa-grid">
           <div className="aa-cell">
-            <dt>成立</dt>
-            <dd>2021</dd>
-          </div>
-          <div className="aa-cell">
-            <dt>团队</dt>
-            <dd>06</dd>
-          </div>
-          <div className="aa-cell">
-            <dt>交付</dt>
-            <dd>40+</dd>
+            <dt>起点</dt>
+            <dd>2018</dd>
           </div>
           <div className="aa-cell">
             <dt>据点</dt>

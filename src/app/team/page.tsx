@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import { Block, Prose, CardGrid, StatusRow, Empty, Actions } from '@/components/Section';
+import { Block, Prose, CardGrid, StatusRow, Empty, Actions, PageHero } from '@/components/Section';
 import { getPage } from '@/data/pages';
 import {
   COMPOSITION,
@@ -9,6 +9,7 @@ import {
   LEADERSHIP,
   MEMBER_EMPTY_NOTE,
   TEAM_CTA,
+  TEAM_HERO,
   WORKSPACE_IMAGES,
 } from '@/data/team';
 
@@ -18,6 +19,12 @@ export const metadata: Metadata = {
   title: page.title,
   description: page.seoDescription,
   alternates: { canonical: page.canonicalPath },
+  openGraph: {
+    title: `${page.title} — 森韵次元坞`,
+    description: page.seoDescription,
+    url: page.canonicalPath,
+    images: [{ url: TEAM_HERO.heroImage, alt: TEAM_HERO.heroImageAlt }],
+  },
 };
 
 export default function TeamPage() {
@@ -25,6 +32,11 @@ export default function TeamPage() {
 
   return (
     <PageShell page={page}>
+      <PageHero
+        description={TEAM_HERO.heroDescription}
+        image={TEAM_HERO.heroImage}
+        imageAlt={TEAM_HERO.heroImageAlt}
+      />
       <Block kicker="COMPOSITION" title="团队构成">
         <StatusRow
           items={[...COMPOSITION]
