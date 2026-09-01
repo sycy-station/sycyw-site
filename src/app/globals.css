@@ -1,0 +1,185 @@
+:root {
+  color-scheme: light;
+  --ink: #0a0a0a;
+  --paper: #f4f3ef;
+  --grey: #8c8c86;
+  --grey-strong: #6a6a63;
+  --line: rgba(10, 10, 10, 0.14);
+  --line-strong: rgba(10, 10, 10, 0.28);
+  --tint: rgba(10, 10, 10, 0.02);
+  --text-soft: #3a3a38;
+  --text-body: #2b2b29;
+  --guide-major: rgba(10, 10, 10, 1);
+  --guide-minor: rgba(10, 10, 10, 0.42);
+  --guide-h: rgba(10, 10, 10, 0.5);
+  --blend-src: #f4f3ef;
+  --noise-dot: #000;
+  --noise-blend: multiply;
+  --noise-opacity: 0.035;
+  --grid-invert: none;
+  --planet-1: #8c8c86;
+  --planet-2: #6a6a63;
+  --planet-3: #0a0a0a;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
+  --travel: 380ms;
+  --reveal: 300ms;
+  --font-sans: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
+  --font-display: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
+    "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  --logo-base: clamp(120px, 20vw, 248px);
+  --logo-expand: 1.55;
+  --logo-final: calc(var(--logo-base) * var(--logo-expand));
+  --view-shift: clamp(2vh, 4.5vh, 6vh);
+  --shell: 1200px;
+  --shell-pad: 2.4rem;
+  --shell-sub: min(92vw, 1800px);
+  /* 分页面排版别名：跟随 --line / --text-soft 的主题取值，深色模式无需重复声明 */
+  --rule-faint: var(--line);
+  --ink-soft: var(--text-soft);
+  --measure: 68ch;
+  --measure-wide: var(--shell);
+  --title-left: calc(max((100vw - var(--shell-sub)) / 2, 0px) + var(--shell-pad));
+  --title-top: clamp(8.5rem, 17vh, 12rem);
+  --header-pad-y: 1rem;
+  --header-btn: 42px;
+  --header-h: calc(var(--header-pad-y) * 2 + var(--header-btn));
+  --bar-h: calc(35px + 0.85rem);
+  --planet-slot: 21px;
+  --scale-h: 24px;
+  --scale-gap: 3px;
+  --tick-step: 9px;
+  --bar-pad-b: 0.85rem;
+  --bar-rule: 1px;
+  --freq-top: 9px;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --shell-pad: 1.4rem;
+    --header-pad-y: 0.75rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ink: #eeede7;
+    --paper: #0d0d0c;
+    --grey: #7d7c75;
+    --grey-strong: #a3a29a;
+    --line: rgba(238, 237, 231, 0.16);
+    --line-strong: rgba(238, 237, 231, 0.3);
+    --tint: rgba(238, 237, 231, 0.04);
+    --text-soft: #c9c8c1;
+    --text-body: #d8d7d0;
+    --guide-major: rgba(238, 237, 231, 0.9);
+    --guide-minor: rgba(238, 237, 231, 0.36);
+    --guide-h: rgba(238, 237, 231, 0.44);
+    --blend-src: #0d0d0c;
+    --noise-dot: #fff;
+    --noise-blend: screen;
+    --noise-opacity: 0.05;
+    --grid-invert: invert(1);
+    --planet-1: #e6e5df;
+    --planet-2: #9b9a93;
+    --planet-3: #55544e;
+  }
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #eeede7;
+  --paper: #0d0d0c;
+  --grey: #7d7c75;
+  --grey-strong: #a3a29a;
+  --line: rgba(238, 237, 231, 0.16);
+  --line-strong: rgba(238, 237, 231, 0.3);
+  --tint: rgba(238, 237, 231, 0.04);
+  --text-soft: #c9c8c1;
+  --text-body: #d8d7d0;
+  --guide-major: rgba(238, 237, 231, 0.9);
+  --guide-minor: rgba(238, 237, 231, 0.36);
+  --guide-h: rgba(238, 237, 231, 0.44);
+  --blend-src: #0d0d0c;
+  --noise-dot: #fff;
+  --noise-blend: screen;
+  --noise-opacity: 0.05;
+  --grid-invert: invert(1);
+  --planet-1: #e6e5df;
+  --planet-2: #9b9a93;
+  --planet-3: #55544e;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+html.theme-switching body {
+  transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-switching body {
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
