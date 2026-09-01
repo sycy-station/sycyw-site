@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import { Block, Prose, CardGrid, Empty, Actions } from '@/components/Section';
+import { Block, Prose, CardGrid, Steps, StatusRow, Empty, Actions } from '@/components/Section';
 import Filter from '@/components/Filter';
 import { getPage } from '@/data/pages';
 import {
   BENEFITS,
-  BENEFITS_EMPTY_NOTE,
   CULTURE,
   deriveJobCategories,
   JOBS,
@@ -75,9 +74,9 @@ export default function JoinPage() {
         )}
       </Block>
 
-      <Block kicker="BENEFITS" title="员工福利">
-        {BENEFITS.length ? (
-          <CardGrid
+      {BENEFITS.length > 0 && (
+        <Block kicker="BENEFITS" title="员工福利">
+          <StatusRow
             items={[...BENEFITS]
               .sort((a, b) => a.order - b.order)
               .map((item) => ({
@@ -87,18 +86,16 @@ export default function JoinPage() {
                 text: item.description,
               }))}
           />
-        ) : (
-          <Empty note={BENEFITS_EMPTY_NOTE} />
-        )}
-      </Block>
+        </Block>
+      )}
 
       <Block kicker="PROCESS" title="招聘流程">
-        <CardGrid
+        <Steps
           items={[...PROCESS]
             .sort((a, b) => a.order - b.order)
             .map((item) => ({
               key: item.step,
-              no: item.step,
+              step: item.step,
               title: item.title,
               text: item.description,
             }))}

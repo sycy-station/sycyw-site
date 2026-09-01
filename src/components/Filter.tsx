@@ -34,7 +34,7 @@ export default function Filter({ categories, label, items }: FilterProps) {
       </div>
 
       {items.map((item) => (
-        <div key={item.id} hidden={active !== 'all' && active !== item.categoryId}>
+        <div key={item.id} className="filter-item" hidden={active !== 'all' && active !== item.categoryId}>
           {item.node}
         </div>
       ))}

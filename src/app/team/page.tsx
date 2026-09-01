@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import { Block, Prose, CardGrid, Empty, Actions } from '@/components/Section';
+import { Block, Prose, CardGrid, StatusRow, Empty, Actions } from '@/components/Section';
 import { getPage } from '@/data/pages';
 import {
   COMPOSITION,
@@ -26,7 +26,7 @@ export default function TeamPage() {
   return (
     <PageShell page={page}>
       <Block kicker="COMPOSITION" title="团队构成">
-        <CardGrid
+        <StatusRow
           items={[...COMPOSITION]
             .sort((a, b) => a.order - b.order)
             .map((item, i) => ({
@@ -41,6 +41,7 @@ export default function TeamPage() {
       <Block kicker="MEMBERS" title="成员介绍">
         {members.length ? (
           <CardGrid
+            columns={2}
             items={members.map((member) => ({
               key: member.name,
               no: member.role,
@@ -69,6 +70,7 @@ export default function TeamPage() {
       {WORKSPACE_IMAGES.length > 0 && (
         <Block kicker="WORKSPACE" title="工作环境">
           <CardGrid
+            columns={2}
             items={WORKSPACE_IMAGES.map((image, i) => ({
               key: image.src,
               no: String(i + 1).padStart(2, '0'),

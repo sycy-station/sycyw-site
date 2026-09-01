@@ -159,6 +159,85 @@ export function Empty({ title, note }: { title?: string; note: string }) {
   );
 }
 
+type ProductRowProps = {
+  no: string;
+  category: string;
+  name: string;
+  status: string;
+  description: string;
+  features: { title: string; description: string }[];
+  actions: { label: string; url: string | null }[];
+};
+
+/** 产品行：左栏品牌区（编号/分类/名称/状态徽标）+ 右栏描述与特性列表 */
+export function ProductRow({ no, category, name, status, description, features, actions }: ProductRowProps) {
+  return (
+    <article className="prd-row reveal-item">
+      <div className="prd-brand">
+        <span className="prd-no">{no}</span>
+        <span className="prd-cat">{category}</span>
+        <h3 className="prd-name">{name}</h3>
+        <span className="prd-status">{status}</span>
+      </div>
+      <div className="prd-detail">
+        <p className="prd-desc">{description}</p>
+        {features.length > 0 && (
+          <ul className="prd-feats" role="list">
+            {features.map((feature, i) => (
+              <li key={feature.title}>
+                <span className="prdf-no">{String(i + 1).padStart(2, '0')}</span>
+                <div className="prdf-body">
+                  <h4 className="prdf-title">{feature.title}</h4>
+                  <p>{feature.description}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Actions items={actions} />
+      </div>
+    </article>
+  );
+}
+
+type StatusItem = { key: string; no: string; title: string; text: string };
+
+/** 状态行：编号 + 标题 + 说明的紧凑单列列表（构成/福利等轻量条目） */
+export function StatusRow({ items }: { items: StatusItem[] }) {
+  return (
+    <ul className="st-row" role="list">
+      {items.map((item) => (
+        <li key={item.key} className="reveal-item">
+          <span className="st-no">{item.no}</span>
+          <div className="st-body">
+            <h3 className="st-title">{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+type StepItem = { key: string; step: string; title: string; text: string };
+
+/** 横向步骤条：编号 + 标题 + 说明，多列网格自适应 */
+export function Steps({ items }: { items: StepItem[] }) {
+  return (
+    <ol className="steps" role="list">
+      {items.map((item) => (
+        <li key={item.key} className="reveal-item">
+          <span className="steps-no">{item.step}</span>
+          <div className="steps-body">
+            <h3 className="steps-title">{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export function Actions({ items }: { items: { label: string; url: string | null }[] }) {
   const usable = items.filter((item) => Boolean(item.url)) as { label: string; url: string }[];
   if (!usable.length) return null;
