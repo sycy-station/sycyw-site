@@ -259,6 +259,15 @@
 .stage-orbit:hover .orbit-inner { opacity: 0.42; }
 .stage-orbit .orbit-item:hover .orbit-inner { opacity: 1; }
 
+/* 轨道占位项（森韵次元 / 曲词识库）：暂无页面，不响应 hover，弱化显示 */
+.orbit-item--placeholder { cursor: default; }
+.orbit-item--placeholder .orbit-inner { opacity: 0.55; }
+.stage-orbit:hover .orbit-item--placeholder .orbit-inner,
+.orbit-item--placeholder:hover .orbit-inner { opacity: 0.55; }
+.orbit-item--placeholder:hover::after { width: 0; }
+.orbit-item--placeholder .orbit-no,
+.orbit-item--placeholder .orbit-sub { opacity: 0.7; }
+
 .stage-about {
   position: absolute;
   left: 50%;
@@ -506,8 +515,10 @@ body.stage-back .orbit-ring-path {
 body.stage-back .orbit-inner { opacity: 1; }
 body.stage-back .orbit-item:not(.is-arriving) .orbit-inner { transform: none; }
 body.stage-back .pos-4:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.16s); }
+body.stage-back .pos-5:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.28s); }
 body.stage-back .pos-6:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.39s); }
 body.stage-back .pos-3:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.71s); }
+body.stage-back .pos-2:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.83s); }
 body.stage-back .pos-1:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.94s); }
 
 body.stage-back .orbit-ticks {

@@ -79,3 +79,19 @@ export function getPage(slug: string): PageMeta {
   if (!page) throw new Error(`未定义的页面 slug: ${slug}`);
   return page;
 }
+
+/**
+ * 首页轨道占位项：仅展示标题，暂无对应页面，点击不跳转。
+ * 不进入 PAGES（IndexBar / 遮罩菜单 / 打字文案均按真实页面消费 PAGES），
+ * 只由 Stage 渲染在空出的 pos-2 / pos-5 中位上。
+ */
+export const ORBIT_PLACEHOLDERS: {
+  slug: string;
+  no: string;
+  title: string;
+  sub: string;
+  pos: 2 | 5;
+}[] = [
+  { slug: 'sycy', no: '05', title: '森韵次元', sub: 'COMING SOON', pos: 2 },
+  { slug: 'lyric-db', no: '06', title: '曲词识库', sub: 'COMING SOON', pos: 5 },
+];

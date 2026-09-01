@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { PAGES } from '@/data/pages';
+import { ORBIT_PLACEHOLDERS, PAGES } from '@/data/pages';
 import { BRAND } from '@/data/site';
 import { gsap, useGSAP, prefersReducedMotion } from '@/motion/gsap';
 import { trackDwell } from '@/motion/visit';
@@ -196,6 +196,21 @@ export default function Stage({ ready }: { ready: boolean }) {
           />
           <span className="stage-logo-name">{BRAND.name}</span>
         </div>
+
+        {ORBIT_PLACEHOLDERS.map((item) => (
+          <span
+            key={item.slug}
+            className={`orbit-item orbit-item--placeholder pos-${item.pos}`}
+            data-no={item.no}
+            aria-disabled="true"
+          >
+            <span className="orbit-inner">
+              <span className="orbit-no">{item.no}</span>
+              <span className="orbit-title">{item.title}</span>
+              <span className="orbit-sub">{item.sub}</span>
+            </span>
+          </span>
+        ))}
 
         {PAGES.map((page) => (
           <Link
