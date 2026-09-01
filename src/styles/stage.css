@@ -1,0 +1,697 @@
+.stage {
+  position: relative;
+  max-width: none;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  --orbit-r: calc(var(--logo-final) / 2 + clamp(52px, 5vw, 76px));
+  --orbit-x-mid: var(--orbit-r);
+  --orbit-x-off: calc(var(--orbit-r) * 0.82);
+  --orbit-y: calc(var(--orbit-r) * 0.62);
+}
+
+.stage-orbit {
+  position: relative;
+  width: min(100%, 1180px);
+  height: clamp(420px, 62vh, 620px);
+  transform: translateY(calc(-1 * var(--view-shift)));
+}
+
+.stage-logo-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--logo-final);
+  line-height: 0;
+}
+.stage-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.stage-logo-name {
+  position: absolute;
+  top: calc(100% + 1.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 1.2;
+  font-size: clamp(1.15rem, 2.1vw, 1.62rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  white-space: nowrap;
+}
+
+.orbit-ring,
+.orbit-ticks {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--orbit-r) * 2);
+  height: calc(var(--orbit-r) * 2);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.orbit-ring {
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  display: block;
+}
+
+.orbit-ring-path {
+  r: calc(var(--orbit-r) - 0.5px);
+  cx: var(--orbit-r);
+  cy: var(--orbit-r);
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1px;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.orbit-ticks {
+  --tick-band: 7px;
+  transform: translate(-50%, -50%) scale(1.045);
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    var(--ink) 0deg 0.34deg,
+    transparent 0.34deg 6deg
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - var(--tick-band)),
+    #000 calc(50% - var(--tick-band) + 1px),
+    #000 50%,
+    transparent 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - var(--tick-band)),
+    #000 calc(50% - var(--tick-band) + 1px),
+    #000 50%,
+    transparent 50%
+  );
+}
+
+.stage { --sweep: 1100ms; --sweep-start: 0.1s; }
+
+
+
+.stage {
+  --planet-r: calc((var(--logo-final) / 2 + var(--orbit-inner-edge)) / 2);
+  --orbit-inner-edge: calc(var(--orbit-r) * 0.88);
+}
+.orbit-planet-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--planet-r) * 2);
+  height: calc(var(--planet-r) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--ink) 0deg 152deg,
+    transparent 152deg 208deg,
+    var(--ink) 208deg 360deg
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - 1px),
+    #000 calc(50% - 1px),
+    #000 50%,
+    transparent 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(50% - 1px),
+    #000 calc(50% - 1px),
+    #000 50%,
+    transparent 50%
+  );
+}
+.orbit-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  line-height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(calc(-1 * var(--planet-r)));
+}
+.orbit-planet svg { display: block; }
+
+.orbit-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(150px, 16vw, 240px);
+}
+.orbit-inner {
+  display: grid;
+  gap: 0.28rem;
+  transition: transform 0.5s var(--ease), opacity 0.55s var(--ease);
+}
+
+.pos-1 .orbit-inner,
+.pos-2 .orbit-inner,
+.pos-3 .orbit-inner { justify-items: end; }
+.pos-4 .orbit-inner,
+.pos-5 .orbit-inner,
+.pos-6 .orbit-inner { justify-items: start; }
+
+.orbit-no {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+.orbit-title {
+  font-size: clamp(1.35rem, 2.7vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.orbit-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+
+.orbit-item { --tilt: 0deg; }
+
+.pos-1, .pos-2, .pos-3 {
+  text-align: right;
+  transform-origin: 100% 50%;
+}
+.pos-1 {
+  --tilt: -7deg;
+  transform: translate(calc(-100% - var(--orbit-x-off)), calc(-50% - var(--orbit-y))) rotate(var(--tilt));
+}
+.pos-2 {
+  --tilt: 0deg;
+  transform: translate(calc(-100% - var(--orbit-x-mid)), -50%) rotate(var(--tilt));
+}
+.pos-3 {
+  --tilt: 7deg;
+  transform: translate(calc(-100% - var(--orbit-x-off)), calc(-50% + var(--orbit-y))) rotate(var(--tilt));
+}
+
+.pos-4, .pos-5, .pos-6 {
+  text-align: left;
+  transform-origin: 0% 50%;
+}
+.pos-4 {
+  --tilt: 7deg;
+  transform: translate(var(--orbit-x-off), calc(-50% - var(--orbit-y))) rotate(var(--tilt));
+}
+.pos-5 {
+  --tilt: 0deg;
+  transform: translate(var(--orbit-x-mid), -50%) rotate(var(--tilt));
+}
+.pos-6 {
+  --tilt: -7deg;
+  transform: translate(var(--orbit-x-off), calc(-50% + var(--orbit-y))) rotate(var(--tilt));
+}
+
+.orbit-item::after {
+  content: "";
+  position: absolute;
+  bottom: -0.35rem;
+  width: 0;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.45;
+  transition: width 0.45s var(--ease);
+}
+.pos-1::after, .pos-2::after, .pos-3::after { right: 0; }
+.pos-4::after, .pos-5::after, .pos-6::after { left: 0; }
+.orbit-item:hover::after { width: 100%; }
+
+.pos-1:hover .orbit-inner,
+.pos-2:hover .orbit-inner,
+.pos-3:hover .orbit-inner { transform: translateX(0.55rem); }
+.pos-4:hover .orbit-inner,
+.pos-5:hover .orbit-inner,
+.pos-6:hover .orbit-inner { transform: translateX(-0.55rem); }
+
+.stage-orbit:hover .orbit-inner { opacity: 0.42; }
+.stage-orbit .orbit-item:hover .orbit-inner { opacity: 1; }
+
+/* 轨道占位项（森韵次元 / 曲词识库）：暂无页面，不响应 hover，弱化显示 */
+.orbit-item--placeholder { cursor: default; }
+.orbit-item--placeholder .orbit-inner { opacity: 0.55; }
+.stage-orbit:hover .orbit-item--placeholder .orbit-inner,
+.orbit-item--placeholder:hover .orbit-inner { opacity: 0.55; }
+.orbit-item--placeholder:hover::after { width: 0; }
+.orbit-item--placeholder .orbit-no,
+.orbit-item--placeholder .orbit-sub { opacity: 0.7; }
+
+.stage-about {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(6.2rem, 9.5vh, 8.4rem);
+  transform: translateX(-50%);
+  width: min(88vw, 620px);
+  text-align: center;
+  font-size: clamp(1.05rem, 2vw, 1.42rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0;
+}
+
+.sa-type {
+  display: none;
+}
+body.has-typed-about .sa-real {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+body.has-typed-about .sa-type {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+}
+
+.sa-type::before {
+  content: attr(data-full) "_";
+  visibility: hidden;
+}
+
+.sa-typed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+}
+
+.sa-caret {
+  display: inline-block;
+  margin-left: 1px;
+  color: var(--grey-strong);
+  animation: blink 0.9s steps(1, end) infinite;
+}
+
+.stage-foot {
+  position: absolute;
+  left: 50%;
+  bottom: 2.4rem;
+  transform: translateX(-50%);
+  width: min(78vw, 860px);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.7rem);
+  pointer-events: none;
+  opacity: 0;
+}
+.sf-line {
+  flex: 1;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.18;
+  transform: scaleX(0);
+}
+.sf-line:first-child { transform-origin: right center; }
+.sf-line:last-child { transform-origin: left center; }
+
+.sf-text {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+.sf-dot { opacity: 0.55; }
+
+.sf-clock {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  min-width: 5.4em;
+  display: inline-block;
+  text-align: center;
+  color: var(--ink);
+}
+
+
+
+@media (max-height: 760px) {
+  .stage-about {
+    bottom: clamp(5rem, 7.5vh, 6.4rem);
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  }
+  .stage-foot { gap: 0.7rem; }
+  .sf-text { font-size: 0.58rem; letter-spacing: 0.14em; gap: 0.55em; }
+}
+
+@media (max-height: 660px) {
+  .stage-foot { display: none; }
+  .stage-about { bottom: 2.6rem; }
+}
+
+@media (max-height: 590px) {
+  .stage-about {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+    opacity: 1 !important;
+  }
+}
+
+.stage-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 2.4rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease) 1.35s;
+}
+.stage-scroll i {
+  width: 1px;
+  height: 32px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.stage-scroll i::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0% { top: -100%; }
+  60% { top: 100%; }
+  100% { top: 100%; }
+}
+
+.orbit-item .orbit-inner {
+  opacity: 0;
+}
+
+.pos-2 .orbit-inner,
+.pos-5 .orbit-inner {
+  transform: none;
+}
+
+.pos-1 .orbit-inner { transform: translate(-6px, -4px); }
+.pos-3 .orbit-inner { transform: translate(-6px, 4px); }
+.pos-4 .orbit-inner { transform: translate(6px, -4px); }
+.pos-6 .orbit-inner { transform: translate(6px, 4px); }
+.stage-logo-name {
+  opacity: 0;
+}
+
+/* 入场动效由 GSAP timeline 统一编排，见 src/components/Stage.tsx。
+   CSS 只保留初态，避免 transition 与 GSAP 争抢同一属性。
+   返场动效与 legacy stage.css L501-597 一致，由 html.nav-back /
+   back-ready / back-play / body.stage-back 相位链驱动，
+   几何飞回在 src/components/Stage.tsx 的 runBackArrive 内完成。 */
+
+/* ---- legacy 返场相位链（html.nav-back 初态 → back-ready → back-play → stage-back 终态） ---- */
+
+html.nav-back .splash { display: none !important; }
+
+html.nav-back .orbit-ring { opacity: 0; }
+html.nav-back .orbit-ring-path { stroke-dashoffset: 1; }
+html.nav-back .orbit-ticks,
+html.nav-back .orbit-planet-ring,
+html.nav-back .orbit-planet,
+html.nav-back .stage-logo-name,
+html.nav-back .stage-about,
+html.nav-back .stage-foot { opacity: 0; }
+
+html.nav-back .orbit-inner { opacity: 0; transform: none; }
+
+html.nav-back .orbit-item.is-arriving .orbit-inner {
+  opacity: 0;
+  transform-origin: 0 0;
+  transition: none;
+}
+html.nav-back.back-ready .orbit-item.is-arriving .orbit-inner {
+  opacity: 1;
+}
+html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+  transform: translateX(var(--sx, 0px));
+  transition: none;
+}
+
+html.nav-back.back-play .orbit-item.is-arriving .orbit-inner,
+html.nav-back.back-play .orbit-item.is-arriving .orbit-inner > * {
+  transition: transform var(--back-glide) var(--ease);
+}
+
+.stage { --back-glide: 380ms; }
+
+/* legacy 基础规则带 transition（供 stage-back 相位延迟淡入），
+   src 为避免与 GSAP 首进场争抢属性已删，这里仅在返场作用域补回 */
+html.nav-back .orbit-ticks,
+html.nav-back .orbit-planet-ring,
+html.nav-back .orbit-planet,
+html.nav-back .stage-logo-name,
+html.nav-back .stage-about,
+html.nav-back .stage-foot { transition: opacity 1s var(--ease); }
+html.nav-back .stage-logo-name,
+html.nav-back .stage-foot { transition-duration: 0.8s; }
+html.nav-back .sf-line { transition: transform 0.9s var(--ease); }
+
+body.stage-back .orbit-ring { opacity: 0.15; }
+body.stage-back .orbit-ring-path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--sweep) linear var(--back-glide);
+}
+body.stage-back .orbit-inner { opacity: 1; }
+body.stage-back .orbit-item:not(.is-arriving) .orbit-inner { transform: none; }
+body.stage-back .pos-4:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.16s); }
+body.stage-back .pos-5:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.28s); }
+body.stage-back .pos-6:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.39s); }
+body.stage-back .pos-3:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.71s); }
+body.stage-back .pos-2:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.83s); }
+body.stage-back .pos-1:not(.is-arriving) .orbit-inner { transition-delay: calc(var(--back-glide) + 0.94s); }
+
+body.stage-back .orbit-ticks {
+  opacity: 0.3;
+  transition-delay: calc(var(--back-glide) + var(--sweep));
+}
+body.stage-back .orbit-planet-ring {
+  opacity: 0.1;
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.9);
+}
+body.stage-back .orbit-planet {
+  opacity: 1;
+  transition-delay: calc(var(--back-glide) + var(--sweep));
+}
+body.stage-back .stage-logo-name { opacity: 1; transition-delay: var(--back-glide); }
+body.stage-back .stage-about { opacity: 1; transition-delay: calc(var(--back-glide) + 0.3s); }
+body.stage-back .stage-foot {
+  opacity: 1;
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.85);
+}
+body.stage-back .sf-line {
+  transform: scaleX(1);
+  transition-delay: calc(var(--back-glide) + var(--sweep) * 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.nav-back .orbit-inner,
+  html.nav-back .stage-logo-name,
+  html.nav-back .stage-about,
+  html.nav-back .stage-foot { opacity: 1 !important; }
+  html.nav-back .orbit-ring { opacity: 0.15 !important; }
+  html.nav-back .orbit-ring-path { stroke-dashoffset: 0 !important; }
+  html.nav-back .orbit-ticks { opacity: 0.3 !important; }
+  html.nav-back .orbit-planet-ring { opacity: 0.1 !important; }
+  html.nav-back .orbit-planet { opacity: 1 !important; }
+  html.nav-back .orbit-item.is-arriving .orbit-inner {
+    transform: none !important;
+  }
+  html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  html.nav-back .orbit-item.is-arriving .orbit-inner {
+    transform: none !important;
+  }
+  html.nav-back .orbit-item.is-arriving .orbit-inner > * {
+    transform: none !important;
+  }
+  body.stage-back .orbit-inner { transition-delay: 0.06s !important; }
+}
+
+@media (max-width: 900px) {
+  .stage { --orbit-r: calc(var(--logo-final) / 2 + clamp(40px, 6vw, 56px)); }
+  .orbit-title { font-size: clamp(1.15rem, 3.3vw, 1.6rem); }
+  .orbit-sub { display: none; }
+}
+
+@media (max-width: 720px) {
+  .orbit-ring,
+  .orbit-ticks,
+  .orbit-planet-ring,
+  .orbit-planet { display: none; }
+
+  .pos-1 .orbit-inner, .pos-2 .orbit-inner, .pos-3 .orbit-inner,
+  .pos-4 .orbit-inner, .pos-5 .orbit-inner, .pos-6 .orbit-inner {
+    transform: none;
+  }
+  .stage {
+    min-height: auto;
+    padding: 7rem 1.4rem 5rem;
+    place-items: stretch;
+  }
+
+  .stage-orbit {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "logo logo"
+      "i1 i4"
+      "i2 i5"
+      "i3 i6";
+    column-gap: 1.6rem;
+    row-gap: 2.2rem;
+    transform: none;
+  }
+  .stage-logo-wrap {
+    position: static;
+    grid-area: logo;
+    transform: none;
+    width: var(--logo-final);
+    justify-self: center;
+    margin: 0 auto 2.6rem;
+  }
+  .stage-logo-name {
+    position: static;
+    transform: none;
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .orbit-item {
+    position: static;
+    width: auto;
+    transform: none !important;
+  }
+  .pos-1, .pos-2, .pos-3 { justify-self: end; }
+  .pos-4, .pos-5, .pos-6 { justify-self: start; }
+  .pos-1 { grid-area: i1; }
+  .pos-2 { grid-area: i2; }
+  .pos-3 { grid-area: i3; }
+  .pos-4 { grid-area: i4; }
+  .pos-5 { grid-area: i5; }
+  .pos-6 { grid-area: i6; }
+  .orbit-sub { display: block; }
+  .stage-scroll { display: none; }
+
+  .stage-about {
+    position: static;
+    transform: none;
+    width: auto;
+    margin: 3.2rem auto 0;
+    text-align: center;
+  }
+  .stage-foot {
+    position: static;
+    width: auto;
+    margin: 2.4rem auto 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .stage-orbit {
+    grid-template-columns: 1fr;
+    grid-template-areas: "logo" "i1" "i2" "i3" "i4" "i5" "i6";
+    row-gap: 1.9rem;
+  }
+  .pos-1, .pos-2, .pos-3,
+  .pos-4, .pos-5, .pos-6 {
+    justify-self: center;
+    text-align: center;
+  }
+  .orbit-item::after { left: 50%; right: auto; transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-inner,
+  .stage-logo-name,
+  .stage-scroll,
+  .stage-about,
+  .stage-foot {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .sa-caret { animation: none !important; }
+  .orbit-ring { opacity: 0.15 !important; transition: none !important; }
+
+  .orbit-ring-path {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+  .orbit-ticks { opacity: 0.3 !important; transition: none !important; }
+
+  .orbit-planet-ring { opacity: 0.1 !important; transition: none !important; }
+  .orbit-planet { opacity: 1 !important; transition: none !important; }
+  .sf-line { transform: scaleX(1) !important; transition: none !important; }
+  .pos-1 .orbit-inner, .pos-2 .orbit-inner, .pos-3 .orbit-inner,
+  .pos-4 .orbit-inner, .pos-5 .orbit-inner, .pos-6 .orbit-inner {
+    transform: none !important;
+    transition-delay: 0s !important;
+  }
+  .stage-scroll i::after { display: none; }
+}
