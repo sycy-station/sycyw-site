@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import PageShell from '@/components/PageShell';
-import { PageHero, ProductRow } from '@/components/Section';
-import Filter from '@/components/Filter';
+import { PageHero, ProductBlock } from '@/components/Section';
 import { getPage } from '@/data/pages';
-import { PRODUCT_CATEGORIES, PRODUCT_HERO, PRODUCTS } from '@/data/products';
+import { PRODUCT_HERO, PRODUCTS } from '@/data/products';
 
 const page = getPage('products');
 
@@ -28,33 +28,42 @@ export default function ProductsPage() {
         imageAlt={PRODUCT_HERO.heroImageAlt}
       />
 
-      <Filter
-        label="产品分类"
-        categories={[...PRODUCT_CATEGORIES].sort((a, b) => a.order - b.order)}
-        items={PRODUCTS.map((product, i) => ({
-          id: product.id,
-          categoryId: product.categoryId,
-          node: (
-            <ProductRow
-              key={product.id}
-              no={String(i + 1).padStart(2, '0')}
-              category={product.categoryLabel}
-              name={product.name}
-              status={product.status ?? '—'}
-              description={product.description}
-              image={product.image}
-              imageAlt={product.imageAlt}
-              features={product.features.map((feature) => ({
-                title: feature.title,
-                description: feature.description,
-              }))}
-              actions={[product.primaryAction, product.secondaryAction]
-                .filter((action): action is NonNullable<typeof action> => Boolean(action))
-                .map((action) => ({ label: action.label, url: action.url }))}
-            />
-          ),
-        }))}
-      />
+      {/* 产品索引：锚点跳转到各产品分区 */}
+      <nav className="pb-index" aria-label="产品索引">
+        {PRODUCTS.map((product, i) => (
+          <Link
+            key={product.id}
+            href={`#${product.id}`}
+            className="pb-index-item reveal-item"
+          >
+            <span className="pbi-no">{String(i + 1).padStart(2, '0')}</span>
+            <span className="pbi-name">{product.name}</span>
+            <span className="pbi-cat">{product.categoryLabel}</span>
+            {product.status && <span className="pbi-status">{product.status}</span>}
+          </Link>
+        ))}
+      </nav>
+
+      {PRODUCTS.map((product, i) => (
+        <ProductBlock
+          key={product.id}
+          no={String(i + 1).padStart(2, '0')}
+          id={product.id}
+          category={product.categoryLabel}
+          name={product.name}
+          tagline={product.tagline}
+          status={product.status}
+          description={product.description}
+          image={product.image}
+          imageAlt={product.imageAlt}
+          features={product.features}
+          actions={[product.primaryAction, product.secondaryAction]
+            .filter((action): action is NonNullable<typeof action> => Boolean(action))
+            .map((action) => ({ label: action.label, url: action.url }))}
+          specGroups={product.specGroups}
+          specNote={product.specNote}
+        />
+      ))}
     </PageShell>
   );
 }

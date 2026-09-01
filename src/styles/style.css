@@ -1116,6 +1116,13 @@ section {
   margin: 0 auto;
 }
 
+/* 全宽版式：分页内容区块不受首页 section 限宽影响 */
+.page-main section {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 .site-footer {
   display: block;
   padding: 2.6rem var(--shell-pad) 2rem;
