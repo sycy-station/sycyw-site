@@ -34,13 +34,15 @@
   --view-shift: clamp(2vh, 4.5vh, 6vh);
   --shell: 1200px;
   --shell-pad: 2.4rem;
-  --shell-sub: min(92vw, 1800px);
+  /* 全宽版式：子页与页脚铺满视口，仅保留安全边距 */
+  --shell-sub: 100%;
+  --shell-pad-wide: clamp(1.4rem, 1rem + 3.4vw, 5.5rem);
   /* 分页面排版别名：跟随 --line / --text-soft 的主题取值，深色模式无需重复声明 */
   --rule-faint: var(--line);
   --ink-soft: var(--text-soft);
   --measure: 68ch;
   --measure-wide: var(--shell);
-  --title-left: calc(max((100vw - var(--shell-sub)) / 2, 0px) + var(--shell-pad));
+  --title-left: var(--shell-pad-wide);
   --title-top: clamp(8.5rem, 17vh, 12rem);
   --header-pad-y: 1rem;
   --header-btn: 42px;
@@ -58,6 +60,7 @@
 @media (max-width: 600px) {
   :root {
     --shell-pad: 1.4rem;
+    --shell-pad-wide: 1.4rem;
     --header-pad-y: 0.75rem;
   }
 }
