@@ -41,6 +41,8 @@ ces/
 │   ├── reference/             品牌、团队头像与故事插画
 │   └── logo.png / og.png       共用品牌图片与分享图
 ├── scripts/                   构建、图标生成、素材整理和参考内容采集
+├── deploy/nginx.conf           生产服务器配置模板
+├── dist/                      生产构建输出（已忽略，不手工维护）
 ├── build/build.js             旧构建命令的兼容入口
 ├── docs/                      内容来源、素材说明与项目记录
 ├── design-tests/              独立布局预览，保留原有访问路径
@@ -48,11 +50,29 @@ ces/
 ```
 
 - 修改页面内容、导航或 HTML 结构：编辑 `src/content/` 或 `src/templates/`，再运行构建。根目录 HTML 会被覆盖。
-- 修改样式或交互：编辑 `assets/css/` 或 `assets/js/` 中对应模块。资源文件直接供浏览器使用，构建不复制它们。
-- CSS 与 JavaScript 继续按原有顺序加载，文件名、选择器和动效参数保持一致。仅改变目录和引用路径。
+- 修改样式或交互：编辑 `assets/css/` 或 `assets/js/` 中对应模块，再运行构建更新内容版本。开发页面直接引用这些资源。
+- CSS 保留原有顺序、选择器和动效参数；生产包将全部样式按原顺序合并。共享脚本保持顺序，各分区脚本在进入对应页面前加载，并复用已加载模块。
 - `design-tests/` 不参与正式构建；其中依赖的旧 `page.css` 位于 `archive/legacy/styles/`。
 - `.playwright-mcp/` 存放本地浏览器检查截图和日志，已加入 Git 忽略规则。
-- 发布时上传根目录生成的 HTML、`robots.txt`、`favicon.ico`、`assets/`，以及配置域名后生成的 `sitemap.xml`。`src/`、`scripts/`、`build/`、`docs/`、`design-tests/` 和 `archive/` 不需要发布。
+- 正式发布使用下方生产构建命令，只发布 `dist/` 的内容。
+
+## 生产构建与部署
+
+```bash
+node scripts/build.js --production
+node scripts/check-build.js
+python -m http.server 8766 --bind 127.0.0.1 --directory dist
+```
+
+生产构建会先生成开发页面，再输出 `dist/`：资源使用内容哈希文件名，全部 CSS 按原有级联顺序合并为一个文件，文本资源附带 `.gz` / `.br` 预压缩副本。分区脚本按需加载，导航会等模块就绪后才插入内容、测量标题和播放动画。输出保留全部原有页面 URL 和五个兼容跳转地址；不包含源代码、文档、归档或未引用图片。
+
+产品截图及 Logo 使用已生成的全尺寸无损 WebP，原始 PNG 保留在源码中。更新 PNG 后，可运行 `python scripts/optimize-images.py` 重新生成并逐像素校验；这一步需要 Pillow，日常 Node 构建没有 npm 依赖。其余未提供 WebP 副本的图片继续使用原文件。
+
+`deploy/nginx.conf` 是可包含在 Nginx `http {}` 内的站点模板：将站点根目录指向发布目录，填写真实域名并配置 HTTPS。模板启用动态 gzip、HTML 每次校验、带哈希资源一年缓存；如服务器包含相应模块，可启用 `gzip_static` 或另行配置 Brotli 使用预压缩文件。预览用 Python HTTP 服务不会自动启用这些压缩和缓存策略。服务器执行 `nginx -t` 成功后再重载配置。
+
+部署时先上传新资源，再切换 HTML；建议采用版本目录和原子切换，并让旧哈希资源在新目录中继续可访问，避免已打开的标签页切换分区时取不到旧版模块。不要只替换 HTML，也不要立即删除上一版本的哈希资源。发布包为自动生成目录，构建器只会清理带 `.site-build` 标记的 `dist/`。
+
+上线前填写 `src/content/pages.js` 的 `SITE_URL` 后重新完整构建，以生成对应域名的 canonical、Open Graph 地址和 sitemap；当前未预设生产域名。性能优化范围、验证结果和限制见 `docs/performance-optimization.md`。
 
 ## 六个空间
 
