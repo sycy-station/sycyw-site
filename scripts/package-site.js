@@ -69,6 +69,8 @@ for (const slug of pages) {
     return `<link rel="stylesheet" href="${cssOutput}">`;
   });
   // Also rewrite the room-module JSON map, not just HTML attributes.
+  html = html.replace(/\b(srcset|data-srcset)="([^"]+)"/g, (_, attribute, candidates) =>
+    `${attribute}="${candidates.replace(/assets\/[^,\s]+/g, emitAsset)}"`);
   html = html.replace(/(["'])(assets\/[^"'<>\s]+)\1/g, (_, quote, reference) => `${quote}${emitAsset(reference)}${quote}`);
   write(slug + ".html", Buffer.from(html));
 }

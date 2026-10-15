@@ -24,8 +24,11 @@ const assetUrl = (reference) => {
   const digest = crypto.createHash("sha256").update(fs.readFileSync(path.join(ROOT, file))).digest("hex").slice(0, 12);
   return `${file}?v=${digest}`;
 };
-const versionAssets = (html) => html.replace(/\b(src|href)="(assets\/[^"?#]+)(?:\?[^"#]*)?"/g,
-  (_, attribute, file) => `${attribute}="${assetUrl(file)}"`);
+const versionAssets = (html) => html
+  .replace(/\b(src|href|data-src)="(assets\/[^"?#]+)(?:\?[^"#]*)?"/g,
+    (_, attribute, file) => `${attribute}="${assetUrl(file)}"`)
+  .replace(/\b(srcset|data-srcset)="([^"]+)"/g, (_, attribute, candidates) =>
+    `${attribute}="${candidates.replace(/assets\/[^,\s]+/g, assetUrl)}"`);
 
 const readPartial = (name) => {
   const f = path.join(PARTIALS, name + ".html");

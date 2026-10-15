@@ -1,0 +1,122 @@
+{
+  "assets/reference/team/cy00.jpg": [
+    {
+      "src": "assets/reference/team/cy00-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/cy00-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/cy01.jpg": [
+    {
+      "src": "assets/reference/team/cy01-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/cy01-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/cy02.jpg": [
+    {
+      "src": "assets/reference/team/cy02-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/cy02-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/dongyue.png": [
+    {
+      "src": "assets/reference/team/dongyue-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/dongyue-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s01.jpg": [
+    {
+      "src": "assets/reference/team/s01-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s01-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s02.jpg": [
+    {
+      "src": "assets/reference/team/s02-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s02-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s03.jpg": [
+    {
+      "src": "assets/reference/team/s03-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s03-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s04.jpg": [
+    {
+      "src": "assets/reference/team/s04-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s04-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s05.jpg": [
+    {
+      "src": "assets/reference/team/s05-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s05-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s06.jpg": [
+    {
+      "src": "assets/reference/team/s06-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s06-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s07.jpg": [
+    {
+      "src": "assets/reference/team/s07-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s07-500.webp",
+      "width": 500
+    }
+  ],
+  "assets/reference/team/s08.jpg": [
+    {
+      "src": "assets/reference/team/s08-240.webp",
+      "width": 240
+    },
+    {
+      "src": "assets/reference/team/s08-500.webp",
+      "width": 349
+    }
+  ]
+}

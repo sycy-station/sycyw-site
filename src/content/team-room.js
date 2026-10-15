@@ -1,8 +1,15 @@
 const data = require("./team-data.json");
+const imageVariants = require("./team-image-variants.json");
 const esc = (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const number = (index) => String(index + 1).padStart(2, "0");
 
-const portrait = (member, className = "team-portrait") => `<div class="${className}"><div class="team-portrait-image"><img src="${esc(member.image)}" alt="${esc(member.name)}的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>`;
+const portrait = (member, className = "team-portrait") => {
+  const variants = imageVariants[member.image];
+  const source = esc(variants[variants.length - 1].src);
+  const candidates = variants.map((variant) => `${esc(variant.src)} ${variant.width}w`).join(', ');
+  const attributes = `alt="${esc(member.name)}的头像" width="500" height="500" decoding="async"`;
+  return `<div class="${className}"><div class="team-portrait-image"><img data-src="${source}" data-srcset="${candidates}" ${attributes}><noscript><img src="${source}" ${attributes} loading="lazy"></noscript></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>`;
+};
 
 const leaderProfile = (member, index) => {
   const id = `team-leader-${index}`;

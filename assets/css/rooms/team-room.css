@@ -59,6 +59,7 @@ html.room-enhanced[data-slug="team"] .stage-foot {
 .team-profile-index::after { content: ""; display: inline-block; width: 30px; height: 1px; margin-left: 10px; background: var(--team-muted); vertical-align: middle; }
 .team-portrait { --portrait-size: clamp(116px, 11vw, 210px); position: relative; width: var(--portrait-size); height: var(--portrait-size); max-width: 100%; margin: 0 auto 24px; }
 .team-portrait-image { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--paper); }
+.team-portrait-image > img:not([src]) { display: none; }
 .team-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(.7); transition: filter 420ms ease, transform 600ms var(--ease); }
 .team-portrait-orbit { position: absolute; inset: -9px; border: 1px solid var(--team-muted); border-radius: 50%; transform: rotate(-20deg); transition: transform 700ms var(--ease), border-color 350ms ease; pointer-events: none; }
 .team-portrait-orbit::before { content: ""; position: absolute; inset: -5px; border: 1px dashed var(--line); border-radius: 50%; }

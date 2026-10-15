@@ -124,7 +124,15 @@
   html[data-page="stage"]:not([data-home-collapsed]) .stage-narrator { visibility: visible; }
   html[data-page="stage"] .stage-foot { position: static; display: flex; width: 100%; margin: 16px auto 0; transform: none; }
 
-  .splash-skip { display: block; position: absolute; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); z-index: 20; transform: translateX(-50%); border: 1px solid var(--line-strong); padding: 10px 18px; min-height: 44px; background: var(--paper); color: var(--ink); font: 12px/1.8 var(--font-sans); white-space: nowrap; cursor: pointer; }
+  /* Leave room below the reticle and keep the opening caption on one centered line. */
+  .splash-content { --meta-offset: calc(var(--logo-size) / 2 + 2rem); }
+  .splash-caption { display: flex; align-items: center; justify-content: center; gap: .6em; max-width: 100%; font-size: clamp(9px, 2.5vw, 11px); letter-spacing: .18em; white-space: nowrap; }
+  .splash-caption > span { flex: none; }
+  .splash-caption .cap-br { letter-spacing: 0; }
+
+  /* Let the opening logo land on the actual home image, including in landscape. */
+  #splash.phase-expand[data-logo-aligned] .splash-logo { transform: translate(var(--splash-logo-x), var(--splash-logo-y)) scale(var(--splash-logo-scale)); }
+  #splash.phase-expand[data-logo-realigned] .splash-logo { transition-duration: 0s; }
   .product-preview-zoom { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 12px; }
   .product-preview-zoom button { min-height: 44px; min-width: 44px; padding: 6px 10px; border: 1px solid var(--line); color: var(--ink); background: transparent; font: 12px/1.5 var(--font-sans); }
   .product-preview-zoom span { margin-left: auto; font-size: 11px; color: var(--grey-strong); }
@@ -137,9 +145,8 @@
 }
 
 /* These added controls are absent visually on the desktop experience. */
-.splash-skip, .product-preview-zoom { display: none; }
+.product-preview-zoom { display: none; }
 @media (max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse) {
-  .splash-skip { display: block; }
   .product-preview-zoom { display: flex; }
 }
 @media (max-width: 760px) and (max-height: 740px) {
@@ -149,6 +156,13 @@
   html[data-page="stage"] .stage-logo-wrap { margin-bottom: 4px; }
   html[data-page="stage"] .stage-about { margin-top: 12px; font-size: 14px; }
   html[data-page="stage"] .stage-foot { margin-top: 8px; }
+}
+@media (max-width: 1000px) and (max-height: 600px) and (orientation: landscape) and (pointer: coarse) {
+  .splash-content { --logo-size: clamp(64px, 20dvh, 96px); transform: translateY(calc(-1 * clamp(60px, 24dvh, 96px))); }
+  .splash-name { font-size: 1.15rem; }
+  .splash-line { margin-top: .6rem; }
+  .splash-caption { margin-top: .6rem; }
+  .splash-code { margin-top: .8rem; min-height: 5.1em; font-size: .68rem; }
 }
 @media (max-width: 1000px) and (max-height: 500px) and (pointer: coarse) {
   html[data-experience="orbit"] { --room-top: 164px; --room-title-size: 23px; }

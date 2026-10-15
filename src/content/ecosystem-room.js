@@ -65,7 +65,7 @@ const ECOSYSTEM_SCENE = `
       ${PARTNERS.map((p, i) => `<section class="room-panel eco-panel" id="panel-ecosystem-${i}" role="tabpanel" aria-labelledby="tab-ecosystem-${i}" tabindex="0"${i ? " hidden" : ""}>
         <div class="eco-detail">
           <div class="eco-detail-top">
-            <figure class="eco-brand" data-eco-reveal><div class="eco-image-wrap"><img src="assets/reference/${p.image}" alt="${p.name}品牌图形" width="560" height="250"></div><figcaption><span>${p.name}</span><span aria-hidden="true">0${i + 1} / 03</span></figcaption></figure>
+            <figure class="eco-brand" data-eco-reveal><div class="eco-image-wrap"><img ${i ? 'data-src' : 'src'}="assets/reference/${p.image}" alt="${p.name}品牌图形" width="560" height="250" decoding="async">${i ? `<noscript><img src="assets/reference/${p.image}" alt="${p.name}品牌图形" width="560" height="250" decoding="async" loading="lazy"></noscript>` : ''}</div><figcaption><span>${p.name}</span><span aria-hidden="true">0${i + 1} / 03</span></figcaption></figure>
             <div class="eco-introduction"><p class="eco-kicker" data-eco-reveal>${p.category} <span aria-hidden="true">/ ${p.english}</span></p><h2 class="eco-title"><span data-eco-line>${p.title.replace("<br>", "</span><span data-eco-line>")}</span></h2><p class="eco-copy" data-eco-reveal>${p.copy}</p></div>
           </div>
           <div class="eco-features">${p.features.map(([title, copy], n) => `<div class="eco-feature" data-eco-reveal><span class="eco-feature-no" aria-hidden="true">0${n + 1}</span><h3>${title}</h3><p>${copy}</p></div>`).join("")}</div>

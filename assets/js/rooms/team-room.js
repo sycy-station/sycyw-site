@@ -19,6 +19,17 @@
     };
     const stop = () => { animations.forEach((animation) => animation.cancel()); animations = []; };
     const rosterSize = (roster) => `${roster.clientWidth}:${roster.clientHeight}`;
+    const loadPortraits = (container) => {
+      container.querySelectorAll('img[data-src], img[srcset]').forEach((image) => {
+        image.sizes = `${Math.ceil(image.parentElement.getBoundingClientRect().width)}px`;
+        if (!image.dataset.src) return;
+        // Set candidates before src so the browser downloads only the chosen density.
+        image.srcset = image.dataset.srcset;
+        image.src = image.dataset.src;
+        delete image.dataset.src;
+        delete image.dataset.srcset;
+      });
+    };
 
     const dimensions = (scene) => {
       const { roster } = groups.get(scene);
@@ -64,7 +75,10 @@
         scene.style.setProperty("--team-core-portrait", `${Math.round(portraitSize)}px`);
       }
       const start = group.page * size;
-      group.cells.forEach((cell, index) => { cell.hidden = index < start || index >= start + size; });
+      group.cells.forEach((cell, index) => {
+        cell.hidden = index < start || index >= start + size;
+        if (!cell.hidden) loadPortraits(cell.querySelector('.team-profile'));
+      });
       const pager = scene.querySelector("[data-team-pager]");
       pager.dataset.pages = String(pages);
       pager.inert = pages === 1;
@@ -101,6 +115,7 @@
         const dialog = content.querySelector(`#${button.dataset.teamDetails}`);
         if (!dialog || dialog.open) return;
         dialog.showModal();
+        loadPortraits(dialog);
         if (!reduced.matches) dialog.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 300, easing: ease });
       }));
       scene.querySelectorAll("[data-team-close]").forEach((button) => listen(button, "click", () => button.closest("dialog").close()));

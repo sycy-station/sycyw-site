@@ -21,7 +21,8 @@
     let preloadTimer;
     const prepareImage = (panel) => {
       const source = panel?.querySelector(".product-image-button img");
-      if (!source || navigator.connection?.saveData || /(^|-)2g$/.test(navigator.connection?.effectiveType || "")) return;
+      // Touch previews load on selection; preserve desktop hover/next-image preloading.
+      if (!source || mobilePreview.matches || navigator.connection?.saveData || /(^|-)2g$|^3g$/.test(navigator.connection?.effectiveType || "")) return;
       const preload = new Image();
       preload.decoding = "async";
       preload.src = source.currentSrc || source.src;

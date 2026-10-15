@@ -28,6 +28,11 @@
       currentPanel = panel;
       const index = [...scene.querySelectorAll(".eco-panel")].indexOf(panel);
       scene.dataset.active = String(index);
+      const brandImage = panel.querySelector('.eco-brand img');
+      if (brandImage.dataset.src) {
+        brandImage.src = brandImage.dataset.src;
+        delete brandImage.dataset.src;
+      }
       if (reduced.matches) return;
       panel.querySelectorAll("[data-eco-line]").forEach((line, i) => {
         add(line, [

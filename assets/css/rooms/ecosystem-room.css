@@ -68,6 +68,7 @@ html[data-slug="ecosystem"] .eco-panel[hidden] { display: none; }
 .eco-image-wrap { position: relative; width: 100%; border: 1px solid var(--line); padding: 6px; background: var(--paper); }
 .eco-image-wrap::after { content: ""; position: absolute; width: 8px; height: 8px; right: -4px; top: -4px; background: var(--eco-accent); }
 .eco-brand img { display: block; width: 100%; height: auto; aspect-ratio: 56 / 25; object-fit: contain; background: #fff; }
+.eco-brand img:not([src]) { display: none; }
 .eco-brand figcaption { display: flex; justify-content: space-between; gap: 10px; margin-top: 13px; color: var(--grey-strong); font: 10px/1.5 var(--font-mono); letter-spacing: .05em; }
 .eco-introduction { min-width: 0; }
 .eco-introduction .eco-kicker > span { display: none; }

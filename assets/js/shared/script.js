@@ -61,8 +61,7 @@
     handoffOverlap: 290,
     dissolve: 620
   };
-  const phoneSplash = matchMedia("(max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse)").matches;
-  if (phoneSplash) Object.assign(TIMING, { nameDelay: 320, codeDelay: 360, charSpeed: 9, lineGap: 70, expandDelay: 180, holdExpanded: 700 });
+  const phoneSplash = window.matchMedia("(max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse)");
   const SP_PHASES = ["sp-logo", "sp-name", "sp-code", "sp-expand", "sp-leave"];
   const setPhase = (name) => {
     if (name) splash.classList.add("phase-" + name);
@@ -241,8 +240,30 @@
     };
   })();
 
+  let splashLogoObserver = null;
+  const alignSplashLogo = (event) => {
+    if (!hasSplash || finished) return;
+    if (!phoneSplash.matches) {
+      splash.removeAttribute("data-logo-aligned");
+      return;
+    }
+    // Measure the image, since the home button also includes the brand name.
+    const homeLogo = document.querySelector(".stage-logo");
+    const origin = splash.querySelector(".splash-logo-wrap").getBoundingClientRect();
+    const target = homeLogo?.getBoundingClientRect();
+    if (!target?.width || !origin.width) return;
+    splash.style.setProperty("--splash-logo-x", `${target.x + target.width / 2 - origin.x - origin.width / 2}px`);
+    splash.style.setProperty("--splash-logo-y", `${target.y + target.height / 2 - origin.y - origin.height / 2}px`);
+    splash.style.setProperty("--splash-logo-scale", String(target.width / origin.width));
+    splash.setAttribute("data-logo-aligned", "");
+    // A viewport reflow must follow the home layout immediately, even mid-handoff.
+    if (event?.type === "resize" && splash.classList.contains("phase-expand")) {
+      splash.setAttribute("data-logo-realigned", "");
+    }
+  };
   const expandLogo = () => {
     if (splashDone) return;
+    alignSplashLogo();
     setPhase("expand");
     lockSeq();
     setHud("READY", 100);
@@ -254,6 +275,9 @@
   const finishSplash = () => {
     if (finished) return;
     finished = true;
+    splashLogoObserver?.disconnect();
+    window.removeEventListener("resize", alignSplashLogo);
+    window.visualViewport?.removeEventListener("resize", alignSplashLogo);
     splash.style.display = "none";
     splash.setAttribute("aria-hidden", "true");
     document.body.classList.add("stage-in");
@@ -300,6 +324,7 @@
     skipping = true;
     clearTimers();
     cls.add("skip");
+    alignSplashLogo();
     setPhase("expand");
     lockSeq();
     setHud("READY", 100);
@@ -307,12 +332,12 @@
   };
 
   if (hasSplash) {
-    if (phoneSplash) {
-      const skip = document.createElement("button");
-      skip.type = "button"; skip.className = "splash-skip"; skip.textContent = "轻触跳过开场";
-      splash.removeAttribute("aria-hidden");
-      splash.appendChild(skip);
-    }
+    window.addEventListener("resize", alignSplashLogo);
+    window.visualViewport?.addEventListener("resize", alignSplashLogo);
+    // Follow the home's width transition while the viewport changes.
+    splashLogoObserver = new ResizeObserver(() => alignSplashLogo());
+    [document.querySelector(".stage-logo"), splash.querySelector(".splash-logo-wrap")]
+      .filter(Boolean).forEach((element) => splashLogoObserver.observe(element));
     splash.addEventListener("click", leaveSplash);
     window.addEventListener("keydown", (e) => {
       if (!splashDone && (e.key === "Escape" || e.key === "Enter")) {

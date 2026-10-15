@@ -33,6 +33,9 @@ for (const file of files) {
     const html = buffer.toString("utf8");
     assert(!/\{\{[^}]+\}\}/.test(html), `Unexpanded template: ${file}`);
     for (const match of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) verifyReference(match[1], file);
+    for (const match of html.matchAll(/\b(?:srcset|data-srcset)="([^"]+)"/g)) {
+      for (const candidate of match[1].split(',')) verifyReference(candidate.trim().split(/\s+/)[0], file);
+    }
     const resources = html.match(/<script type="application\/json" id="roomResources">([\s\S]*?)<\/script>/);
     if (resources) for (const reference of Object.values(JSON.parse(resources[1]))) verifyReference(reference, file);
   }
