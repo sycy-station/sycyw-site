@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方案二 · 分屏跨页</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../theme.css">
+<link rel="stylesheet" href="b-scrollstage.css">
+</head>
+<body data-page="sub" class="bs-body">
+
+  <header class="site-header">
+    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+  </header>
+
+  <!-- 右侧竖排进度指示：四屏对应四个圆点 -->
+  <nav class="bs-nav" aria-label="分屏进度">
+    <a class="bs-dot is-current" href="#bs-1" data-label="故事"><span></span></a>
+    <a class="bs-dot" href="#bs-2" data-label="使命"><span></span></a>
+    <a class="bs-dot" href="#bs-3" data-label="历程"><span></span></a>
+    <a class="bs-dot" href="#bs-4" data-label="概况"><span></span></a>
+  </nav>
+
+  <main class="bs-main">
+
+    <section class="bs-screen" id="bs-1">
+      <div class="bs-deco" aria-hidden="true"></div>
+      <div class="bs-inner">
+        <span class="bs-kicker reveal-line">01 — OUR&nbsp;STORY</span>
+        <h1 class="bs-heading reveal-line">起初只是两个人<br>和一份不肯将就的清单</h1>
+        <div class="bs-cols reveal-item">
+          <p>我们在各自的岗位上反复遇到同一件事：一个界面被交付出去，看起来是完成了，可它没有被认真地想过——间距是随手给的，过渡是插件带的，状态是漏掉的。</p>
+          <p>于是我们决定自己来。不追逐流行的视觉语言，也不堆叠不必要的装饰，把力气花在留白、节奏和秩序上。后来的每一年都在验证同一件事：克制不是少做，而是把该做的做到位。</p>
+        </div>
+      </div>
+      <span class="bs-scroll-hint reveal-line">向下滚动 ↓</span>
+    </section>
+
+    <section class="bs-screen" id="bs-2">
+      <div class="bs-inner">
+        <span class="bs-kicker reveal-line">02 — OUR&nbsp;MISSION</span>
+        <h2 class="bs-heading bs-heading-sm reveal-line">让复杂的系统<br>对使用它的人保持诚实</h2>
+        <div class="bs-creed">
+          <div class="bsc-col reveal-item">
+            <span class="bsc-no">01</span>
+            <h3>克制先于表达</h3>
+            <p>能不加的一律不加。一个页面的好坏不取决于用了多少组件。</p>
+          </div>
+          <div class="bsc-col reveal-item">
+            <span class="bsc-no">02</span>
+            <h3>设计与工程之间没有边界</h3>
+            <p>加载速度、首帧、可访问性，都是体验的一部分，不是上线前才想的事。</p>
+          </div>
+          <div class="bsc-col reveal-item">
+            <span class="bsc-no">03</span>
+            <h3>长期胜过漂亮</h3>
+            <p>交付的东西要能被别人接手，三年之后仍然讲得通。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bs-screen" id="bs-3">
+      <div class="bs-inner bs-inner-wide">
+        <span class="bs-kicker reveal-line">03 — MILESTONES</span>
+        <h2 class="bs-heading bs-heading-sm reveal-line">发展历程</h2>
+        <ol class="bs-timeline" role="list">
+          <li class="bst-node reveal-item"><span class="bst-year">2021</span><p>成立，两个人、一间租来的房间。</p></li>
+          <li class="bst-node reveal-item"><span class="bst-year">2022</span><p>第一套设计系统交付。</p></li>
+          <li class="bst-node reveal-item"><span class="bst-year">2023</span><p>团队扩充到六人。</p></li>
+          <li class="bst-node reveal-item"><span class="bst-year">2024</span><p>方法开始跨行业复制。</p></li>
+          <li class="bst-node is-now reveal-item"><span class="bst-year">2026</span><p>现在：让复杂的系统对人保持诚实。</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="bs-screen bs-screen-vitals" id="bs-4">
+      <div class="bs-inner">
+        <span class="bs-kicker reveal-line">04 — VITALS</span>
+        <div class="bs-vitals">
+          <div class="bsv-cell reveal-item"><span class="bsv-v">2021</span><span class="bsv-k">成立</span></div>
+          <div class="bsv-cell reveal-item"><span class="bsv-v">06</span><span class="bsv-k">团队</span></div>
+          <div class="bsv-cell reveal-item"><span class="bsv-v">40+</span><span class="bsv-k">交付</span></div>
+          <div class="bsv-cell reveal-item"><span class="bsv-v">上海</span><span class="bsv-k">据点</span></div>
+        </div>
+        <span class="bs-coord reveal-line">31.23N&nbsp;121.47E</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="reveal.js"></script>
+  <script src="b-scrollstage.js"></script>
+</body>
+</html>

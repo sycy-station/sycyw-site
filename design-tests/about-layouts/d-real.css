@@ -1,0 +1,249 @@
+/* 方案四：按旧站 syciyuan.cn/about.html 的内容与分段结构重做，
+   视觉语言换成本站极简黑白系统（细线、等宽数字、克制留白），
+   不用旧站的粉紫渐变与图标插画。 */
+
+.ro-main {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--shell-pad);
+  padding-bottom: 6rem;
+}
+
+/* ---- 1 Hero ---- */
+.ro-hero {
+  padding-bottom: 3.4rem;
+  border-bottom: 1px solid var(--line-strong);
+  margin-bottom: 4.6rem;
+}
+.ro-kicker {
+  display: block;
+  margin-bottom: 1.4rem;
+}
+.ro-hero-title {
+  font-size: clamp(2rem, 1.3rem + 3vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin-bottom: 1.8rem;
+}
+.ro-em {
+  position: relative;
+}
+.ro-em::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.06em;
+  height: 0.1em;
+  background: var(--line-strong);
+  z-index: -1;
+}
+.ro-hero-desc {
+  max-width: 42em;
+  font-size: var(--fs-body);
+  line-height: 1.85;
+  color: var(--text-body);
+}
+
+/* ---- 通用段头 ---- */
+.ro-block + .ro-block {
+  margin-top: 5rem;
+}
+.ro-head {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.6rem;
+}
+.ro-no {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+}
+.ro-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+}
+.ro-title {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.ro-sub {
+  color: var(--text-soft);
+  font-size: var(--fs-body-sm);
+  margin-bottom: 2.4rem;
+}
+
+/* ---- 2 故事：满宽正文，不做图文分栏（旧站左图右文，图片替换为留白） ---- */
+.ro-prose {
+  max-width: 52em;
+  font-size: var(--fs-body);
+  line-height: 1.9;
+  color: var(--text-body);
+  display: grid;
+  gap: 1.2rem;
+}
+
+/* ---- 3 价值观：三列通栏宽卡，去掉图标改用编号 ---- */
+.ro-value-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line-strong);
+}
+.ro-value-col {
+  padding: 2rem 1.8rem 0;
+  border-left: 1px solid var(--line);
+}
+.ro-value-col:first-child { border-left: 0; padding-left: 0; }
+.ro-value-no {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+  margin-bottom: 0.9rem;
+}
+.ro-value-title {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+}
+.ro-value-col p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+/* ---- 4 使命：陈述 + 四个数据横向铺满 ---- */
+.ro-mission-desc {
+  max-width: 48em;
+  font-size: var(--fs-body);
+  line-height: 1.85;
+  color: var(--text-body);
+  margin-bottom: 2.6rem;
+}
+.ro-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+.ro-stat {
+  padding: 1.6rem 1.4rem;
+  display: grid;
+  gap: 0.5rem;
+  border-left: 1px solid var(--line);
+}
+.ro-stat:first-child { border-left: 0; }
+.ro-stat-v {
+  font-family: var(--font-mono);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.ro-stat-k {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+
+/* ---- 5 发展历程：左右交替（zigzag）时间轴，细线极简版 ---- */
+.ro-timeline {
+  list-style: none;
+  position: relative;
+  padding-top: 0.4rem;
+}
+.ro-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--line-strong);
+  transform: translateX(-50%);
+}
+.ro-tl-item {
+  position: relative;
+  width: 50%;
+  padding: 0 3.2rem 3rem;
+}
+.ro-tl-item:nth-child(odd) {
+  left: 0;
+  text-align: right;
+}
+.ro-tl-item:nth-child(even) {
+  left: 50%;
+  text-align: left;
+}
+.ro-tl-item::before {
+  content: "";
+  position: absolute;
+  top: 0.35rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  z-index: 1;
+}
+.ro-tl-item:nth-child(odd)::before { right: -5px; }
+.ro-tl-item:nth-child(even)::before { left: -5px; }
+.ro-tl-item.is-now::before { background: var(--ink); }
+
+.ro-tl-card { display: inline-block; max-width: 26rem; }
+.ro-tl-year {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  letter-spacing: 0.08em;
+  color: var(--grey-strong);
+  margin-bottom: 0.7rem;
+}
+.ro-tl-title {
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.ro-tl-card p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+@media (max-width: 760px) {
+  .ro-value-grid { grid-template-columns: 1fr; }
+  .ro-value-col { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1.6rem; }
+  .ro-value-col:first-child { border-top: 0; }
+
+  .ro-stats { grid-template-columns: repeat(2, 1fr); }
+  .ro-stat:nth-child(3) { border-left: 0; }
+
+  .ro-timeline::before { left: 0.3rem; }
+  .ro-tl-item,
+  .ro-tl-item:nth-child(odd),
+  .ro-tl-item:nth-child(even) {
+    width: 100%;
+    left: 0;
+    text-align: left;
+    padding: 0 0 2.2rem 2rem;
+  }
+  .ro-tl-item::before,
+  .ro-tl-item:nth-child(odd)::before,
+  .ro-tl-item:nth-child(even)::before {
+    left: -0.05rem;
+    right: auto;
+  }
+  .ro-tl-card { max-width: none; }
+}

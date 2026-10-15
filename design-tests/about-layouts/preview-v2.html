@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于我们 · 真·全宽先锋画幅预览</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../page.css">
+<link rel="stylesheet" href="../../theme.css">
+<link rel="stylesheet" href="preview-v2.css">
+</head>
+<body data-page="sub">
+
+  <!-- 顶部导航栏 -->
+  <header class="site-header">
+    <a class="mark" href="../../index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色模式" title="切换深色模式">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 顶部拟物电台调频刻度尺横条 -->
+  <nav class="index-bar" aria-label="全站导航">
+    <div class="ib-scroll">
+      <div class="ib-track">
+        <a class="ib-item" href="../../system-design.html" data-freq="88.1">
+          <span class="ib-no">01</span>
+          <span class="ib-title">系统设计</span>
+          <span class="ib-freq" aria-hidden="true">88.1</span>
+        </a>
+        <a class="ib-item" href="../../interaction.html" data-freq="91.5">
+          <span class="ib-no">02</span>
+          <span class="ib-title">交互研究</span>
+          <span class="ib-freq" aria-hidden="true">91.5</span>
+        </a>
+        <a class="ib-item" href="../../brand.html" data-freq="94.7">
+          <span class="ib-no">03</span>
+          <span class="ib-title">品牌语言</span>
+          <span class="ib-freq" aria-hidden="true">94.7</span>
+        </a>
+        <a class="ib-item is-current" href="#" aria-current="page" data-freq="98.3">
+          <span class="ib-no">04</span>
+          <span class="ib-title">关于我们</span>
+          <span class="ib-freq" aria-hidden="true">98.3</span>
+        </a>
+        <a class="ib-item" href="../../motion.html" data-freq="101.9">
+          <span class="ib-no">05</span>
+          <span class="ib-title">动效编排</span>
+          <span class="ib-freq" aria-hidden="true">101.9</span>
+        </a>
+        <a class="ib-item" href="../../archive.html" data-freq="104.6">
+          <span class="ib-no">06</span>
+          <span class="ib-title">实验归档</span>
+          <span class="ib-freq" aria-hidden="true">104.6</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主画布：彻底突破 max-width: 1200px / 1800px 封锁，实现 100vw 全幅展开 -->
+  <main class="page-main pv-canvas-full" id="top">
+
+    <!-- 1. HERO POSTER: 先锋巨幅海报与波形状态区 -->
+    <section class="pv-poster">
+      <div class="pv-poster-topbar">
+        <div class="pv-poster-status">
+          <span class="pv-pulse-dot"></span>
+          <span>SYCYW LAB // OPERATIONAL SYSTEM</span>
+        </div>
+        <div>STATION FREQ : 98.3 MHz</div>
+        <div>COORDINATE : 31.23°N 121.47°E</div>
+        <div>INDEX // 04</div>
+      </div>
+
+      <div class="pv-poster-hero-grid">
+        <h1 class="pv-poster-title">
+          用创意与工程
+          <span class="pv-outline">连接二次元与现实</span>
+        </h1>
+        <div class="pv-poster-aside">
+          <p class="pv-poster-desc">
+            森韵次元坞创立于 2024 年，由一群热爱 ACGN 文化、前沿科技与极简工程美学的年轻人组成。我们打破传统设计与开发的边界，让科技更有温度，让属于年轻人的数字空间保持纯粹与诚实。
+          </p>
+          <div class="pv-waveform-box">
+            <span class="pv-waveform-label">AUDIO FREQ SIGNAL</span>
+            <div class="pv-waveform-bars" aria-hidden="true">
+              <div class="pv-wave-bar" style="height:12px;"></div>
+              <div class="pv-wave-bar" style="height:18px;"></div>
+              <div class="pv-wave-bar" style="height:6px;"></div>
+              <div class="pv-wave-bar" style="height:22px;"></div>
+              <div class="pv-wave-bar" style="height:14px;"></div>
+              <div class="pv-wave-bar" style="height:20px;"></div>
+              <div class="pv-wave-bar" style="height:10px;"></div>
+              <div class="pv-wave-bar" style="height:16px;"></div>
+              <div class="pv-wave-bar" style="height:24px;"></div>
+              <div class="pv-wave-bar" style="height:8px;"></div>
+              <div class="pv-wave-bar" style="height:19px;"></div>
+              <div class="pv-wave-bar" style="height:13px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. BENTO MATRIX: 工业级非对称数据与基础设施矩阵 (全宽 12 栏) -->
+    <section class="pv-section">
+      <header class="pv-sec-head">
+        <div class="pv-sec-index">
+          <span class="no">01</span>
+          <span class="title">SYSTEM VITALS & INFRASTRUCTURE</span>
+        </div>
+        <span class="pv-sec-meta">METRIC // SPEC SHEET</span>
+      </header>
+
+      <div class="pv-bento-grid">
+        <!-- 历程大数 (span 4) -->
+        <div class="pv-bento-card bento-origin">
+          <div class="pbc-header">
+            <span>EXPLORATION</span>
+            <span>01-A</span>
+          </div>
+          <div class="pbc-origin-body">
+            <div class="pbc-main-val">
+              <span>6+</span>
+              <span class="pbc-unit">YEARS</span>
+            </div>
+            <div class="pbc-desc">自 2018 年独立社区试验起步，跨越 6 年持续打磨与沉淀。</div>
+          </div>
+        </div>
+
+        <!-- 物理基础设施与团队 (span 8) -->
+        <div class="pv-bento-card bento-infra">
+          <div class="pbc-header">
+            <span>INFRASTRUCTURE TOPOLOGY</span>
+            <span>01-B // SELF-HOSTED</span>
+          </div>
+          <div>
+            <h3 style="font-size: 1.45rem; font-weight:500; margin-bottom: 0.6rem; color:var(--ink);">自主搭建的物理计算与内容集群</h3>
+            <p class="pbc-desc">不妥协于公有云模板限制，自建物理服务器，为二次元平台的高性能音视频与交互提供底层保障。</p>
+            
+            <div class="pv-infra-flow">
+              <div class="pv-infra-node">
+                <span class="pvn-tag">NODE 01</span>
+                <div class="pvn-name">物理服务器集群</div>
+                <div class="pvn-stat">ONLINE · 99.98%</div>
+              </div>
+              <div class="pv-infra-node">
+                <span class="pvn-tag">NODE 02</span>
+                <div class="pvn-name">音视频流与存储</div>
+                <div class="pvn-stat">HIGH DENSITY</div>
+              </div>
+              <div class="pv-infra-node">
+                <span class="pvn-tag">NODE 03</span>
+                <div class="pvn-name">微内核客户端架构</div>
+                <div class="pvn-stat">STANDALONE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 圈层领域沉淀 (span 7) -->
+        <div class="pv-bento-card bento-domains">
+          <div class="pbc-header">
+            <span>DOMAIN ECOSYSTEM</span>
+            <span>01-C</span>
+          </div>
+          <div>
+            <h3 style="font-size: 1.3rem; font-weight:500; margin-bottom: 0.6rem; color:var(--ink);">跨圈层的深度实践与调研</h3>
+            <p class="pbc-desc">七年间深入各大亚文化与前沿领域，将真实体验沉淀为产品与交互设计规范：</p>
+            <div class="pv-tag-matrix">
+              <span class="pv-matrix-pill">Vup 虚拟主播生态</span>
+              <span class="pv-matrix-pill">术力口 (VOCALOID) 圈</span>
+              <span class="pv-matrix-pill">AI 音乐合成与编曲</span>
+              <span class="pv-matrix-pill">极简 UI / UX 设计系统</span>
+              <span class="pv-matrix-pill">Minecraft 独立社区架构</span>
+              <span class="pv-matrix-pill">原生轻量前端工程</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 团队终端信息 (span 5) -->
+        <div class="pv-bento-card bento-terminal">
+          <div class="pbc-header">
+            <span>DEV CONSOLE</span>
+            <span>01-D</span>
+          </div>
+          <div class="pv-term-box">
+            <div class="pv-term-row"><span class="pv-term-k">CORE_TEAM:</span><span class="pv-term-v">4 Founders & Archs</span></div>
+            <div class="pv-term-row"><span class="pv-term-k">DEV_FORCE:</span><span class="pv-term-v">13+ Active Devs</span></div>
+            <div class="pv-term-row"><span class="pv-term-k">COLLAB:</span><span class="pv-term-v">Design × Dev Co-located</span></div>
+            <div class="pv-term-row"><span class="pv-term-k">CAPEX:</span><span class="pv-term-v">100,000+ RMB Invested</span></div>
+            <div class="pv-term-row"><span class="pv-term-k">STATUS:</span><span class="pv-term-v" style="color:#10b981;">BETA PREPARING</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. EDITORIAL NARRATIVE: 全宽引语与三栏叙事 -->
+    <section class="pv-section">
+      <header class="pv-sec-head">
+        <div class="pv-sec-index">
+          <span class="no">02</span>
+          <span class="title">THE NARRATIVE & PHILOSOPHY</span>
+        </div>
+        <span class="pv-sec-meta">PERSPECTIVE // 故事与理念</span>
+      </header>
+
+      <div class="pv-narrative-grid">
+        <div class="pv-narrative-statement">
+          <blockquote class="pv-big-quote">
+            “二次元越来越普及，但属于年轻人兼具极致审美与硬核技术的数字净土，却近乎于无。”
+          </blockquote>
+          <div class="pv-statement-sign">
+            FOUNDER STATEMENT — 森韵次元坞 · 2024
+          </div>
+        </div>
+
+        <div class="pv-narrative-prose">
+          <div class="pv-prose-block">
+            <h3 class="pv-prose-title">01 / 起源于不肯妥协的初心</h3>
+            <p class="pv-prose-p">
+              创始团队由一群二次元爱好者与极客程序员组成。我们在各自的领域中反复遇到同样的问题：许多平台为了商业化充斥着杂乱的堆叠与嘈杂的噪点，忽略了界面最原本的节奏与纯粹。我们决定亲自动手，把力气花在留白、响应秩序与真正好用的产品上。
+            </p>
+          </div>
+
+          <div class="pv-prose-block">
+            <h3 class="pv-prose-title">02 / 从一个人的实验到 13 人的阵营</h3>
+            <p class="pv-prose-p">
+              从 2018 年最初由创始人一人运维的“OurSky”社区，到 2022 年结识志同道合的技术合伙人，再到 2024 年正式注资创立“森韵次元坞”并扩展至 13 人的协作团队。我们不仅是在做网页和应用，更是在构建一套能跨越时间检验的数字化乐园。
+            </p>
+          </div>
+
+          <div class="pv-prose-block">
+            <h3 class="pv-prose-title">03 / 让复杂的系统对人保持诚实</h3>
+            <p class="pv-prose-p">
+              我们坚持少即是多（Less but better）。不堆叠无意义的动画特效，每一次过渡、每一个字号、每一条发丝线都被认真推敲过。系统应当清晰说明它在做什么，不夸大、不隐瞒，三年之后仍然讲得通。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TRI-PILLAR: 三柱核心行动准则 (全宽等分) -->
+    <section class="pv-section">
+      <header class="pv-sec-head">
+        <div class="pv-sec-index">
+          <span class="no">03</span>
+          <span class="title">CORE OPERATING PRINCIPLES</span>
+        </div>
+        <span class="pv-sec-meta">CREED // 行动准则</span>
+      </header>
+
+      <div class="pv-pillars-grid">
+        <div class="pv-pillar-card">
+          <div>
+            <div class="pv-pillar-top">
+              <span class="pvp-no">01</span>
+              <span class="pvp-code">RULE // RESTRAINT</span>
+            </div>
+            <h3 class="pv-pillar-title">克制先于表达</h3>
+            <p class="pv-pillar-body">
+              能不加的元素一律不加。好的界面不需要喋喋不休地解释自己，真正的设计感来自于留白、节奏和秩序的深度克制。
+            </p>
+          </div>
+          <div class="pv-pillar-spec">SPEC 01 // LESS BUT BETTER</div>
+        </div>
+
+        <div class="pv-pillar-card">
+          <div>
+            <div class="pv-pillar-top">
+              <span class="pvp-no">02</span>
+              <span class="pvp-code">RULE // UNIFIED</span>
+            </div>
+            <h3 class="pv-pillar-title">设计与工程无界</h3>
+            <p class="pv-pillar-body">
+              首帧毫秒级渲染、无白屏闪烁、亚像素对齐与键盘可访问性，都是设计不可分割的组成部分，绝非交付后的补丁。
+            </p>
+          </div>
+          <div class="pv-pillar-spec">SPEC 02 // ZERO DEPENDENCY & 60FPS</div>
+        </div>
+
+        <div class="pv-pillar-card">
+          <div>
+            <div class="pv-pillar-top">
+              <span class="pvp-no">03</span>
+              <span class="pvp-code">RULE // ENDURING</span>
+            </div>
+            <h3 class="pv-pillar-title">长期胜过漂亮</h3>
+            <p class="pv-pillar-body">
+              交付的代码与架构必须具备长久的可维护性。拒绝追逐转瞬即逝的流行样式，打造能被后续团队接手并持续演进的坚固系统。
+            </p>
+          </div>
+          <div class="pv-pillar-spec">SPEC 03 // 3-YEAR TIMELESS STABILITY</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HORIZON TRACK: 横向长卷成长轨迹 -->
+    <section class="pv-section">
+      <header class="pv-sec-head">
+        <div class="pv-sec-index">
+          <span class="no">04</span>
+          <span class="title">CHRONOLOGY OF EVOLUTION</span>
+        </div>
+        <span class="pv-sec-meta">TIMELINE // ← 左右滑动探索 →</span>
+      </header>
+
+      <div class="pv-horizon-wrap">
+        <div class="pv-horizon-track">
+          
+          <div class="pv-hz-item">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2018</span>
+              <span class="pv-hz-phase">GENESIS</span>
+            </div>
+            <h3 class="pv-hz-title">“OurSky” 雏形创立</h3>
+            <p class="pv-hz-desc">由创始人一人独立创立并运维 Minecraft 社区，探索虚拟社群与交互体验的初心。</p>
+          </div>
+
+          <div class="pv-hz-item">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2022</span>
+              <span class="pv-hz-phase">ALLIANCE</span>
+            </div>
+            <h3 class="pv-hz-title">核心团队汇聚</h3>
+            <p class="pv-hz-desc">结识核心运维伙伴，启动底层架构规范化，储备自研资金与研发硬件设备。</p>
+          </div>
+
+          <div class="pv-hz-item">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2024.Q1</span>
+              <span class="pv-hz-phase">HARDWARE</span>
+            </div>
+            <h3 class="pv-hz-title">构想成型与硬件采购</h3>
+            <p class="pv-hz-desc">决定打造全新二次元综合平台，采购首批独立物理服务器，完成基础设施部署。</p>
+          </div>
+
+          <div class="pv-hz-item">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2024.Q4</span>
+              <span class="pv-hz-phase">INCEPTION</span>
+            </div>
+            <h3 class="pv-hz-title">森韵次元坞正式成立</h3>
+            <p class="pv-hz-desc">合伙人正式注资，团队全面成立，确立“极简、克制、纯粹”的产品基调与研发路线。</p>
+          </div>
+
+          <div class="pv-hz-item">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2025</span>
+              <span class="pv-hz-phase">EXPANSION</span>
+            </div>
+            <h3 class="pv-hz-title">全栈开发与团队扩展</h3>
+            <p class="pv-hz-desc">核心扩展至 4 人，研发团队达 13 人，完成客户端、微内核设计系统与交互实验室构建。</p>
+          </div>
+
+          <div class="pv-hz-item is-current">
+            <div class="pv-hz-top">
+              <span class="pv-hz-year">2026 / NOW</span>
+              <span class="pv-hz-phase">LAUNCHING</span>
+            </div>
+            <h3 class="pv-hz-title">内测与面向未来的下一站</h3>
+            <p class="pv-hz-desc">内测版本开放验证，新一代二次元与极简科技融合平台即将正式上线。</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MARQUEE STRIP: 先锋无限跑马灯 -->
+    <div class="pv-marquee-strip" aria-hidden="true">
+      <div class="pv-marquee-track">
+        <div class="pv-mq-item">
+          <span>MINIMAL SYSTEM</span><span class="pv-mq-dot">●</span>
+          <span>INTERFACE LAB</span><span class="pv-mq-dot">●</span>
+          <span>NO BOUNDARY BETWEEN DESIGN & CODE</span><span class="pv-mq-dot">●</span>
+          <span>SYCYW ARCHIVE</span><span class="pv-mq-dot">●</span>
+          <span>STATION 98.3 MHz</span><span class="pv-mq-dot">●</span>
+        </div>
+        <div class="pv-mq-item">
+          <span>MINIMAL SYSTEM</span><span class="pv-mq-dot">●</span>
+          <span>INTERFACE LAB</span><span class="pv-mq-dot">●</span>
+          <span>NO BOUNDARY BETWEEN DESIGN & CODE</span><span class="pv-mq-dot">●</span>
+          <span>SYCYW ARCHIVE</span><span class="pv-mq-dot">●</span>
+          <span>STATION 98.3 MHz</span><span class="pv-mq-dot">●</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. OUTRO CALLOUT: 底部交互卡片 -->
+    <section class="pv-outro-card">
+      <div class="pv-outro-left">
+        <h2>想要了解更多系统设计与实验？</h2>
+        <p>探索我们的交互研究、动效编排与实验归档档案。</p>
+      </div>
+      <div class="pv-outro-right">
+        <a class="pv-btn-action" href="../../system-design.html">
+          <span>EXPLORE SYSTEM</span>
+          <span>→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" style="padding-inline: var(--pv-pad);">
+    <div class="sf-meta" style="max-width: 100%; width: 100%;">
+      <span>© 2024 森韵次元坞</span>
+      <span class="sf-rev">WIDE-CANVAS EXPERIMENTAL // 纯粹真·全宽先锋画幅</span>
+    </div>
+  </footer>
+
+  <script>
+    // 简易黑白主题切换
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>

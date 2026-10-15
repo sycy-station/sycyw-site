@@ -1,0 +1,227 @@
+/* 方案一：全宽模块化编辑版式 —— 每段自行铺满宽度，不做主栏/侧栏切分 */
+
+.page-main {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--shell-pad);
+  padding-bottom: 6rem;
+}
+
+.am-block + .am-block {
+  margin-top: 5.2rem;
+}
+
+.am-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.am-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  color: var(--grey-strong);
+  letter-spacing: 0.18em;
+}
+.am-kicker-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--ink);
+}
+
+/* ---- 顶部数据条：满宽四等分，呼应首页 stage-foot 的一行读数感 ---- */
+.am-vitals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  margin-bottom: 4rem;
+}
+.amv-item {
+  padding: 1.4rem 1.6rem;
+  display: grid;
+  gap: 0.5rem;
+  border-left: 1px solid var(--line);
+}
+.amv-item:first-child { border-left: 0; }
+.amv-k {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+}
+.amv-v {
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2.1rem);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+/* ---- 故事段：大字引言 + 正文两栏窄柱，横向占满 ---- */
+.am-story-grid {
+  display: grid;
+  gap: 2.4rem;
+}
+@media (min-width: 860px) {
+  .am-story-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    align-items: start;
+  }
+}
+.am-lead {
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.am-cols {
+  display: grid;
+  gap: 1.3rem;
+  font-size: var(--fs-body);
+  line-height: 1.85;
+  color: var(--text-body);
+}
+@media (min-width: 860px) {
+  .am-cols {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+  }
+}
+
+/* ---- 使命：三条准则做满宽三列宽卡 ---- */
+.am-mission-lead {
+  font-size: clamp(1.3rem, 1rem + 1vw, 1.9rem);
+  font-weight: 500;
+  line-height: 1.5;
+  max-width: 40em;
+  margin-bottom: 2.6rem;
+  color: var(--ink);
+}
+.am-creed {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line-strong);
+}
+.amc-col {
+  padding: 2rem 1.8rem 0;
+  border-left: 1px solid var(--line);
+}
+.amc-col:first-child { border-left: 0; }
+.amc-no {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+  margin-bottom: 0.9rem;
+}
+.amc-title {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+}
+.amc-col p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+/* ---- 历程：横向铺开的通栏时间轴 ---- */
+.am-timeline {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  padding-top: 2.2rem;
+}
+.am-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line-strong);
+}
+.amt-node {
+  position: relative;
+  padding-right: 1.4rem;
+  border-left: 1px solid var(--line);
+  padding-left: 1.2rem;
+}
+.amt-node:first-child { border-left: 0; padding-left: 0; }
+.amt-dot {
+  position: absolute;
+  top: -1.65rem;
+  left: 1.2rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+.amt-node:first-child .amt-dot { left: 0; }
+.amt-node.is-now .amt-dot {
+  background: var(--ink);
+}
+.amt-year {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  letter-spacing: 0.08em;
+  color: var(--grey-strong);
+  margin-bottom: 0.9rem;
+}
+.amt-title {
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+.amt-node p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+@media (max-width: 900px) {
+  .am-timeline {
+    grid-template-columns: 1fr;
+    gap: 2.2rem;
+    padding-top: 0;
+  }
+  .am-timeline::before {
+    top: 0;
+    bottom: 0;
+    left: 0.55rem;
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+  .amt-node {
+    border-left: 0;
+    padding-left: 1.8rem;
+  }
+  .amt-node:first-child { padding-left: 1.8rem; }
+  .amt-dot {
+    top: 0.35rem;
+    left: 0.15rem;
+  }
+  .amt-node:first-child .amt-dot { left: 0.15rem; }
+}
+
+@media (max-width: 720px) {
+  .am-vitals { grid-template-columns: repeat(2, 1fr); }
+  .amv-item:nth-child(3) { border-left: 0; }
+  .am-creed { grid-template-columns: 1fr; }
+  .amc-col { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1.6rem; }
+  .amc-col:first-child { border-top: 0; }
+}

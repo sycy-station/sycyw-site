@@ -1,0 +1,801 @@
+/* ==========================================================================
+   全新纯粹真·全宽先锋画幅 (preview-v2.css)
+   完全打破任何 max-width 封锁，实现 100vw 贯通的大屏沉浸式视觉
+   ========================================================================== */
+
+:root {
+  --pv-pad: clamp(1.25rem, 3vw, 4rem);
+  --pv-ink: var(--ink);
+  --pv-paper: var(--paper);
+  --pv-accent-bg: rgba(10, 10, 10, 0.025);
+  --pv-border: rgba(10, 10, 10, 0.12);
+  --pv-border-bold: rgba(10, 10, 10, 0.28);
+  --pv-mono: var(--font-mono);
+  --pv-sans: var(--font-sans);
+}
+
+[data-theme="dark"] {
+  --pv-accent-bg: rgba(255, 255, 255, 0.035);
+  --pv-border: rgba(255, 255, 255, 0.12);
+  --pv-border-bold: rgba(255, 255, 255, 0.3);
+}
+
+/* 覆盖一切外层约束：绝对真·100% 满宽，不锁死任何 px */
+.page-main.pv-canvas-full,
+.pv-canvas-full {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: calc(var(--header-h) + 2rem) var(--pv-pad) 8rem !important;
+  box-sizing: border-box !important;
+}
+
+/* style.css constrains every section to 1200px; this preview owns a full-width canvas. */
+.pv-canvas-full > .pv-poster,
+.pv-canvas-full > .pv-section,
+.pv-canvas-full > .pv-outro-card {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  box-sizing: border-box;
+}
+
+/* 顶部导航条也同步解除 shell 锁死 */
+.index-bar .ib-scroll {
+  max-width: 100% !important;
+  padding-inline: var(--pv-pad) !important;
+}
+
+.site-header {
+  padding-inline: var(--pv-pad) !important;
+}
+
+.site-footer {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. HERO POSTER: 超宽画幅先锋首屏 (全屏贯通)
+   -------------------------------------------------------------------------- */
+.pv-poster {
+  border-bottom: 1px solid var(--pv-border-bold);
+  padding: clamp(2.5rem, 4vw, 4rem) 0 clamp(3rem, 5vw, 5.5rem);
+  margin-bottom: clamp(3.5rem, 6vw, 6.5rem);
+}
+
+.pv-poster-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--pv-border);
+  font-family: var(--pv-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+
+.pv-poster-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.pv-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pvPulse 2s infinite;
+}
+
+@keyframes pvPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.pv-poster-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(26rem, 0.75fr);
+  gap: clamp(3rem, 5vw, 6rem);
+  align-items: end;
+  padding-top: clamp(2.5rem, 4.5vw, 5rem);
+}
+
+.pv-poster-title {
+  font-size: 4.5rem;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.pv-poster-title .pv-outline {
+  display: block;
+  color: var(--text-soft);
+  -webkit-text-fill-color: currentColor;
+  -webkit-text-stroke: 0;
+  font-family: inherit;
+  font-size: 0.88em;
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
+.pv-poster-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+}
+
+.pv-poster-desc {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-body);
+  letter-spacing: 0.01em;
+  text-wrap: pretty;
+}
+
+@media (min-width: 1920px) {
+  .pv-poster-title { font-size: 5rem; }
+}
+
+@media (max-width: 1280px) {
+  .pv-poster-title { font-size: 4rem; }
+}
+
+/* 调频波形指示器 (Audio Waveform Viz) */
+.pv-waveform-box {
+  border: 1px solid var(--pv-border);
+  background: var(--pv-accent-bg);
+  padding: 1.2rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.4rem;
+}
+
+.pv-waveform-label {
+  font-family: var(--pv-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+
+.pv-waveform-bars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+.pv-wave-bar {
+  width: 3px;
+  background: var(--ink);
+  opacity: 0.65;
+  border-radius: 1px;
+  animation: waveAnim 1.4s ease-in-out infinite alternate;
+}
+
+.pv-wave-bar:nth-child(2n) { animation-delay: 0.2s; }
+.pv-wave-bar:nth-child(3n) { animation-delay: 0.4s; }
+.pv-wave-bar:nth-child(4n) { animation-delay: 0.1s; }
+.pv-wave-bar:nth-child(5n) { animation-delay: 0.5s; }
+
+@keyframes waveAnim {
+  0% { height: 4px; }
+  50% { height: 26px; }
+  100% { height: 8px; }
+}
+
+@media (max-width: 1024px) {
+  .pv-poster-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .pv-poster {
+    padding-top: 1.75rem;
+  }
+
+  .pv-poster-topbar {
+    display: grid;
+    gap: 0.75rem;
+    font-size: 0.68rem;
+  }
+
+  .pv-poster-hero-grid {
+    gap: 2.25rem;
+    padding-top: 2.25rem;
+  }
+
+  .pv-poster-title {
+    font-size: 2.75rem;
+    line-height: 1.12;
+  }
+
+  .pv-poster-aside {
+    gap: 1.5rem;
+  }
+
+  .pv-waveform-box {
+    padding-inline: 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. BENTO MATRIX: 工业级非对称数据与基础设施矩阵 (全宽 12 栏)
+   -------------------------------------------------------------------------- */
+.pv-section {
+  padding: 0;
+  margin-bottom: clamp(4.5rem, 8vw, 8.5rem);
+}
+
+.pv-sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--pv-border-bold);
+  margin-bottom: 2.5rem;
+}
+
+.pv-sec-index {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--pv-mono);
+}
+
+.pv-sec-index .no {
+  font-size: 0.88rem;
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+}
+
+.pv-sec-index .title {
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pv-sec-meta {
+  font-family: var(--pv-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  color: var(--grey-strong);
+}
+
+/* Bento 网格排布 */
+.pv-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.6rem;
+}
+
+.pv-bento-card {
+  border: 1px solid var(--pv-border);
+  background: var(--pv-accent-bg);
+  padding: clamp(1.8rem, 2.5vw, 2.8rem);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.pv-bento-card:hover {
+  border-color: var(--ink);
+}
+
+/* 12 栏弹性空间比例 */
+.bento-origin {
+  grid-column: span 4;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.bento-origin .pbc-header {
+  margin-bottom: 0;
+}
+
+.pbc-origin-body {
+  align-self: center;
+  width: 100%;
+  padding-block: clamp(1.5rem, 2.5vw, 3rem);
+}
+
+.bento-infra {
+  grid-column: span 8;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bento-domains {
+  grid-column: span 7;
+}
+
+.bento-terminal {
+  grid-column: span 5;
+  background: rgba(10, 10, 10, 0.045);
+}
+
+[data-theme="dark"] .bento-terminal {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.pbc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-family: var(--pv-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+
+.pbc-main-val {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-family: var(--pv-mono);
+  font-size: clamp(3.8rem, 3rem + 3vw, 6.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
+}
+
+.pbc-unit {
+  padding-bottom: 0.16em;
+  font-size: 0.24em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--grey-strong);
+}
+
+.pbc-desc {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+/* 基础设施拓扑节点 */
+.pv-infra-flow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin: 2rem 0 1.2rem;
+}
+
+.pv-infra-node {
+  border: 1px solid var(--pv-border);
+  padding: 1.3rem 1.1rem;
+  background: var(--paper);
+}
+
+.pvn-tag {
+  font-family: var(--pv-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.pvn-name {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+}
+
+.pvn-stat {
+  font-family: var(--pv-mono);
+  font-size: 0.76rem;
+  color: #10b981;
+}
+
+/* 圈层标签矩阵 */
+.pv-tag-matrix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.pv-matrix-pill {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--pv-border);
+  font-size: 0.94rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--pv-sans);
+  letter-spacing: 0.02em;
+  transition: all 0.2s var(--ease);
+}
+
+.pv-matrix-pill:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* 终端模拟窗 */
+.pv-term-box {
+  font-family: var(--pv-mono);
+  font-size: 0.84rem;
+  line-height: 2;
+  color: var(--text-body);
+  margin-top: 0.6rem;
+}
+
+.pv-term-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.pv-term-k { color: var(--grey-strong); flex: 0 0 110px; }
+.pv-term-v { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 1200px) {
+  .bento-origin { grid-column: span 12; }
+  .bento-infra { grid-column: span 12; }
+  .bento-domains { grid-column: span 12; }
+  .bento-terminal { grid-column: span 12; }
+}
+
+@media (max-width: 768px) {
+  .pv-infra-flow { grid-template-columns: 1fr; }
+}
+
+/* --------------------------------------------------------------------------
+   3. EDITORIAL NARRATIVE: 全宽引语与三栏叙事
+   -------------------------------------------------------------------------- */
+.pv-narrative-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(3.5rem, 6vw, 6rem);
+}
+
+.pv-narrative-statement {
+  padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  border-bottom: 1px solid var(--pv-border-bold);
+}
+
+.pv-big-quote {
+  max-width: 26em;
+  font-size: clamp(2rem, 1.5rem + 1.5vw, 3.3rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin-bottom: 2.2rem;
+  text-wrap: balance;
+}
+
+.pv-statement-sign {
+  font-family: var(--pv-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+  padding-left: 1.4rem;
+  border-left: 2px solid var(--ink);
+}
+
+.pv-narrative-prose {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.pv-prose-block {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--pv-border);
+}
+
+.pv-prose-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 1.1rem;
+  letter-spacing: 0;
+}
+
+.pv-prose-p {
+  font-size: clamp(1.05rem, 0.98rem + 0.2vw, 1.2rem);
+  line-height: 1.95;
+  color: var(--text-body);
+}
+
+@media (max-width: 980px) {
+  .pv-narrative-prose {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. TRI-PILLAR: 三柱核心准则架构卡 (全宽均分)
+   -------------------------------------------------------------------------- */
+.pv-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.pv-pillar-card {
+  border: 1px solid var(--pv-border-bold);
+  padding: clamp(2.2rem, 3.5vw, 3.5rem) clamp(1.8rem, 2.5vw, 2.8rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--paper);
+  position: relative;
+  transition: all 0.3s var(--ease);
+}
+
+.pv-pillar-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+
+.pv-pillar-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.pv-pillar-card:hover::before {
+  transform: scaleX(1);
+}
+
+.pv-pillar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2.2rem;
+  font-family: var(--pv-mono);
+}
+
+.pvp-no {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pvp-code {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--grey-strong);
+}
+
+.pv-pillar-title {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 1.4rem;
+  letter-spacing: 0;
+}
+
+.pv-pillar-body {
+  font-size: 1.02rem;
+  line-height: 1.9;
+  color: var(--text-soft);
+  margin-bottom: 3rem;
+}
+
+.pv-pillar-spec {
+  font-family: var(--pv-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--pv-border);
+}
+
+@media (max-width: 1024px) {
+  .pv-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. HORIZON TRACK: 横向长卷成长轨迹
+   -------------------------------------------------------------------------- */
+.pv-horizon-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 1.5rem 0 3rem;
+  margin-top: 1.2rem;
+}
+.pv-horizon-wrap::-webkit-scrollbar { display: none; }
+
+.pv-horizon-track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  min-width: 100%;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.pv-hz-item {
+  flex: 0 0 360px;
+  border-top: 2px solid var(--pv-border-bold);
+  padding-top: 1.8rem;
+  position: relative;
+  transition: transform 0.25s var(--ease);
+}
+
+.pv-hz-item:hover {
+  transform: translateY(-4px);
+}
+
+.pv-hz-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+}
+
+.pv-hz-year {
+  font-family: var(--pv-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+
+.pv-hz-phase {
+  font-family: var(--pv-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+
+.pv-hz-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+
+.pv-hz-desc {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-soft);
+}
+
+.pv-hz-item.is-current {
+  border-top-color: var(--ink);
+}
+.pv-hz-item.is-current .pv-hz-year {
+  color: var(--ink);
+}
+.pv-hz-item.is-current .pv-hz-phase {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   6. MARQUEE & OUTRO: 超宽无缝跑马灯与先锋尾声
+   -------------------------------------------------------------------------- */
+.pv-marquee-strip {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+  padding: 1.8rem 0;
+  margin-top: 4rem;
+  white-space: nowrap;
+  display: flex;
+}
+
+.pv-marquee-track {
+  display: flex;
+  gap: 3.5rem;
+  animation: pvMarquee 24s linear infinite;
+  font-family: var(--pv-mono);
+  font-size: clamp(1.1rem, 0.9rem + 0.7vw, 1.5rem);
+  letter-spacing: 0.22em;
+  font-weight: 500;
+}
+
+.pv-mq-item {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+}
+
+.pv-mq-dot {
+  opacity: 0.4;
+}
+
+@keyframes pvMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.pv-outro-card {
+  margin-top: clamp(4.5rem, 7vw, 7.5rem);
+  padding: clamp(3.5rem, 5vw, 5.5rem) var(--pv-pad);
+  border: 1px solid var(--pv-border-bold);
+  background: var(--pv-accent-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+.pv-outro-left h2 {
+  font-size: clamp(1.8rem, 1.3rem + 1.4vw, 2.8rem);
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0;
+}
+
+.pv-outro-left p {
+  color: var(--text-soft);
+  font-size: 1.05rem;
+}
+
+.pv-outro-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pv-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.2rem 2.2rem;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  font-family: var(--pv-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  font-weight: 500;
+  transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+}
+
+.pv-btn-action:hover {
+  opacity: 0.88;
+  transform: translateX(5px);
+}

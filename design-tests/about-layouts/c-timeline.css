@@ -1,0 +1,187 @@
+/* 方案三：横向时间轴做脊梁 —— 一条通栏线贯穿全页，准则挂在对应年份节点 */
+
+.ct-main {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--shell-pad);
+  padding-top: calc(var(--header-h) + 2.4rem);
+  padding-bottom: 6rem;
+}
+
+.ct-title { margin-bottom: 3.4rem; }
+
+/* ---- 顶部：引言 + VITALS 并排的仪表条 ---- */
+.ct-hero {
+  display: grid;
+  gap: 2rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--line-strong);
+  margin-bottom: 4rem;
+}
+@media (min-width: 860px) {
+  .ct-hero {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+.ct-lead {
+  font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  max-width: 30em;
+}
+.ct-vitals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+.ctv {
+  display: grid;
+  gap: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--line);
+}
+.ctv-k {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+.ctv-v {
+  font-family: var(--font-mono);
+  font-size: clamp(1.1rem, 0.9rem + 0.6vw, 1.5rem);
+  color: var(--ink);
+}
+
+/* ---- 时间轴脊梁 ---- */
+.ct-spine-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+  margin-bottom: 2.6rem;
+}
+
+.ct-scroll {
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+}
+
+.ct-spine {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(15rem, 1fr);
+  gap: 0;
+  position: relative;
+  min-width: 100%;
+  padding-top: 2.4rem;
+}
+.ct-spine::before {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.ct-node {
+  position: relative;
+  padding: 1.8rem 1.6rem 0;
+  border-left: 1px solid var(--line);
+}
+.ct-node:first-child { border-left: 0; padding-left: 0; }
+
+.ctn-dot {
+  position: absolute;
+  top: -0.3rem;
+  left: 1.6rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  z-index: 1;
+}
+.ct-node:first-child .ctn-dot { left: 0; }
+.ct-node.is-now .ctn-dot { background: var(--ink); }
+
+.ctn-year {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  letter-spacing: 0.1em;
+  color: var(--grey-strong);
+  margin-bottom: 1rem;
+}
+.ctn-title {
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+  min-height: 2.8em;
+}
+.ctn-desc {
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--text-soft);
+  padding-right: 1rem;
+}
+
+/* ---- 挂在节点下方的准则标注气泡 ---- */
+.ct-node.has-badge { padding-bottom: 0; }
+.ctn-badge {
+  display: block;
+  margin-top: 1.6rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line-strong);
+  background: var(--tint);
+}
+.ctnb-no {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  margin-bottom: 0.5rem;
+}
+.ctn-badge strong {
+  display: block;
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.ctnb-desc {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+.ct-scroll-hint {
+  display: block;
+  margin-top: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+}
+
+@media (min-width: 1080px) {
+  .ct-scroll { overflow-x: visible; }
+  .ct-spine { grid-auto-columns: unset; grid-auto-flow: unset; grid-template-columns: repeat(5, 1fr); }
+  .ct-scroll-hint { display: none; }
+}
+
+@media (max-width: 640px) {
+  .ct-hero { padding-bottom: 2rem; }
+  .ct-vitals { grid-template-columns: repeat(2, 1fr); }
+}

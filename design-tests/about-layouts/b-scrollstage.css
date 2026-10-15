@@ -1,0 +1,248 @@
+/* 方案二：分屏跨页 —— 四个满视口板块，滚动依次呈现 */
+
+html { scroll-snap-type: y proximity; }
+
+.bs-main {
+  scroll-behavior: smooth;
+}
+
+.bs-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 6rem var(--shell-pad);
+  scroll-snap-align: start;
+  border-bottom: 1px solid var(--line);
+}
+.bs-screen:last-child { border-bottom: 0; }
+
+.bs-inner {
+  max-width: 900px;
+  width: 100%;
+}
+.bs-inner-wide { max-width: 1200px; }
+
+.bs-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.22em;
+  color: var(--grey-strong);
+  margin-bottom: 1.6rem;
+}
+
+.bs-heading {
+  font-size: clamp(2rem, 1.3rem + 3vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin-bottom: 2.6rem;
+  max-width: 16em;
+}
+.bs-heading-sm {
+  font-size: clamp(1.6rem, 1.1rem + 2vw, 2.6rem);
+}
+
+.bs-cols {
+  display: grid;
+  gap: 1.4rem;
+  font-size: var(--fs-body);
+  line-height: 1.85;
+  color: var(--text-body);
+}
+@media (min-width: 780px) {
+  .bs-cols { grid-template-columns: 1fr 1fr; column-gap: 2.4rem; }
+}
+
+.bs-scroll-hint {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-2xs);
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  animation: bs-bob 2.4s var(--ease) infinite;
+}
+@keyframes bs-bob {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.5; }
+  50% { transform: translate(-50%, 6px); opacity: 1; }
+}
+
+/* ---- 使命：三列平铺占满该屏宽度 ---- */
+.bs-creed {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line-strong);
+}
+.bsc-col {
+  padding: 2rem 1.8rem 0;
+  border-left: 1px solid var(--line);
+}
+.bsc-col:first-child { border-left: 0; padding-left: 0; }
+.bsc-no {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  color: var(--grey-strong);
+  margin-bottom: 0.9rem;
+}
+.bsc-col h3 {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0.7rem;
+  color: var(--ink);
+}
+.bsc-col p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+/* ---- 历程：横向展开的时间轴，占满该屏宽度 ---- */
+.bs-timeline {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  padding-top: 2.4rem;
+}
+.bs-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line-strong);
+}
+.bst-node {
+  position: relative;
+  padding: 1.6rem 1.4rem 0;
+  border-left: 1px solid var(--line);
+}
+.bst-node:first-child { border-left: 0; padding-left: 0; }
+.bst-node::before {
+  content: "";
+  position: absolute;
+  top: -0.35rem;
+  left: 1.4rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+.bst-node:first-child::before { left: 0; }
+.bst-node.is-now::before { background: var(--ink); }
+.bst-year {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  letter-spacing: 0.08em;
+  color: var(--grey-strong);
+  margin-bottom: 0.8rem;
+}
+.bst-node p {
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+/* ---- 概况收尾屏：数字放大铺满 ---- */
+.bs-screen-vitals .bs-inner { text-align: center; }
+.bs-vitals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  margin: 2rem 0;
+}
+.bsv-cell {
+  padding: 2.4rem 1rem;
+  display: grid;
+  gap: 0.6rem;
+  border-left: 1px solid var(--line);
+}
+.bsv-cell:first-child { border-left: 0; }
+.bsv-v {
+  font-family: var(--font-mono);
+  font-size: clamp(1.8rem, 1.2rem + 2.2vw, 3rem);
+  color: var(--ink);
+}
+.bsv-k {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+}
+.bs-coord {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+}
+
+/* ---- 右侧竖排进度指示 ---- */
+.bs-nav {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  gap: 1rem;
+  z-index: 20;
+}
+.bs-dot {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+.bs-dot span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--grey-strong);
+  background: transparent;
+  transition: background 0.25s var(--ease), transform 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.bs-dot.is-current span {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.2);
+}
+.bs-dot::before {
+  content: attr(data-label);
+  position: absolute;
+  right: 130%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+.bs-dot:hover::before { opacity: 1; }
+
+@media (max-width: 900px) {
+  .bs-creed, .bs-vitals { grid-template-columns: repeat(2, 1fr); }
+  .bs-creed .bsc-col:nth-child(2), .bs-vitals .bsv-cell:nth-child(3) { border-left: 0; }
+  .bs-timeline { grid-template-columns: 1fr; gap: 1.8rem; padding-top: 0; }
+  .bs-timeline::before { display: none; }
+  .bst-node { border-left: 0; padding-left: 0; }
+  .bst-node::before { display: none; }
+  .bs-nav { display: none; }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于我们 · 布局方案对比</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../theme.css">
+<style>
+  body { padding: 4rem 2.4rem; }
+  .hub { max-width: 720px; margin: 0 auto; }
+  .hub h1 { font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.4rem); margin-bottom: 0.6rem; }
+  .hub p.lede { color: var(--text-soft); margin-bottom: 3rem; line-height: 1.7; }
+  .hub-list { display: grid; gap: 1.2rem; }
+  .hub-item {
+    display: block;
+    padding: 1.6rem 1.8rem;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .hub-item:hover { border-color: var(--line-strong); transform: translateX(4px); }
+  .hub-item .no {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--grey-strong);
+  }
+  .hub-item h2 { font-size: 1.15rem; font-weight: 500; margin: 0.5rem 0 0.4rem; }
+  .hub-item p { color: var(--text-soft); font-size: 0.92rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="hub">
+    <h1>关于我们 · 布局方案对比</h1>
+    <p class="lede">全宽节奏流重构与各方案对比，点击进入查看实际效果。</p>
+    <div class="hub-list">
+      <a class="hub-item" href="preview-v4.html" style="border-color: var(--ink); background: var(--tint);">
+        <span class="no" style="color: var(--ink); font-weight: 600;">★ 方案 V4 (全新瑞士现代主义图纸版)</span>
+        <h2>瑞士现代主义工程图纸版式 (Preview V4)</h2>
+        <p>100vw 瑞士画报巨构首屏 + 5列参数矩阵 + 双轨联动粘性档案 + 拟物电台调频实时交互实验室。</p>
+      </a>
+      <a class="hub-item" href="preview-v3.html">
+        <span class="no">方案 V3</span>
+        <h2>全景先锋工业 HUD 全宽版式 (Preview V3)</h2>
+        <p>100vw 纯粹全幅展开 + 工业控制台 HUD 首屏 + 6列全宽参数带 + 双翼叙事与法则 + 4列硬件拓扑 + 6节点时序长卷。</p>
+      </a>
+      <a class="hub-item" href="preview-v2.html">
+        <span class="no">方案 V2</span>
+        <h2>全宽海报与 Bento 矩阵方案 (Preview V2)</h2>
+        <p>超大字号主标 + Bento 非对称网格 + 3 柱法则 + 横向长卷时间轴。</p>
+      </a>
+      <a class="hub-item" href="a-modular.html">
+        <span class="no">方案一</span>
+        <h2>全宽模块化编辑版式</h2>
+        <p>每段内容各自设计横向排布：引言+双栏正文、三列宽卡准则、横向时间轴、顶部数据条。</p>
+      </a>
+      <a class="hub-item" href="b-scrollstage.html">
+        <span class="no">方案二</span>
+        <h2>分屏跨页 · 整屏切换</h2>
+        <p>四个满视口板块依次滚动呈现，呼应首页开屏到分区页的整屏语言。</p>
+      </a>
+      <a class="hub-item" href="c-timeline.html">
+        <span class="no">方案三</span>
+        <h2>横向时间轴做脊梁</h2>
+        <p>一条通栏时间轴贯穿全页，准则以标注气泡悬挂在对应年份节点旁。</p>
+      </a>
+      <a class="hub-item" href="d-real.html">
+        <span class="no">方案四（新）</span>
+        <h2>按旧站 syciyuan.cn/about.html 内容重做</h2>
+        <p>Hero / 我们的故事 / 价值观三卡 / 使命+数据 / 发展历程左右交替时间轴，五段结构对齐旧站，视觉换成本站极简黑白语言。</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
