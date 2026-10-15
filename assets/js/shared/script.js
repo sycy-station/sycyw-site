@@ -366,6 +366,7 @@
 
   if (!isTouch && cursor) {
     let mouseX = null, mouseY = null, curX = 0, curY = 0;
+    let cursorFrame = 0;
 
     const place = () => {
       cursor.style.transform = `translate(${curX}px, ${curY}px) translate(-50%, -50%)`;
@@ -392,17 +393,24 @@
       }
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (!cursorFrame && !document.hidden) cursorFrame = requestAnimationFrame(followCursor);
     });
 
     const followCursor = () => {
-      if (mouseX !== null) {
+      cursorFrame = 0;
+      if (document.hidden) return;
+      if (mouseX !== null && (Math.abs(mouseX - curX) > .001 || Math.abs(mouseY - curY) > .001)) {
         curX += (mouseX - curX) * 0.22;
         curY += (mouseY - curY) * 0.22;
         place();
+        cursorFrame = requestAnimationFrame(followCursor);
       }
-      requestAnimationFrame(followCursor);
     };
-    requestAnimationFrame(followCursor);
+    if (carried) cursorFrame = requestAnimationFrame(followCursor);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { cancelAnimationFrame(cursorFrame); cursorFrame = 0; }
+      else if (mouseX !== null && !cursorFrame) cursorFrame = requestAnimationFrame(followCursor);
+    });
     const hoverTargets = document.querySelectorAll("a, button, summary, .index-item");
     hoverTargets.forEach((el) => {
       el.addEventListener("mouseenter", () => cursor.classList.add("hovering"));

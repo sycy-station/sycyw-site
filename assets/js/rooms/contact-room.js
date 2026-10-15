@@ -41,9 +41,12 @@
       visibility();
     };
     const visibility = () => animations.forEach((animation) => {
-      if (document.hidden) animation.pause(); else if (animation.playState === "paused") animation.play();
+      const target = animation.effect?.target;
+      const hiddenArt = art && (target === art || art.contains(target)) && !art.getClientRects().length;
+      if (document.hidden || hiddenArt) animation.pause(); else if (animation.playState === "paused") animation.play();
     });
     document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("resize", visibility);
     reduced.addEventListener("change", reveal);
     reveal();
     return {
@@ -58,6 +61,7 @@
         art?.removeAttribute("data-copy-success");
         animations.forEach((animation) => animation.cancel());
         document.removeEventListener("visibilitychange", visibility);
+        window.removeEventListener("resize", visibility);
         reduced.removeEventListener("change", reveal);
       }
     };
