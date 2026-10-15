@@ -8,3 +8,5 @@ Desktop.ini
 # 临时产物
 *.log
 *.tmp
+.playwright-mcp/
+__pycache__/

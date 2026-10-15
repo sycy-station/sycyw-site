@@ -2,9 +2,9 @@
 
 - 来源：https://www.syciyuan.cn/join.html
 - 采集日期：2026-10-15
-- 保存数据：`build/join-data.json`
-- 更新采集：`python build/scrape-join.py`（需要 BeautifulSoup）
-- 仅构建本页：`node build/build.js --only join`
+- 保存数据：`src/content/join-data.json`
+- 更新采集：`python scripts/scrape-join.py`（需要 BeautifulSoup）
+- 仅构建本页：`node scripts/build.js --only join`
 
 保留原站六项文化、五项福利、五步招聘流程，以及加入说明。页面按岗位申请、团队文化、员工福利、加入流程组织。岗位信息已替换为用户提供的 `C:/Users/dongy/Documents/Codex/2026-10-09/q-o/outputs/各岗位设计.md` 中的六个岗位，完整保留岗位职责和任职要求；文档未提供工作地点，页面不显示地点。
 
@@ -14,4 +14,4 @@
 
 岗位区提供全部、开发、设计、运营、市场筛选，数量由数据自动统计。分类按钮位于岗位区上方；下方为岗位列表及详情，申请入口固定在详情底部。列表根据可用尺寸分页，方向键及 Home / End 可在当前分类的全部岗位间切换。没有岗位的分类展示空状态及「查看全部岗位」入口。
 
-岗位方向配置位于 `build/join-room.js`。默认根据 `category` 归类；当前六个岗位均明确指定 `direction`。开发岗 1 个（软件测试/测试工程师（初级）），设计岗 2 个（二次元形象设计师、UI/UX 设计师），运营岗 3 个（AI数据收集专员、后台操作员、BiliBili账号运营）；市场岗保留为零，沿用原有空分类样式。无法归类的岗位显示在「其他岗位」。
+岗位方向配置位于 `src/content/join-room.js`。默认根据 `category` 归类；当前六个岗位均明确指定 `direction`。开发岗 1 个（软件测试/测试工程师（初级）），设计岗 2 个（二次元形象设计师、UI/UX 设计师），运营岗 3 个（AI数据收集专员、后台操作员、BiliBili账号运营）；市场岗保留为零，沿用原有空分类样式。无法归类的岗位显示在「其他岗位」。

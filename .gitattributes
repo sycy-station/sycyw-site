@@ -3,7 +3,7 @@
 # 起因：一次 git stash/pop 往返之后，git 按 core.autocrlf 把源文件的行尾
 # 换成了 CRLF，style.css 凭空多出约 1540 字节（≈ 行数），diff 里整个文件
 # 都算改动，真正的改动被淹没。
-# 另一层理由：build/build.js 用 fs.writeFileSync 写产物，行尾是 LF。
+# 另一层理由：scripts/build.js 用 fs.writeFileSync 写产物，行尾是 LF。
 # 源文件若是 CRLF，源与产物的行尾就不一致，跨文档接缝那种需要逐字节
 # 比对的验证会一直报满屏差异。
 #

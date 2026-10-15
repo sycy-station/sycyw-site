@@ -52,6 +52,6 @@ assert len(data["culture"]["items"]) == 6
 assert len(data["benefits"]["items"]) == 5
 assert len(data["recruitment"]["jobs"]) == 3
 assert len(data["process"]["items"]) == 5
-target = Path(__file__).with_name("join-data.json")
+target = Path(__file__).resolve().parent.parent / "src/content/join-data.json"
 target.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"Saved {target.name}: 6 culture values, 5 benefits, 3 jobs, 5 process steps")

@@ -17,7 +17,7 @@
 | 用户 | assets/products/profile.png | 1920 × 1032 |
 | 最近播放 | assets/products/recent.png | 1920 × 1032 |
 
-源目录为 `C:/Users/dongy/Desktop/pic(1)`，通过 `python build/prepare-product-assets.py --source <素材目录>` 原样复制。
+源目录为 `C:/Users/dongy/Desktop/pic(1)`，通过 `python scripts/prepare-product-assets.py --source <素材目录>` 原样复制。
 附件中的「下载管理」不在用户指定的六项顺序中，因此未加入章节。
 
 `music-wordmark.png` 为最新首页截图内「森韵」原标识的透明裁剪。
@@ -26,5 +26,5 @@
 未增加未经提供的下载地址、发布状态、用户数或真实播放能力。
 波形与轨道只作为页面装饰，并响应减少动态效果的系统设置。
 
-内容源：`build/products-room.js`；布局：`products-room.css`；交互：`products-room.js`。
-生成本页：`node build/build.js --only products`。
+内容源：`src/content/products-room.js`；布局：`assets/css/rooms/products-room.css`；交互：`assets/js/rooms/products-room.js`。
+生成本页：`node scripts/build.js --only products`。

@@ -5,11 +5,54 @@
 ## 运行
 
 ```bash
-node build/build.js
+node scripts/build.js
 python -m http.server 8765 --bind 127.0.0.1
 ```
 
 访问 http://127.0.0.1:8765/ 。共享舞台切换通过 HTTP 读取目标 HTML；直接双击文件时仍能通过原生链接浏览各页。
+
+旧命令 `node build/build.js` 仍可使用；该文件只转发到 `scripts/build.js`。两种入口均支持 `--only products` 等单页构建参数。
+
+## 目录与维护规则
+
+```text
+ces/
+├── index.html / 六个分区.html   生成的页面入口，保持原有 URL
+├── 五个旧地址.html             生成的兼容跳转页
+├── favicon.ico / robots.txt    站点根目录文件
+├── src/
+│   ├── content/                页面配置、分区内容渲染器和 JSON 数据
+│   └── templates/
+│       ├── index.html          首页模板
+│       ├── page.html           分区页面模板
+│       └── partials/           共用 head、header、舞台、装饰与无脚本降级
+├── assets/
+│   ├── css/
+│   │   ├── shared/             全站基础、主题、共享舞台和宽屏装饰
+│   │   ├── home/               首页布局、Logo 和文案互动样式
+│   │   └── rooms/              六个分区的布局与响应式样式
+│   ├── js/
+│   │   ├── shared/             开屏、导航、主题、光标和边缘刻度
+│   │   ├── home/               首页 Logo 与文案互动
+│   │   └── rooms/              六个分区的交互和动画
+│   ├── icons/                 PNG 图标与 Apple Touch Icon
+│   ├── journey/               发展历程图片
+│   ├── products/              产品截图与字标
+│   ├── reference/             品牌、团队头像与故事插画
+│   └── logo.png / og.png       共用品牌图片与分享图
+├── scripts/                   构建、图标生成、素材整理和参考内容采集
+├── build/build.js             旧构建命令的兼容入口
+├── docs/                      内容来源、素材说明与项目记录
+├── design-tests/              独立布局预览，保留原有访问路径
+└── archive/legacy/             旧版样式、模板片段与归档内容渲染器
+```
+
+- 修改页面内容、导航或 HTML 结构：编辑 `src/content/` 或 `src/templates/`，再运行构建。根目录 HTML 会被覆盖。
+- 修改样式或交互：编辑 `assets/css/` 或 `assets/js/` 中对应模块。资源文件直接供浏览器使用，构建不复制它们。
+- CSS 与 JavaScript 继续按原有顺序加载，文件名、选择器和动效参数保持一致。仅改变目录和引用路径。
+- `design-tests/` 不参与正式构建；其中依赖的旧 `page.css` 位于 `archive/legacy/styles/`。
+- `.playwright-mcp/` 存放本地浏览器检查截图和日志，已加入 Git 忽略规则。
+- 发布时上传根目录生成的 HTML、`robots.txt`、`favicon.ico`、`assets/`，以及配置域名后生成的 `sitemap.xml`。`src/`、`scripts/`、`build/`、`docs/`、`design-tests/` 和 `archive/` 不需要发布。
 
 ## 六个空间
 
@@ -36,7 +79,7 @@ python -m http.server 8765 --bind 127.0.0.1
 
 「加入共创」的岗位申请弹窗支持选择 DOC、DOCX 和 PDF 简历（最大 10 MB），会显示文件名并把附件名写入申请草稿；当前站点仍是静态预览，草稿与简历需要由申请人一并发送。
 
-六个分页的主标题以「联系合作」为基准，共用 orbit-room.css 中的 --room-top、--room-side、--room-pad 和 --room-title-size；标题上方编号及英文标签也使用统一间距。桌面、平板和手机分别采用共同锚点，平板两行导航时预留顶部空间，各页正文仍按自身布局适配。
+六个分页的主标题以「联系合作」为基准，共用 assets/css/shared/orbit-room.css 中的 --room-top、--room-side、--room-pad 和 --room-title-size；标题上方编号及英文标签也使用统一间距。桌面、平板和手机分别采用共同锚点，平板两行导航时预留顶部空间，各页正文仍按自身布局适配。
 
 左右竖向刻度与数字以每秒 8px 的速度反向循环；按顶部导航的页面顺序向右切换时左下右上，向左切换时左上右下，减速后继续保持本次方向。切换时连续加速至 24 倍，快速阶段持续 2 秒，再用 1.6 秒平滑恢复慢速。反向时镜像循环进度以接续当前刻度位置，连续切换延长加速阶段，返回首页和浏览器前进/后退使用相同反馈。窄屏、后台标签和减弱动态模式暂停，恢复后接续原有位置。
 
@@ -46,31 +89,31 @@ python -m http.server 8765 --bind 127.0.0.1
 
 首页底部文案支持七轮点击对话：前五次使用一致的轻微震动，第六次加重震动并将文字变红，第七次整页转为红色，圆形导航、Logo、头部按钮和装饰错时向下掉落。前六次在 3 秒未点击后重置次数及警告，显示“哦 看来是点错了，那我大人不计小人过”约 2.4 秒再淡入原文，其间重新点击从第一轮开始；文案与 Logo 分别计时。快速点击会依序播放台词与反馈；第七次一经触发即取消倒计时并锁住交互、取消正在进行的页面切换和 Logo 动效，掉落后不回位，调整窗口或切换浏览器标签也不会恢复，刷新才会重置。前六次离开首页会清理对话；减弱动态模式采用透明度反馈与直接隐藏终态。
 
-- build/pages.js：六页名称、导航顺序、描述、频率和首页文案。
-- build/rooms.js：六个分区的渲染入口，renderRoom 输出静态内容。
-- build/ecosystem-room.js：三家生态伙伴的介绍、特点、图形与外链。
-- ecosystem-room.css：生态伙伴一体化外框、单屏布局与响应式规则。
-- ecosystem-room.js：伙伴切换揭幕、连接路径动画与生命周期管理。
-- build/about-room.js：「关于我们」四章完整内容，按用户提供的四张截图整理。
-- build/partials/orbit-stage.html：首页与分区共用舞台。
-- build/partials/header.html：站点头部与原有刻度式分区导航。
-- wide-motion.js：左右竖向刻度循环、页面切换加速与平滑减速。
-- home-logo.js / home-logo.css：首页大 Logo 四次点击的渐强震动、伪 3D 翻转、下落与回位。
-- home-narrator.js / home-narrator.css：首页底部文字七轮点击对话、震动、红色警告与不可回位的整页掉落。
-- build/src/index.html：保留现有首页开屏。
-- build/src/page.html：分区文档外壳。
-- orbit-room.css：共享空间布局、轨道退场、顶部导航、章节排版及响应式规则。
-- orbit-room.js：分区加载、文字飞入、顶部刻度动画、历史记录、章节切换、焦点和失败降级。
-- about-room.css：「关于我们」一屏排版、章节内响应式切换及时间线样式。
-- about-room.js：段落/价值观/使命标签、六节点时间线、入场动画和数字递增。
-- script.js：现有开屏、主题、菜单、光标与轨道星球。共享舞台的文字飞入与顶栏动画由 orbit-room.js 接管。
+- src/content/pages.js：六页名称、导航顺序、描述、频率和首页文案。
+- src/content/rooms.js：六个分区的渲染入口，renderRoom 输出静态内容。
+- src/content/ecosystem-room.js：三家生态伙伴的介绍、特点、图形与外链。
+- assets/css/rooms/ecosystem-room.css：生态伙伴一体化外框、单屏布局与响应式规则。
+- assets/js/rooms/ecosystem-room.js：伙伴切换揭幕、连接路径动画与生命周期管理。
+- src/content/about-room.js：「关于我们」四章完整内容，按用户提供的四张截图整理。
+- src/templates/partials/orbit-stage.html：首页与分区共用舞台。
+- src/templates/partials/header.html：站点头部与原有刻度式分区导航。
+- assets/js/shared/wide-motion.js：左右竖向刻度循环、页面切换加速与平滑减速。
+- assets/js/home/home-logo.js / assets/css/home/home-logo.css：首页大 Logo 四次点击的渐强震动、伪 3D 翻转、下落与回位。
+- assets/js/home/home-narrator.js / assets/css/home/home-narrator.css：首页底部文字七轮点击对话、震动、红色警告与不可回位的整页掉落。
+- src/templates/index.html：保留现有首页开屏。
+- src/templates/page.html：分区文档外壳。
+- assets/css/shared/orbit-room.css：共享空间布局、轨道退场、顶部导航、章节排版及响应式规则。
+- assets/js/shared/orbit-room.js：分区加载、文字飞入、顶部刻度动画、历史记录、章节切换、焦点和失败降级。
+- assets/css/rooms/about-room.css：「关于我们」一屏排版、章节内响应式切换及时间线样式。
+- assets/js/rooms/about-room.js：段落/价值观/使命标签、六节点时间线、入场动画和数字递增。
+- assets/js/shared/script.js：现有开屏、主题、菜单、光标与轨道星球。共享舞台的文字飞入与顶栏动画由 assets/js/shared/orbit-room.js 接管。
 - assets/reference/：从参考站取得的生态图形、团队头像与故事插画。
-- assets/journey/：发展历程六张示意配图；来源记录见 docs/reference-content.md，可在 build/about-room.js 的 milestones 中更换。
+- assets/journey/：发展历程六张示意配图；来源记录见 docs/reference-content.md，可在 src/content/about-room.js 的 milestones 中更换。
 
-根目录 HTML 为构建产物，请修改模板或数据后重新构建。单页构建用 node build/build.js --only products。旧 system-design / interaction / brand / motion / archive 地址保留静态跳转，分别转向 products / ecosystem / team / join / contact。现有 design-tests 及旧内容片段是早期项目资料，不作为新站构建入口。
+根目录 HTML 为构建产物，请修改模板或数据后重新构建。单页构建用 node scripts/build.js --only products。旧 system-design / interaction / brand / motion / archive 地址保留静态跳转，分别转向 products / ecosystem / team / join / contact。现有 design-tests 及旧内容片段是早期项目资料，不作为新站构建入口。
 
 ## 内容与发布
 
 原站招聘页明确标记职位信息并非真实招聘，因此新版使用共创交流邀请。占位社交账户与模拟表单没有迁入。用户后续要求完整呈现四张关于页截图，因此「关于我们」保留截图中的故事原文、数字、Vxtls 历史节点与六项发展记录；2025 年上线时间注明「原定计划」。这些截图内容的保留范围见 docs/reference-content.md。联系按钮使用公开邮箱、QQ 和电话入口，站点没有模拟表单提交或发送成功。
 
-上线前在 build/pages.js 设置 SITE_URL，再构建 canonical、Open Graph 绝对地址与 sitemap.xml。邮箱、公司信息与备案取自参考站，正式发布时应由站点持有人核对是否适用于目标域名。产物可直接部署到静态托管。
+上线前在 src/content/pages.js 设置 SITE_URL，再构建 canonical、Open Graph 绝对地址与 sitemap.xml。邮箱、公司信息与备案取自参考站，正式发布时应由站点持有人核对是否适用于目标域名。产物可直接部署到静态托管。
