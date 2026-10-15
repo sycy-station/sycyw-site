@@ -1,5 +1,5 @@
   <header class="site-header">
-    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.png" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
         <i aria-hidden="true"></i>
@@ -10,6 +10,15 @@
     </div>
   </header>
 
+  <nav class="index-bar section-nav" aria-label="分区索引"{{ sectionNavAttrs }}>
+    <div class="ib-scroll">
+      <div class="ib-track">
+{{ indexBar }}
+        <div class="ib-scale" aria-hidden="true"><div class="ib-scale-dense"></div></div>
+      </div>
+    </div>
+  </nav>
+
   <nav class="overlay-nav" id="overlayNav" aria-hidden="true" aria-label="主导航">
 
     <ol class="overlay-list">
@@ -17,6 +26,6 @@
     </ol>
     <div class="overlay-foot">
       <span class="clock" id="clock">--:--:--</span>
-      <span>Shanghai, CN</span>
+      <span>文化 · 创作 · 技术</span>
     </div>
   </nav>

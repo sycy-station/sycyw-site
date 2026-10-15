@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
-<html lang="zh-CN" data-wide="off" data-page="sub" data-slug="about">
+<html lang="zh-CN" data-wide="on" data-page="room" data-experience="orbit" data-slug="about">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>关于我们 — 森韵次元坞</title>
-<meta name="description" content="我们是谁，从哪里来，往哪里去">
+<meta name="description" content="从 Minecraft 社区出发，走向文化与技术的交汇处。">
 
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -19,16 +18,25 @@
 <meta property="og:site_name" content="森韵次元坞">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:title" content="关于我们 — 森韵次元坞">
-<meta property="og:description" content="我们是谁，从哪里来，往哪里去">
+<meta property="og:description" content="从 Minecraft 社区出发，走向文化与技术的交汇处。">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="关于我们 — 森韵次元坞">
-<meta name="twitter:description" content="我们是谁，从哪里来，往哪里去">
+<meta name="twitter:description" content="从 Minecraft 社区出发，走向文化与技术的交汇处。">
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="stage.css">
+<link rel="stylesheet" href="style.css?v=20261015-header-brand">
+<link rel="stylesheet" href="stage.css?v=20261015-instant-orbit">
+<link rel="stylesheet" href="home-logo.css?v=20261015-flip-drop">
+<link rel="stylesheet" href="wide.css?v=20261015-edge-motion">
 
 <link rel="stylesheet" href="theme.css">
-<link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="orbit-room.css?v=20261015-title-alignment">
+<link rel="stylesheet" href="about-room.css?v=20261015-eight-milestones">
+<link rel="stylesheet" href="team-room.css?v=20261015-spacing&title=20261015-aligned">
+<link rel="stylesheet" href="contact-room.css?v=20261015-title-alignment">
+<link rel="stylesheet" href="ecosystem-room.css?v=20261015-title-alignment">
+<link rel="stylesheet" href="join-room.css?v=20261015-direction-emblems">
+<link rel="stylesheet" href="products-room.css?v=20261015-six-views2">
+<link rel="stylesheet" href="home-narrator.css?v=20261015-seven-clicks">
 
 <script>
   (function () {
@@ -42,74 +50,50 @@
   })();
 </script>
 
-<script>
-  (function () {
-    var root = document.documentElement;
-    root.classList.add("js-enter");
-
-    setTimeout(function () {
-      root.classList.add("page-ready");
-    }, 1400);
-
-    try {
-      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    } catch (e) {}
-
-    var raw = null;
-    try {
-      raw = sessionStorage.getItem("ces-nav");
-      sessionStorage.removeItem("ces-nav");
-    } catch (e) {
-      return;
-    }
-    if (!raw) return;
-    var sig;
-    try {
-      sig = JSON.parse(raw);
-    } catch (e) {
-      return;
-    }
-
-    var age = Date.now() - (sig.ts || 0);
-    if (age < 0 || age > 2500) return;
-    if (sig.slug !== root.getAttribute("data-slug")) return;
-
-    if (sig.from === "stage") {
-      root.classList.add("nav-enter");
-    } else if (sig.from === "sub-sub") {
-      root.classList.add("nav-sub");
-    }
-  })();
-</script>
-
 <noscript>
 
   <style>
+    .splash { display: none !important; }
     .reveal-line, .reveal-item { opacity: 1 !important; transform: none !important; }
+    .orbit-inner, .stage-logo-name, .stage-scroll, .stage-about { opacity: 1 !important; transform: none !important; }
+    .deco .splash-grid { opacity: 0.045 !important; }
+    .deco .fr { opacity: 0.55 !important; transform: translate(0, 0) !important; }
+    .orbit-ring { opacity: 0.15 !important; }
 
-    .ab-node:not(:last-child)::after { transform: none !important; }
+    .orbit-ring-path { stroke-dashoffset: 0 !important; }
+    .orbit-ticks { opacity: 0.3 !important; }
+
+    .orbit-planet-ring { opacity: 0.1 !important; }
+    .orbit-planet { opacity: 1 !important; }
+    .stage-foot { opacity: 1 !important; }
+    .sf-line { transform: scaleX(1) !important; }
+
+    .deco .wide-guides { opacity: 0.12 !important; }
+    .deco .wide-scale { opacity: 0.4 !important; }
+    .deco .wide-hlines { opacity: 0.085 !important; }
+    .deco .wide-edge { opacity: 0.42 !important; }
     .cursor { display: none !important; }
-    .theme-toggle { display: none !important; }
 
-    .ib-item.is-current { position: relative; }
-    .ib-item.is-current::after {
-      content: "";
-      position: absolute;
-      left: 0; right: 0; bottom: -0.85rem;
-      height: 1px;
-      background: var(--ink);
-    }
+    .theme-toggle { display: none !important; }
 </style>
 </noscript>
 
+<noscript><style>
+  html[data-experience="orbit"][data-page="room"] .room-panel[hidden] { display: block !important; }
+  html[data-experience="orbit"][data-page="room"] .room-tabs,
+  html[data-experience="orbit"][data-page="room"] .room-footer,
+  html[data-experience="orbit"] .menu-toggle { display: none; }
+  html[data-experience="orbit"][data-page="room"] .room-content { position: relative; inset: auto; margin: 0; width: 100%; max-height: none; overflow: visible; padding: 9rem 7% 5rem; }
+  html[data-experience="orbit"][data-page="room"] .stage { height: auto; min-height: 100vh; overflow: visible; padding: 0; }
+  html[data-experience="orbit"][data-page="room"] .room-panels { overflow: visible; }
+  html[data-experience="orbit"][data-page="room"] .room-panel + .room-panel { border-top: 1px solid var(--line); margin-top: 2rem; }
+</style></noscript>
 </head>
-<body>
-
+<body class="stage-in deco-on">
   <div class="noise" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
-
   <header class="site-header">
-    <a class="mark" href="index.html"><span>森韵次元坞</span><span class="mark-dot">·</span></a>
+    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.png" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
         <i aria-hidden="true"></i>
@@ -120,219 +104,286 @@
     </div>
   </header>
 
+  <nav class="index-bar section-nav" aria-label="分区索引">
+    <div class="ib-scroll">
+      <div class="ib-track">
+        <a class="ib-item" href="products.html" data-route data-freq="88.1">
+          <span class="ib-no">01</span><span class="ib-title">次元坞</span>
+          <span class="ib-freq" aria-hidden="true">88.1</span>
+        </a>
+        <a class="ib-item" href="ecosystem.html" data-route data-freq="91.5">
+          <span class="ib-no">02</span><span class="ib-title">生态伙伴</span>
+          <span class="ib-freq" aria-hidden="true">91.5</span>
+        </a>
+        <a class="ib-item" href="team.html" data-route data-freq="94.7">
+          <span class="ib-no">03</span><span class="ib-title">核心团队</span>
+          <span class="ib-freq" aria-hidden="true">94.7</span>
+        </a>
+        <a class="ib-item is-current" href="about.html" data-route data-freq="98.3" aria-current="page">
+          <span class="ib-no">04</span><span class="ib-title">关于我们</span>
+          <span class="ib-freq" aria-hidden="true">98.3</span>
+        </a>
+        <a class="ib-item" href="join.html" data-route data-freq="101.9">
+          <span class="ib-no">05</span><span class="ib-title">加入共创</span>
+          <span class="ib-freq" aria-hidden="true">101.9</span>
+        </a>
+        <a class="ib-item" href="contact.html" data-route data-freq="104.6">
+          <span class="ib-no">06</span><span class="ib-title">联系合作</span>
+          <span class="ib-freq" aria-hidden="true">104.6</span>
+        </a>
+        <div class="ib-scale" aria-hidden="true"><div class="ib-scale-dense"></div></div>
+      </div>
+    </div>
+  </nav>
+
   <nav class="overlay-nav" id="overlayNav" aria-hidden="true" aria-label="主导航">
 
     <ol class="overlay-list">
-      <li><a href="system-design.html" data-index="01">系统设计</a></li>
-      <li><a href="interaction.html" data-index="02">交互研究</a></li>
-      <li><a href="brand.html" data-index="03">品牌语言</a></li>
+      <li><a href="products.html" data-index="01">次元坞</a></li>
+      <li><a href="ecosystem.html" data-index="02">生态伙伴</a></li>
+      <li><a href="team.html" data-index="03">核心团队</a></li>
       <li><a href="about.html" data-index="04">关于我们</a></li>
-      <li><a href="motion.html" data-index="05">动效编排</a></li>
-      <li><a href="archive.html" data-index="06">实验归档</a></li>
+      <li><a href="join.html" data-index="05">加入共创</a></li>
+      <li><a href="contact.html" data-index="06">联系合作</a></li>
     </ol>
     <div class="overlay-foot">
       <span class="clock" id="clock">--:--:--</span>
-      <span>Shanghai, CN</span>
+      <span>文化 · 创作 · 技术</span>
     </div>
   </nav>
 
+  <main id="top">
+    <section class="stage" id="stage">
 
-  <nav class="index-bar" aria-label="分区索引">
-    <div class="ib-scroll">
-      <div class="ib-track">
-      <a class="ib-item" href="system-design.html" data-freq="88.1">
-        <span class="ib-no">01</span>
-        <span class="ib-title">系统设计</span>
-        <span class="ib-freq" aria-hidden="true">88.1</span>
-      </a>
-      <a class="ib-item" href="interaction.html" data-freq="91.5">
-        <span class="ib-no">02</span>
-        <span class="ib-title">交互研究</span>
-        <span class="ib-freq" aria-hidden="true">91.5</span>
-      </a>
-      <a class="ib-item" href="brand.html" data-freq="94.7">
-        <span class="ib-no">03</span>
-        <span class="ib-title">品牌语言</span>
-        <span class="ib-freq" aria-hidden="true">94.7</span>
-      </a>
-      <a class="ib-item is-current" href="about.html" aria-current="page" data-freq="98.3">
-        <span class="ib-no">04</span>
-        <span class="ib-title">关于我们</span>
-        <span class="ib-freq" aria-hidden="true">98.3</span>
-      </a>
-      <a class="ib-item" href="motion.html" data-freq="101.9">
-        <span class="ib-no">05</span>
-        <span class="ib-title">动效编排</span>
-        <span class="ib-freq" aria-hidden="true">101.9</span>
-      </a>
-      <a class="ib-item" href="archive.html" data-freq="104.6">
-        <span class="ib-no">06</span>
-        <span class="ib-title">实验归档</span>
-        <span class="ib-freq" aria-hidden="true">104.6</span>
-      </a>
+      <div class="deco" aria-hidden="true">
+        <div class="splash-grid"></div>
+        <div class="splash-frame">
+          <span class="fr fr-tl"></span><span class="fr fr-tr"></span>
+          <span class="fr fr-bl"></span><span class="fr fr-br"></span>
+        </div>
 
-        <div class="ib-scale" aria-hidden="true">
-          <div class="ib-scale-dense"></div>
+        <div class="wide">
+      <div class="wide-guides"></div>
+      <div class="wide-hlines"></div>
+      <div class="wide-scale"><span>X:0000</span><span>X:0320</span><span>X:0640</span><span>X:0960</span><span>X:1280</span><span>X:1600</span><span>X:1920</span><span>X:2240</span><span>X:2560</span><span>X:2880</span><span>X:3200</span><span>X:3520</span></div>
+
+      <div class="wide-edge wide-edge-l">
+        <span class="we-rail"><i></i></span>
+        <span class="we-marks"><span>0100</span><span>0200</span><span>0300</span><span>0400</span><span>0500</span><span>0600</span><span>0700</span><span>0800</span></span>
+        <span class="we-vtext">SYCYW&nbsp;·&nbsp;INTERFACE&nbsp;LAB&nbsp;·&nbsp;GRID&nbsp;0417</span>
+      </div>
+
+      <div class="wide-edge wide-edge-r">
+        <span class="we-rail"><i></i></span>
+        <span class="we-marks"><span>0800</span><span>0700</span><span>0600</span><span>0500</span><span>0400</span><span>0300</span><span>0200</span><span>0100</span></span>
+        <span class="we-vtext">CELL&nbsp;ARRAY&nbsp;·&nbsp;REV&nbsp;2.31&nbsp;·&nbsp;LOCK&nbsp;OK</span>
+      </div>
+
         </div>
       </div>
-    </div>
-  </nav>
 
-  <main class="page-main" id="top">
+      <nav class="stage-orbit" aria-label="六个分区" inert aria-hidden="true">
 
-    <header class="page-title" id="pageTitle">
-      <span class="pt-no">04</span>
-      <h1 class="pt-name">关于我们</h1>
-      <span class="pt-sub">ABOUT&nbsp;US</span>
-    </header>
+        <svg class="orbit-ring" focusable="false" aria-hidden="true">
+          <circle class="orbit-ring-path" pathLength="1"/>
+        </svg>
+        <span class="orbit-ticks" aria-hidden="true"></span>
 
-    <p class="page-desc reveal-line">我们是谁，从哪里来，往哪里去</p>
+        <span class="orbit-planet-ring" aria-hidden="true"></span>
 
-    <section class="page-body about-body">
+        <span class="orbit-planet" aria-hidden="true">
+          <svg viewBox="0 0 7 7" width="16" height="16" focusable="false" aria-hidden="true">
+            <g fill="var(--planet-1)">
+              <rect x="2" y="0" width="2" height="1"/>
+              <rect x="1" y="1" width="2" height="1"/>
+              <rect x="0" y="2" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-2)">
+              <rect x="4" y="0" width="1" height="1"/>
+              <rect x="3" y="1" width="2" height="1"/>
+              <rect x="2" y="2" width="3" height="1"/>
+              <rect x="1" y="3" width="3" height="1"/>
+              <rect x="1" y="4" width="2" height="1"/>
+              <rect x="2" y="5" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-3)">
+              <rect x="5" y="1" width="1" height="1"/>
+              <rect x="5" y="2" width="2" height="1"/>
+              <rect x="4" y="3" width="3" height="1"/>
+              <rect x="3" y="4" width="3" height="1"/>
+              <rect x="3" y="5" width="2" height="1"/>
+              <rect x="2" y="6" width="3" height="1"/>
+            </g>
+          </svg>
+        </span>
 
-     <div class="about-main">
+        <button class="stage-logo-wrap" type="button" data-logo-trigger aria-label="森韵次元坞，点击体验 Logo 动效">
+          <span class="stage-logo-motion" data-logo-motion>
+            <img class="stage-logo" src="assets/logo.png" alt="" width="1000" height="1000" draggable="false">
+          </span>
+          <span class="stage-logo-shadow" aria-hidden="true"></span>
+          <span class="stage-logo-name">森韵次元坞</span>
+        </button>
 
-      <section class="ab-block">
-        <header class="ab-head">
-          <span class="ab-kicker">OUR&nbsp;STORY</span>
-          <h2 class="ab-title">我们的故事</h2>
-        </header>
-        <div class="ab-prose">
-          <p>起初只是两个人和一份不肯将就的清单。我们在各自的岗位上反复遇到同一件事：一个界面被交付出去，看起来是完成了，可它没有被认真地想过——间距是随手给的，过渡是插件带的，状态是漏掉的。</p>
-          <p>于是我们决定自己来。不追逐流行的视觉语言，也不堆叠不必要的装饰，把力气花在留白、节奏和秩序上。第一个项目没有预算，只有一个愿意等我们把细节做对的客户。</p>
-          <p>后来的每一年都在验证同一件事：克制不是少做，而是把该做的做到位。</p>
-        </div>
-      </section>
+        <a class="orbit-item pos-1" href="products.html" data-no="01">
+          <span class="orbit-inner">
+            <span class="orbit-no">01</span>
+            <span class="orbit-title">次元坞</span>
+            <span class="orbit-sub">PLATFORM</span>
+          </span>
+        </a>
+        <a class="orbit-item pos-2" href="ecosystem.html" data-no="02">
+          <span class="orbit-inner">
+            <span class="orbit-no">02</span>
+            <span class="orbit-title">生态伙伴</span>
+            <span class="orbit-sub">ECOSYSTEM</span>
+          </span>
+        </a>
+        <a class="orbit-item pos-3" href="team.html" data-no="03">
+          <span class="orbit-inner">
+            <span class="orbit-no">03</span>
+            <span class="orbit-title">核心团队</span>
+            <span class="orbit-sub">OUR&nbsp;TEAM</span>
+          </span>
+        </a>
+        <a class="orbit-item pos-4" href="about.html" data-no="04" aria-current="page">
+          <span class="orbit-inner">
+            <span class="orbit-no">04</span>
+            <span class="orbit-title">关于我们</span>
+            <span class="orbit-sub">ABOUT&nbsp;US</span>
+          </span>
+        </a>
+        <a class="orbit-item pos-5" href="join.html" data-no="05">
+          <span class="orbit-inner">
+            <span class="orbit-no">05</span>
+            <span class="orbit-title">加入共创</span>
+            <span class="orbit-sub">CO-CREATE</span>
+          </span>
+        </a>
+        <a class="orbit-item pos-6" href="contact.html" data-no="06">
+          <span class="orbit-inner">
+            <span class="orbit-no">06</span>
+            <span class="orbit-title">联系合作</span>
+            <span class="orbit-sub">CONTACT</span>
+          </span>
+        </a>
 
-      <section class="ab-block">
-        <header class="ab-head">
-          <span class="ab-kicker">OUR&nbsp;MISSION</span>
-          <h2 class="ab-title">我们的使命</h2>
-        </header>
-        <div class="ab-prose">
-          <p class="ab-lead">让复杂的系统对使用它的人保持诚实。</p>
-          <p>界面应当清楚地说明它能做什么、正在做什么、做完之后发生了什么。不夸大，也不隐瞒。我们把这件事拆成三条准则，落到每一次交付里。</p>
-        </div>
+      </nav>
 
-        <ol class="ab-creed" role="list">
-          <li class="reveal-item">
-            <span class="abc-no">01</span>
-            <div class="abc-body">
-              <h3 class="abc-title">克制先于表达</h3>
-              <p>能不加的一律不加。一个页面的好坏不取决于用了多少组件。</p>
-            </div>
-          </li>
-          <li class="reveal-item">
-            <span class="abc-no">02</span>
-            <div class="abc-body">
-              <h3 class="abc-title">设计与工程之间没有边界</h3>
-              <p>加载速度、首帧、可访问性，都是体验的一部分，不是上线前才想的事。</p>
-            </div>
-          </li>
-          <li class="reveal-item">
-            <span class="abc-no">03</span>
-            <div class="abc-body">
-              <h3 class="abc-title">长期胜过漂亮</h3>
-              <p>交付的东西要能被别人接手，三年之后仍然讲得通。</p>
-            </div>
-          </li>
-        </ol>
-      </section>
+      <h1 class="stage-about" id="stageAbout" hidden data-canon="用创意与科技，连接二次元与现实">
+        <button class="stage-narrator" type="button" data-narrator-trigger>
+          <span class="sa-real">用创意与科技，连接二次元与现实</span>
+          <span class="sa-type" aria-hidden="true"></span>
+          <span class="sa-dialogue" data-narrator-dialogue aria-live="polite" aria-atomic="true"></span>
+        </button>
+      </h1>
 
-      <section class="ab-block">
-        <header class="ab-head">
-          <span class="ab-kicker">MILESTONES</span>
-          <h2 class="ab-title">发展历程</h2>
-        </header>
+      <a class="room-return" href="index.html" data-route><span aria-hidden="true">↙</span> 返回主空间</a>
+      <div class="room-content" id="roomContent" tabindex="-1" aria-label="分区内容">
+<div class="room-topline"><span><span data-room-no>04</span> / <span data-room-sub>ABOUT US</span></span><span>98.3 MHz</span></div>
+    <header class="room-heading"><h1 id="roomTitle" tabindex="-1">关于我们</h1><p>从 Minecraft 社区出发，走向文化与技术的交汇处。</p></header>
+    <div class="room-tabs" role="tablist" aria-label="关于我们章节"><button type="button" data-room-tab="about-0" id="tab-about-0" role="tab" aria-controls="panel-about-0" aria-selected="true" tabindex="0"><span aria-hidden="true">01</span> 我们的故事</button>
+<button type="button" data-room-tab="about-1" id="tab-about-1" role="tab" aria-controls="panel-about-1" aria-selected="false" tabindex="-1"><span aria-hidden="true">02</span> 我们的价值观</button>
+<button type="button" data-room-tab="about-2" id="tab-about-2" role="tab" aria-controls="panel-about-2" aria-selected="false" tabindex="-1"><span aria-hidden="true">03</span> 我们的使命</button>
+<button type="button" data-room-tab="about-3" id="tab-about-3" role="tab" aria-controls="panel-about-3" aria-selected="false" tabindex="-1"><span aria-hidden="true">04</span> 发展历程</button></div>
+    <div class="room-panels"><section class="room-panel" id="panel-about-0" role="tabpanel" aria-labelledby="tab-about-0" tabindex="0"><div class="about-scene about-story" data-about-group="story">
+      <figure class="about-figure"><img src="assets/reference/about-story.jpg" alt="森林中面向红色夕阳的二次元少女" width="1280" height="853"><figcaption><span>始于热爱</span><span>2018 — PRESENT</span></figcaption></figure>
+      <div class="about-story-body"><p class="about-kicker">01 / OUR STORY</p><h2 class="about-story-reveal"><span class="about-story-words">我们的故事</span></h2>
+        <div class="about-subtabs" role="tablist" aria-label="故事段落" data-about-switch><button type="button" id="about-story-tab-0" role="tab" aria-controls="about-story-part-0" aria-selected="true" tabindex="0" data-about-tab="0"><span aria-hidden="true">01</span>缘起</button><button type="button" id="about-story-tab-1" role="tab" aria-controls="about-story-part-1" aria-selected="false" tabindex="-1" data-about-tab="1"><span aria-hidden="true">02</span>创立</button><button type="button" id="about-story-tab-2" role="tab" aria-controls="about-story-part-2" aria-selected="false" tabindex="-1" data-about-tab="2"><span aria-hidden="true">03</span>探索</button></div>
+        <div class="about-story-copy"><div class="about-story-part" id="about-story-part-0" role="tabpanel" aria-labelledby="about-story-tab-0"><p class="about-story-reveal"><span class="about-story-words">森韵次元的创始团队由一群热爱二次元文化和科技创新的年轻人组成。我们注意到，尽管二次元文化在年轻人中越来越受欢迎，但属于二次元的净土和平台却近乎于无。</span></p></div><div class="about-story-part" id="about-story-part-1" role="tabpanel" aria-labelledby="about-story-tab-1"><p class="about-story-reveal"><span class="about-story-words">2024年，我们怀揣着将二次元文化与平台完美结合的梦想，创立了森韵次元。从最初的Mc服务器，到如今拥有超过13+开发团队的科技企业，我们始终坚持初心，致力于打造独特的二次元平台。</span></p></div><div class="about-story-part" id="about-story-part-2" role="tabpanel" aria-labelledby="about-story-tab-2"><p class="about-story-reveal"><span class="about-story-words">七年来，我们参与了各个领域的圈子，包括Vup、术圈、ai音乐、UI设计、MC等复杂的圈子，这些经验与调研为我们带来了全新的体验和乐趣。未来，我们将继续探索更多可能性，创造更多令人惊喜的产品。</span></p></div></div>
+        <div class="about-story-foot"><span>文化 · 创作 · 技术</span><span class="about-index">01 / 03</span></div>
+      </div>
+    </div></section>
+<section class="room-panel" id="panel-about-1" role="tabpanel" aria-labelledby="tab-about-1" tabindex="0" hidden><div class="about-scene about-values" data-about-group="values">
+      <header class="about-scene-head"><div><p class="about-kicker">02 / OUR VALUES</p><h2>我们的价值观</h2><p class="about-values-lead">指引我们前行的核心理念</p></div><div class="about-values-orbit" aria-hidden="true">
+  <svg viewBox="0 0 400 400" width="400" height="400" focusable="false">
+    <g class="about-values-orbit-guide" fill="none">
+      <path d="M200 12v376M12 200h376"/>
+      <circle cx="200" cy="200" r="164"/>
+      <circle cx="200" cy="200" r="130"/>
+      <ellipse cx="200" cy="200" rx="183" ry="70" transform="rotate(-32 200 200)"/>
+      <ellipse cx="200" cy="200" rx="183" ry="70" transform="rotate(32 200 200)"/>
+    </g>
+    <g class="about-values-orbit-motion" fill="none">
+      <circle class="about-values-orbit-dashes" cx="200" cy="200" r="147"/>
+      <path class="about-values-orbit-arc" d="M200 53a147 147 0 0 1 127.31 73.5"/>
+      <g class="about-values-orbit-nodes">
+        <rect x="196" y="49" width="8" height="8"/>
+        <rect x="68.69" y="269.5" width="8" height="8"/>
+        <rect x="323.31" y="269.5" width="8" height="8"/>
+      </g>
+    </g>
+    <g class="about-values-orbit-cross" fill="none"><path d="M194 12h12M194 388h12M12 194v12M388 194v12"/></g>
+    <g transform="translate(172 172) scale(8)">
+      <path fill="var(--planet-1)" d="M2 0h2v1H2zM1 1h2v1H1zM0 2h2v1H0zM0 3h1v1H0z"/>
+      <path fill="var(--planet-2)" d="M4 0h1v1H4zM3 1h2v1H3zM2 2h3v1H2zM1 3h3v1H1zM1 4h2v1H1zM2 5h1v1H2z"/>
+      <path fill="var(--planet-3)" d="M5 1h1v1H5zM5 2h2v1H5zM4 3h3v1H4zM3 4h3v1H3zM3 5h2v1H3zM2 6h3v1H2z"/>
+    </g>
+  </svg>
+</div></header>
+      <div class="about-subtabs" role="tablist" aria-label="价值观" data-about-switch><button type="button" id="about-values-tab-0" role="tab" aria-controls="about-values-part-0" aria-selected="true" tabindex="0" data-about-tab="0"><span aria-hidden="true">01</span>创新无界</button><button type="button" id="about-values-tab-1" role="tab" aria-controls="about-values-part-1" aria-selected="false" tabindex="-1" data-about-tab="1"><span aria-hidden="true">02</span>用户至上</button><button type="button" id="about-values-tab-2" role="tab" aria-controls="about-values-part-2" aria-selected="false" tabindex="-1" data-about-tab="2"><span aria-hidden="true">03</span>热爱与激情</button></div>
+      <div class="about-values-grid"><article class="about-value" id="about-values-part-0" role="tabpanel" aria-labelledby="about-values-tab-0"><div class="about-value-mark" aria-hidden="true">01<i></i></div><span class="about-kicker">INNOVATION</span><h3>创新无界</h3><p>我们鼓励突破常规思维，勇于尝试新的技术和创意，不断探索二次元文化与科技融合的可能性。</p></article><article class="about-value" id="about-values-part-1" role="tabpanel" aria-labelledby="about-values-tab-1"><div class="about-value-mark" aria-hidden="true">02<i></i></div><span class="about-kicker">PEOPLE FIRST</span><h3>用户至上</h3><p>我们始终将用户需求放在首位，倾听用户声音，不断优化产品体验，为用户创造真正的价值。</p></article><article class="about-value" id="about-values-part-2" role="tabpanel" aria-labelledby="about-values-tab-2"><div class="about-value-mark" aria-hidden="true">03<i></i></div><span class="about-kicker">PASSION</span><h3>热爱与激情</h3><p>我们热爱二次元文化和科技创新，这份热爱和激情驱动我们不断前行，创造更多精彩。</p></article></div>
+    </div></section>
+<section class="room-panel" id="panel-about-2" role="tabpanel" aria-labelledby="tab-about-2" tabindex="0" hidden><div class="about-scene about-mission" data-about-group="mission"><header class="about-scene-head"><div><p class="about-kicker">03 / OUR MISSION</p><h2>我们的使命</h2></div><span class="about-kicker">二次元 × 现实世界</span></header>
+      <div class="about-subtabs" role="tablist" aria-label="使命与数字" data-about-switch><button type="button" id="about-mission-tab-0" role="tab" aria-controls="about-mission-part-0" aria-selected="true" tabindex="0" data-about-tab="0"><span aria-hidden="true">01</span>使命宣言</button><button type="button" id="about-mission-tab-1" role="tab" aria-controls="about-mission-part-1" aria-selected="false" tabindex="-1" data-about-tab="1"><span aria-hidden="true">02</span>数字足迹</button></div>
+      <div class="about-mission-part" id="about-mission-part-0" role="tabpanel" aria-labelledby="about-mission-tab-0"><div class="about-mission-bridge" aria-hidden="true">
+  <svg viewBox="0 0 640 120" width="640" height="120" focusable="false">
+    <g class="about-mission-guide" fill="none">
+      <circle cx="116" cy="60" r="44"/><circle cx="524" cy="60" r="44"/>
+      <path d="M116 6v10m0 88v10M62 60h10m88 0h10M524 6v10m0 88v10M470 60h10m88 0h10"/>
+      <path d="M174 60h292M198 48h244M198 72h244"/>
+      <path d="M232 56v8m44-8v8m88-8v8m44-8v8"/>
+    </g>
+    <g class="about-mission-pixels">
+      <path d="M96 40h12v12H96zM112 40h12v12h-12zM96 56h12v12H96zM112 56h12v12h-12zM128 56h12v12h-12zM112 72h12v12h-12zM128 72h12v12h-12z"/>
+      <path class="about-mission-pixel-accent" d="M128 40h12v12h-12zM96 72h12v12H96z"/>
+    </g>
+    <g class="about-mission-cube" fill="none">
+      <path d="m524 34 24 13v26l-24 13-24-13V47zM500 47l24 13 24-13M524 60v26"/>
+      <path class="about-mission-cube-back" d="m500 73 24-13 24 13M524 34v26"/>
+    </g>
+    <g class="about-mission-link" fill="none"><path d="M288 60h64"/><path d="m315 55 5-3 5 3v10l-5 3-5-3z"/></g>
+    <rect class="about-mission-signal" x="181" y="57" width="6" height="6"/>
+  </svg>
+</div><p class="about-mission-copy">森韵次元致力于通过创新科技连接二次元与现实世界，为用户创造更加丰富、有趣、便捷的数字生活体验。我们希望让科技产品更有温度，让二次元文化更加普及，让每一位用户都能在我们的产品中找到惊喜与快乐。</p></div>
+      <div class="about-mission-part" id="about-mission-part-1" role="tabpanel" aria-labelledby="about-mission-tab-1"><dl class="about-metrics"><div class="about-metric"><dt>年创新历程</dt><dd><span data-about-count="6">6</span><span class="about-metric-unit">+</span></dd></div><div class="about-metric"><dt>专业团队成员</dt><dd><span data-about-count="10">10</span><span class="about-metric-unit">+</span></dd></div><div class="about-metric"><dt>创新思维</dt><dd><span data-about-count="300">300</span><span class="about-metric-unit">+</span></dd></div><div class="about-metric"><dt>资金投入</dt><dd><span data-about-count="10">10</span><span class="about-metric-unit">万+</span></dd></div></dl></div>
+    </div></section>
+<section class="room-panel" id="panel-about-3" role="tabpanel" aria-labelledby="tab-about-3" tabindex="0" hidden><div class="about-scene about-history" data-about-group="history"><div class="about-history-layout"><div class="about-history-frame"><header class="about-scene-head"><div><p class="about-kicker">04 / OUR JOURNEY</p><h2>发展历程</h2></div></header>
+      <div class="about-milestones"><article class="about-milestone" id="about-history-part-0" role="tabpanel" aria-labelledby="about-history-tab-0"><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2018"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">1</span></span><span class="about-year-cell"><span class="about-year-digit">8</span></span></span><span class="about-year-suffix">年</span></div><div class="about-milestone-copy"><p class="about-kicker">2018年</p><h3>“OurSky”成立</h3><p>森韵次元前身“Oursky”由创始人“冬月”一人创立，主营Mc服务器。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/origin.jpg" alt="阳光穿过森林，林间小径向前延伸（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>01 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-1" role="tabpanel" aria-labelledby="about-history-tab-1" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2022"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span></span><span class="about-year-suffix">年</span></div><div class="about-milestone-copy"><p class="about-kicker">2022年</p><h3>结识成员</h3><p>结识了目前的常驻运维“Vxtls”，并开始积累资金。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/connection.jpg" alt="日落时分的海岸与相接的海天（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>02 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-2" role="tabpanel" aria-labelledby="about-history-tab-2" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2024"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">4</span></span></span><span class="about-year-suffix">初</span></div><div class="about-milestone-copy"><p class="about-kicker">2024年</p><h3>想法初现</h3><p>在24年年初，有了制作一个二次元平台的想法，购买了项目搭载的物理服务器。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/idea.jpg" alt="电路板上排列的芯片与电子元件（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>03 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-3" role="tabpanel" aria-labelledby="about-history-tab-3" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2024"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">4</span></span></span><span class="about-year-suffix">末</span></div><div class="about-milestone-copy"><p class="about-kicker">2024年末</p><h3>正式启动</h3><p>年末结识合伙人，一拍即合，创立森韵次元。成立公司。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/start.jpg" alt="舒展开来的绿色蕨叶（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>04 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-4" role="tabpanel" aria-labelledby="about-history-tab-4" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2025"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">5</span></span></span><span class="about-year-suffix">年</span></div><div class="about-milestone-copy"><p class="about-kicker">2025年</p><h3>全面发展</h3><p>将核心团队扩展至4人，开发团队扩展至13人，团队欣欣向荣。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/growth.jpg" alt="晨光照亮云雾中的绿色山谷（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>05 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-5" role="tabpanel" aria-labelledby="about-history-tab-5" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2025"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">5</span></span></span><span class="about-year-suffix">末</span></div><div class="about-milestone-copy"><p class="about-kicker">2025年末</p><h3>开发PC/移动</h3><p>项目在初次调研完毕后，经过商讨，决定制作森韵次元坞的PC端和移动端，并且将中心迁移至术力口方向。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/idea.jpg" alt="电路板上排列的芯片与电子元件（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>06 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-6" role="tabpanel" aria-labelledby="about-history-tab-6" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2026"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">6</span></span></span><span class="about-year-suffix">年</span></div><div class="about-milestone-copy"><p class="about-kicker">2026年</p><h3>数据增入</h3><p>经过半年的研发，成功地开发出了AI全链路，实现歌曲授权—歌词增入—歌曲入库的全流程。并且开发出术曲识别、歌词识别、歌姬识别三大模型。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/growth.jpg" alt="晨光照亮云雾中的绿色山谷（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>07 / 08</span></figcaption></figure></article><article class="about-milestone" id="about-history-part-7" role="tabpanel" aria-labelledby="about-history-tab-7" hidden><div class="about-year" aria-hidden="true"><span class="about-year-number" data-year="2026"><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">0</span></span><span class="about-year-cell"><span class="about-year-digit">2</span></span><span class="about-year-cell"><span class="about-year-digit">6</span></span></span><span class="about-year-suffix">末</span></div><div class="about-milestone-copy"><p class="about-kicker">2026年末</p><h3>正式上线</h3><p>项目预计在12月正式全量上线，包含web、PC、移动端，敬请期待。</p></div><figure class="about-history-figure"><div class="about-history-image"><img src="assets/journey/horizon.jpg" alt="星空下的连绵山峰（示意配图）" width="960" height="600" decoding="async"></div><figcaption><span>示意配图</span><span>08 / 08</span></figcaption></figure></article></div>
+      </div><div class="about-history-rail" role="tablist" aria-label="8个发展节点" style="--history-count: 8" data-about-switch><span class="about-history-scale" aria-hidden="true"></span><div class="about-history-stops"><button type="button" id="about-history-tab-0" role="tab" aria-controls="about-history-part-0" aria-selected="true" tabindex="0" data-about-tab="0"><span class="about-rail-step" aria-hidden="true">01</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2018</span><span class="about-rail-title">“OurSky”成立</span></button><button type="button" id="about-history-tab-1" role="tab" aria-controls="about-history-part-1" aria-selected="false" tabindex="-1" data-about-tab="1"><span class="about-rail-step" aria-hidden="true">02</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2022</span><span class="about-rail-title">结识成员</span></button><button type="button" id="about-history-tab-2" role="tab" aria-controls="about-history-part-2" aria-selected="false" tabindex="-1" data-about-tab="2"><span class="about-rail-step" aria-hidden="true">03</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2024初</span><span class="about-rail-title">想法初现</span></button><button type="button" id="about-history-tab-3" role="tab" aria-controls="about-history-part-3" aria-selected="false" tabindex="-1" data-about-tab="3"><span class="about-rail-step" aria-hidden="true">04</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2024末</span><span class="about-rail-title">正式启动</span></button><button type="button" id="about-history-tab-4" role="tab" aria-controls="about-history-part-4" aria-selected="false" tabindex="-1" data-about-tab="4"><span class="about-rail-step" aria-hidden="true">05</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2025</span><span class="about-rail-title">全面发展</span></button><button type="button" id="about-history-tab-5" role="tab" aria-controls="about-history-part-5" aria-selected="false" tabindex="-1" data-about-tab="5"><span class="about-rail-step" aria-hidden="true">06</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2025末</span><span class="about-rail-title">开发PC/移动</span></button><button type="button" id="about-history-tab-6" role="tab" aria-controls="about-history-part-6" aria-selected="false" tabindex="-1" data-about-tab="6"><span class="about-rail-step" aria-hidden="true">07</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2026</span><span class="about-rail-title">数据增入</span></button><button type="button" id="about-history-tab-7" role="tab" aria-controls="about-history-part-7" aria-selected="false" tabindex="-1" data-about-tab="7"><span class="about-rail-step" aria-hidden="true">08</span><span class="about-rail-dot" aria-hidden="true"></span><span class="about-rail-date">2026末</span><span class="about-rail-title">正式上线</span></button></div></div>
+    </div></div></section></div>
+      </div>
+      <p class="room-status" id="roomStatus" role="status" aria-live="polite"></p>
 
-        <ol class="ab-timeline" role="list">
-          <li class="ab-node reveal-item">
-            <span class="abn-year">2021</span>
-            <div class="abn-body">
-              <h3 class="abn-title">成立</h3>
-              <p>两个人、一间租来的房间。接下第一个没有预算的项目。</p>
-            </div>
-          </li>
-          <li class="ab-node reveal-item">
-            <span class="abn-year">2022</span>
-            <div class="abn-body">
-              <h3 class="abn-title">第一套设计系统交付</h3>
-              <p>把零散的页面收敛成一套可复用的组件与规范，客户的迭代周期缩短了一半。</p>
-            </div>
-          </li>
-          <li class="ab-node reveal-item">
-            <span class="abn-year">2023</span>
-            <div class="abn-body">
-              <h3 class="abn-title">团队扩充到六人</h3>
-              <p>设计与前端坐在一起工作，不再有「设计稿交付」这道墙。</p>
-            </div>
-          </li>
-          <li class="ab-node reveal-item">
-            <span class="abn-year">2024</span>
-            <div class="abn-body">
-              <h3 class="abn-title">方法开始跨行业复制</h3>
-              <p>同一套工作方式在电商、工具、内容三类产品上都成立，它不再依赖具体行业。</p>
-            </div>
-          </li>
-          <li class="ab-node is-now reveal-item">
-            <span class="abn-year">2026</span>
-            <div class="abn-body">
-              <h3 class="abn-title">现在</h3>
-              <p>还是那件事：让复杂的系统对人保持诚实。</p>
-            </div>
-          </li>
-        </ol>
-      </section>
+      <script type="application/json" id="aboutData">
+{"lines":{"pool":["让热爱，拥有自己的次元","从一个社区，走向更多可能","文化与技术，在这里相遇","一起把想法，变成看得见的作品"],"quips":{"refresh":"每一次相遇，都是新的开始","allSeen":"六个空间，同一种热爱","dwell":"慢慢看，故事还在继续","away":"欢迎回来，继续我们的故事","night":"热爱，也在深夜发光"}},"rules":{"refreshMin":4,"dwellMin":180000,"awayMin":604800000,"nightFrom":1,"nightTo":5}}</script>
 
-     </div>
+      <div class="stage-foot" aria-hidden="true">
+        <i class="sf-line"></i>
+        <span class="sf-text">
+          <span class="sf-seg">SYCYW</span>
+          <span class="sf-dot">·</span>
 
-      <aside class="about-aside" aria-label="公司概况">
-        <span class="aa-kicker">VITALS</span>
-        <dl class="aa-grid">
-          <div class="aa-cell">
-            <dt>成立</dt>
-            <dd>2021</dd>
-          </div>
-          <div class="aa-cell">
-            <dt>团队</dt>
-            <dd>06</dd>
-          </div>
-          <div class="aa-cell">
-            <dt>交付</dt>
-            <dd>40+</dd>
-          </div>
-          <div class="aa-cell">
-            <dt>据点</dt>
-            <dd>上海</dd>
-          </div>
-        </dl>
-        <span class="aa-coord">31.23N&nbsp;121.47E</span>
-        <span class="aa-rule" aria-hidden="true"></span>
-        <p class="aa-note">设计与前端坐在一起工作，<br>没有「设计稿交付」那道墙。</p>
-      </aside>
-
+          <span class="sf-seg sf-clock clock">--:--:--</span>
+          <span class="sf-dot">·</span>
+          <span class="sf-seg">CULTURE&nbsp;×&nbsp;TECHNOLOGY</span>
+        </span>
+        <i class="sf-line"></i>
+      </div>
     </section>
 
   </main>
-
-  <footer class="site-footer">
-    <div class="sf-contact">
-      <a class="footer-mail" href="mailto:hello@ces.studio">hello@ces.studio</a>
-      <div class="footer-social">
-        <a href="#">微博</a>
-        <a href="#">GitHub</a>
-        <a href="#">Twitter</a>
-      </div>
-    </div>
-
-    <div class="sf-meta">
-      <span>© 2024 森韵次元坞</span>
-      <span class="sf-rev">REV&nbsp;2.31</span>
-    </div>
-  </footer>
-
-
-  <script src="script.js">
-</script>
+  <script src="script.js?v=20261015-splash-readouts"></script>
+  <script src="home-logo.js?v=20261015-idle-reset"></script>
+  <script src="home-narrator.js?v=20261015-idle-reset"></script>
+  <script src="about-room.js"></script>
+  <script src="team-room.js?v=20261015-spacing"></script>
+  <script src="contact-room.js"></script>
+  <script src="ecosystem-room.js"></script>
+  <script src="join-room.js?v=20261015-direction-emblems"></script>
+  <script src="products-room.js?v=20261015-shadow-reveal"></script>
+  <script src="wide-motion.js?v=20261015-home-lock"></script>
+  <script src="orbit-room.js?v=20261015-home-lock"></script>
 </body>
 </html>

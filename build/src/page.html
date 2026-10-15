@@ -1,47 +1,36 @@
 <!DOCTYPE html>
-
-<html lang="zh-CN" data-wide="off" data-page="sub" data-slug="{{ slug }}">
+<html lang="zh-CN" data-wide="on" data-page="room" data-experience="orbit" data-slug="{{ slug }}">
 <head>
 {{> head }}
-{{> nav-signal }}
-{{> noscript-page }}
+{{> noscript-home }}
+<noscript><style>
+  html[data-experience="orbit"][data-page="room"] .room-panel[hidden] { display: block !important; }
+  html[data-experience="orbit"][data-page="room"] .room-tabs,
+  html[data-experience="orbit"][data-page="room"] .room-footer,
+  html[data-experience="orbit"] .menu-toggle { display: none; }
+  html[data-experience="orbit"][data-page="room"] .room-content { position: relative; inset: auto; margin: 0; width: 100%; max-height: none; overflow: visible; padding: 9rem 7% 5rem; }
+  html[data-experience="orbit"][data-page="room"] .stage { height: auto; min-height: 100vh; overflow: visible; padding: 0; }
+  html[data-experience="orbit"][data-page="room"] .room-panels { overflow: visible; }
+  html[data-experience="orbit"][data-page="room"] .room-panel + .room-panel { border-top: 1px solid var(--line); margin-top: 2rem; }
+</style></noscript>
 </head>
-<body>
-
+<body class="stage-in deco-on">
   <div class="noise" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
-
 {{> header }}
-
-  <nav class="index-bar" aria-label="分区索引">
-    <div class="ib-scroll">
-      <div class="ib-track">
-{{ indexBar }}
-
-        <div class="ib-scale" aria-hidden="true">
-          <div class="ib-scale-dense"></div>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <main class="page-main" id="top">
-
-    <header class="page-title" id="pageTitle">
-      <span class="pt-no">{{ no }}</span>
-      <h1 class="pt-name">{{ title }}</h1>
-      <span class="pt-sub">{{ subNbsp }}</span>
-    </header>
-
-    <p class="page-desc reveal-line">{{ desc }}</p>
-
-{{ pageBody }}
-
+  <main id="top">
+{{> orbit-stage }}
   </main>
-
-{{> footer }}
-
-  <script src="script.js">
-</script>
+  <script src="script.js?v=20261015-splash-readouts"></script>
+  <script src="home-logo.js?v=20261015-idle-reset"></script>
+  <script src="home-narrator.js?v=20261015-idle-reset"></script>
+  <script src="about-room.js"></script>
+  <script src="team-room.js?v=20261015-spacing"></script>
+  <script src="contact-room.js"></script>
+  <script src="ecosystem-room.js"></script>
+  <script src="join-room.js?v=20261015-direction-emblems"></script>
+  <script src="products-room.js?v=20261015-shadow-reveal"></script>
+  <script src="wide-motion.js?v=20261015-home-lock"></script>
+  <script src="orbit-room.js?v=20261015-home-lock"></script>
 </body>
 </html>

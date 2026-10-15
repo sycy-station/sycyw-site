@@ -1,0 +1,49 @@
+.stage-logo-wrap {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.stage-logo-motion {
+  display: block;
+  width: 100%;
+  transform-origin: 50% 52%;
+  pointer-events: none;
+}
+
+.stage-logo-motion .stage-logo {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.stage-logo-wrap.is-logo-moving .stage-logo-motion {
+  will-change: transform, opacity;
+}
+
+.stage-logo-wrap.is-logo-flipping {
+  z-index: 3;
+}
+
+.stage-logo-shadow {
+  position: absolute;
+  left: 22%;
+  top: calc(var(--logo-final) - 12px);
+  width: 56%;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-logo-shadow { display: none; }
+}

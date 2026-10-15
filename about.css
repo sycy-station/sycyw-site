@@ -1,0 +1,938 @@
+/* About page: panoramic industrial layout, promoted from preview V3. */
+
+:root {
+  --p3-pad: clamp(1.25rem, 3vw, 4rem);
+  --p3-ink: var(--ink);
+  --p3-paper: var(--paper);
+  --p3-card-bg: rgba(10, 10, 10, 0.02);
+  --p3-card-hover: rgba(10, 10, 10, 0.045);
+  --p3-line: rgba(10, 10, 10, 0.12);
+  --p3-line-bold: rgba(10, 10, 10, 0.3);
+  --p3-green: #10b981;
+  --p3-mono: var(--font-mono);
+  --p3-sans: var(--font-sans);
+}
+
+[data-theme="dark"] {
+  --p3-card-bg: rgba(255, 255, 255, 0.03);
+  --p3-card-hover: rgba(255, 255, 255, 0.06);
+  --p3-line: rgba(255, 255, 255, 0.12);
+  --p3-line-bold: rgba(255, 255, 255, 0.3);
+}
+
+/* 覆盖 style.css 与 page.css 的所有约束：绝对 100% 满宽 */
+.page-main.p3-fullscreen-canvas,
+.p3-fullscreen-canvas {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: calc(var(--header-h) + var(--bar-h) + var(--scale-h) + 2rem) var(--p3-pad) 8rem !important;
+  box-sizing: border-box !important;
+  position: relative;
+}
+
+.p3-page-body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.p3-page-body > section {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Preserve the home-to-page title handoff without duplicating the V3 hero. */
+.p3-transition-title {
+  position: absolute;
+  top: var(--title-top);
+  left: var(--title-left);
+  z-index: 2;
+  pointer-events: none;
+}
+
+html.js-enter:not(.nav-enter) .page-title.p3-transition-title,
+html.js-enter.page-ready .page-title.p3-transition-title {
+  opacity: 0 !important;
+  transform: translateY(-8px);
+  transition: opacity 0.24s var(--ease), transform 0.24s var(--ease);
+}
+
+html.nav-enter:not(.page-ready) .page-title.p3-transition-title,
+body.leaving-back .page-title.p3-transition-title {
+  opacity: 1 !important;
+  transform: none;
+}
+
+/* 顶部导航与页眉全宽 */
+.index-bar .ib-scroll {
+  max-width: 100% !important;
+  padding-inline: var(--p3-pad) !important;
+}
+
+.site-header {
+  padding-inline: var(--p3-pad) !important;
+}
+
+.site-footer {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  padding-inline: var(--p3-pad) !important;
+  box-sizing: border-box !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. PANORAMIC HUD HERO: 全景工业仪表首屏
+   -------------------------------------------------------------------------- */
+.p3-hud-hero {
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  position: relative;
+  margin-bottom: 2.5rem !important;
+  padding: 0 !important; /* 内部由各个子元素撑开 */
+}
+
+/* 四角十字工业参考标 */
+.p3-cross-tl, .p3-cross-tr, .p3-cross-bl, .p3-cross-br {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+}
+.p3-cross-tl { top: -5px; left: -5px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.p3-cross-tr { top: -5px; right: -5px; border-top: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+.p3-cross-bl { bottom: -5px; left: -5px; border-bottom: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.p3-cross-br { bottom: -5px; right: -5px; border-bottom: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+
+.p3-hud-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 1rem var(--p3-pad);
+  border-bottom: 1px solid var(--p3-line);
+  font-family: var(--p3-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+}
+
+.p3-hud-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.p3-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--p3-green);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: p3Pulse 2s infinite;
+}
+
+@keyframes p3Pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* 首屏三栏全景布局 */
+.p3-hud-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.05fr) minmax(0, 0.85fr);
+  align-items: stretch;
+}
+
+.p3-hud-col {
+  padding: clamp(2rem, 3.5vw, 4rem) var(--p3-pad);
+  border-right: 1px solid var(--p3-line);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.p3-hud-col:last-child {
+  border-right: none;
+}
+
+.p3-hud-title {
+  font-size: 3.6rem;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+
+.p3-hud-title span.outline {
+  display: block;
+  color: var(--text-soft);
+  font-weight: 400;
+  -webkit-text-stroke: 0;
+}
+
+.p3-hud-tagline {
+  font-family: var(--p3-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  color: var(--grey-strong);
+}
+
+.p3-hud-desc {
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--text-body);
+  margin-bottom: 2rem;
+}
+
+/* 频谱图 */
+.p3-spectrum-box {
+  border: 1px solid var(--p3-line);
+  padding: 1.4rem;
+  background: var(--paper);
+}
+
+.p3-spec-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--p3-mono);
+  font-size: 0.74rem;
+  color: var(--grey-strong);
+  letter-spacing: 0.14em;
+  margin-bottom: 1rem;
+}
+
+.p3-wave-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 42px;
+}
+
+.p3-w-bar {
+  flex: 1;
+  background: var(--ink);
+  opacity: 0.75;
+  min-height: 4px;
+  animation: p3Wave 1.6s ease-in-out infinite alternate;
+}
+.p3-w-bar:nth-child(2n) { animation-delay: 0.15s; }
+.p3-w-bar:nth-child(3n) { animation-delay: 0.35s; }
+.p3-w-bar:nth-child(4n) { animation-delay: 0.5s; }
+.p3-w-bar:nth-child(5n) { animation-delay: 0.25s; }
+
+@keyframes p3Wave {
+  0% { height: 6px; }
+  50% { height: 40px; }
+  100% { height: 12px; }
+}
+
+/* 右侧参数板 */
+.p3-hud-telemetry {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  font-family: var(--p3-mono);
+}
+
+.p3-tele-row {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px dashed var(--p3-line);
+  font-size: 0.88rem;
+}
+.p3-tele-k { color: var(--grey-strong); }
+.p3-tele-v { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 1200px) {
+  .p3-hud-title { font-size: 3rem; }
+  .p3-hud-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .p3-hud-col {
+    border-right: none;
+    border-bottom: 1px solid var(--p3-line);
+  }
+  .p3-hud-col:last-child {
+    border-bottom: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. FULL-BLEED SPEC TAPE: 6 列全幅横贯参数带
+   -------------------------------------------------------------------------- */
+.p3-spec-tape {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  margin-bottom: 2.5rem !important;
+}
+
+.p3-tape-cell {
+  padding: 1.8rem var(--p3-pad);
+  border-right: 1px solid var(--p3-line);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background 0.25s var(--ease);
+}
+.p3-tape-cell:last-child { border-right: none; }
+.p3-tape-cell:hover { background: var(--p3-card-hover); }
+
+.p3-tc-k {
+  font-family: var(--p3-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--grey-strong);
+  margin-bottom: 0.8rem;
+}
+
+.p3-tc-v {
+  font-family: var(--p3-mono);
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: 0;
+  margin-bottom: 0.4rem;
+}
+
+.p3-tc-sub {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+
+@media (max-width: 1300px) {
+  .p3-spec-tape { grid-template-columns: repeat(3, 1fr); }
+  .p3-tape-cell:nth-child(3) { border-right: none; }
+  .p3-tape-cell:nth-child(n+4) { border-top: 1px solid var(--p3-line); }
+}
+@media (max-width: 760px) {
+  .p3-spec-tape { grid-template-columns: repeat(2, 1fr); }
+  .p3-tape-cell:nth-child(2n) { border-right: none; }
+  .p3-tape-cell:nth-child(n+3) { border-top: 1px solid var(--p3-line); }
+}
+
+/* --------------------------------------------------------------------------
+   3. DUAL-WING NARRATIVE & CREED: 双翼展开叙事与行动法则
+   -------------------------------------------------------------------------- */
+.p3-wing-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 0;
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  margin-bottom: 2.5rem !important;
+}
+
+.p3-panel {
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  padding: clamp(2.2rem, 3.2vw, 3.6rem) var(--p3-pad) !important;
+}
+
+.p3-wing-layout > .p3-panel {
+  border: 0;
+  background: transparent;
+}
+
+.p3-wing-layout > .p3-panel + .p3-panel {
+  border-left: 1px solid var(--p3-line-bold);
+}
+
+.p3-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--p3-line);
+  margin-bottom: 2.2rem;
+}
+
+.p3-ph-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-family: var(--p3-mono);
+}
+.p3-ph-title .no {
+  flex: 0 0 auto;
+  font-size: 0.88rem;
+  color: var(--grey-strong);
+  white-space: nowrap;
+}
+.p3-ph-title .text { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.16em; color: var(--ink); }
+.p3-ph-meta { font-family: var(--p3-mono); font-size: 0.8rem; color: var(--grey-strong); }
+
+/* 左翼品牌叙事 */
+.p3-story-panel {
+  display: flex;
+  min-width: 0;
+  padding: 0 !important;
+}
+
+.p3-story-hero {
+  display: grid;
+  grid-template-rows: minmax(22rem, 1fr) auto 4rem;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.p3-story-hero-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  padding: clamp(2.75rem, 4vw, 5.25rem) clamp(2rem, 2.5vw, 3rem);
+  box-sizing: border-box;
+  font-size: 4.4rem;
+  line-height: 1.08;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.p3-story-hero-title strong,
+.p3-story-hero-title span {
+  display: block;
+  font: inherit;
+  letter-spacing: 0;
+}
+
+.p3-story-hero-title strong {
+  font-weight: 800;
+}
+
+.p3-story-hero-title span {
+  font-weight: 400;
+  color: var(--text-body);
+}
+
+.p3-story-copy {
+  display: grid;
+  align-content: center;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 2.25rem var(--p3-pad) 2.5rem;
+}
+
+.p3-story-copy p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--text-body);
+}
+
+.p3-story-tagline {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 4rem;
+  margin: 0;
+  padding: 0 var(--p3-pad);
+  font-family: var(--p3-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--grey-strong);
+}
+
+/* 法则卡片组 */
+.p3-creed-grid {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.p3-creed-card {
+  border: 1px solid var(--p3-line);
+  background: var(--paper);
+  padding: 1.8rem 2rem;
+  transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.p3-creed-card:hover {
+  border-color: var(--ink);
+  transform: translateX(5px);
+}
+
+.p3-cc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+  font-family: var(--p3-mono);
+}
+.p3-cc-no { font-size: 1.25rem; font-weight: 600; color: var(--ink); }
+.p3-cc-tag { font-size: 0.72rem; letter-spacing: 0.16em; color: var(--grey-strong); }
+.p3-cc-title { font-size: 1.25rem; font-weight: 500; color: var(--ink); margin-bottom: 0.6rem; }
+.p3-cc-desc { font-size: 0.96rem; line-height: 1.8; color: var(--text-soft); }
+
+@media (max-width: 1080px) {
+  .p3-wing-layout { grid-template-columns: 1fr; }
+
+  .p3-wing-layout > .p3-panel + .p3-panel {
+    border-left: 0;
+    border-top: 1px solid var(--p3-line-bold);
+  }
+
+  .p3-story-hero-title { font-size: 3.75rem; }
+}
+
+/* --------------------------------------------------------------------------
+   4. FULL-WIDTH TOPOLOGY & ECOSYSTEM: 4 列硬件拓扑与全景圈层
+   -------------------------------------------------------------------------- */
+.p3-full-section {
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  padding: 2.25rem var(--p3-pad) !important;
+  margin-bottom: 2.5rem !important;
+}
+
+/* Restore the inset intentionally removed by the generic full-width reset. */
+.p3-page-body > .p3-full-section {
+  padding: 2.25rem var(--p3-pad) !important;
+}
+
+.p3-full-section > .p3-panel-head {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+}
+
+.p3-topo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.p3-topo-card {
+  border: 1px solid var(--p3-line);
+  background: var(--paper);
+  padding: 1.75rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.p3-t-tag {
+  display: block;
+  font-family: var(--p3-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  color: var(--grey-strong);
+  margin-bottom: 0.65rem;
+}
+
+.p3-t-name {
+  font-size: 1.28rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+}
+
+.p3-t-desc {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text-soft);
+  margin-bottom: 1.75rem;
+  text-wrap: pretty;
+}
+
+.p3-t-status {
+  font-family: var(--p3-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  color: var(--p3-green);
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--p3-line);
+}
+
+@media (max-width: 1100px) {
+  .p3-topo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .p3-topo-grid { grid-template-columns: 1fr; }
+}
+
+/* --------------------------------------------------------------------------
+   5. HORIZONTAL TIMELINE: V2 横向长卷成长轨迹
+   -------------------------------------------------------------------------- */
+.p3-page-body > .p3-chrono-section {
+  border: 0;
+  background: transparent;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.p3-horizon-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1.5rem 0 3rem;
+  margin-top: 1.2rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.p3-horizon-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.p3-chrono-grid {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  min-width: 100%;
+  padding-bottom: 1rem;
+}
+
+.p3-cg-item {
+  flex: 0 0 22.5rem;
+  padding: 1.8rem 0 0;
+  border-top: 2px solid var(--p3-line-bold);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.25s var(--ease);
+}
+.p3-cg-item:hover { transform: translateY(-4px); }
+
+.p3-cg-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.4rem;
+}
+
+.p3-cg-year {
+  font-family: var(--p3-mono);
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.p3-cg-tag {
+  font-family: var(--p3-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--grey-strong);
+}
+
+.p3-cg-title {
+  font-size: 1.12rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+  text-wrap: pretty;
+}
+
+.p3-cg-desc {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--text-soft);
+  text-wrap: pretty;
+}
+
+.p3-cg-item.is-live {
+  border-top-color: var(--ink);
+}
+.p3-cg-item.is-live .p3-cg-tag {
+  color: var(--p3-green);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .p3-horizon-wrap { padding-bottom: 1.5rem; }
+  .p3-cg-item { flex-basis: min(18rem, calc(100vw - 4.5rem)); }
+}
+
+/* V2 full-bleed marquee, placed above the ecosystem / console region. */
+.p3-marquee-strip {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin: 4rem 0;
+  margin-left: -50vw;
+  overflow: hidden;
+  padding: 1.8rem 0;
+  background: var(--ink);
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+.p3-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: p3Marquee 24s linear infinite;
+  will-change: transform;
+  font-family: var(--p3-mono);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.p3-marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+  padding-right: 3.5rem;
+}
+
+.p3-marquee-dot {
+  opacity: 0.4;
+}
+
+@keyframes p3Marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* --------------------------------------------------------------------------
+   6. FULL-WIDTH CONSOLE & ECOSYSTEM: 圈层矩阵与终端
+   -------------------------------------------------------------------------- */
+.p3-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 2rem;
+  margin-bottom: 2.5rem !important;
+}
+
+.p3-page-body > .p3-lower-grid {
+  padding: 0 !important;
+}
+
+.p3-eco-matrix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 1.4rem;
+}
+
+.p3-eco-badge {
+  padding: 0.65rem 1.3rem;
+  border: 1px solid var(--p3-line);
+  background: var(--paper);
+  font-size: 0.98rem;
+  color: var(--ink);
+  transition: all 0.2s var(--ease);
+}
+.p3-eco-badge:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.p3-console-window {
+  border: 1px solid var(--p3-line);
+  background: rgba(10, 10, 10, 0.05);
+  padding: 1.8rem;
+  font-family: var(--p3-mono);
+  font-size: 0.86rem;
+  line-height: 2.1;
+}
+
+[data-theme="dark"] .p3-console-window {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.p3-console-row {
+  display: flex;
+  gap: 1.4rem;
+}
+.p3-cr-k { color: var(--grey-strong); flex: 0 0 120px; }
+.p3-cr-v { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 1000px) {
+  .p3-lower-grid { grid-template-columns: 1fr; }
+}
+
+/* --------------------------------------------------------------------------
+   7. FOOTER ACTION BANNER
+   -------------------------------------------------------------------------- */
+.p3-footer-banner {
+  border: 1px solid var(--p3-line-bold);
+  background: var(--p3-card-bg);
+  padding: 2.8rem var(--p3-pad) !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.p3-page-body > .p3-footer-banner {
+  padding: 2.8rem var(--p3-pad) !important;
+}
+
+.p3-fb-left h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0;
+}
+.p3-fb-left p { color: var(--text-soft); font-size: 1.05rem; }
+
+.p3-fb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.2rem 2.4rem;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  font-family: var(--p3-mono);
+  font-size: 0.92rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.p3-fb-btn:hover { opacity: 0.85; transform: translateX(5px); }
+
+@media (max-width: 760px) {
+  .page-main.p3-fullscreen-canvas,
+  .p3-fullscreen-canvas {
+    padding: calc(var(--header-h) + var(--bar-h) + var(--scale-h) + 1.25rem) 1rem 5rem !important;
+  }
+
+  .site-header,
+  .site-footer,
+  .index-bar .ib-scroll {
+    padding-inline: 1rem !important;
+  }
+
+  .p3-hud-status-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+
+  .p3-hud-status-bar > *,
+  .p3-ph-title,
+  .p3-ph-title .text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .p3-hud-col,
+  .p3-panel,
+  .p3-page-body > .p3-full-section {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .p3-wing-layout > .p3-story-panel {
+    padding: 0 !important;
+  }
+
+  .p3-hud-title {
+    font-size: 2.2rem;
+    line-height: 1.18;
+  }
+
+  .p3-hud-tagline,
+  .p3-ph-title .text,
+  .p3-cc-tag {
+    letter-spacing: 0.08em;
+  }
+
+  .p3-spec-top,
+  .p3-panel-head,
+  .p3-tele-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .p3-panel-head {
+    margin-bottom: 1.5rem;
+  }
+
+  .p3-tape-cell {
+    padding: 1.35rem 1rem;
+  }
+
+  .p3-tc-v { font-size: 2.25rem; }
+
+  .p3-story-hero-title {
+    min-height: 12.5rem;
+    padding: 2.5rem 1.25rem;
+    font-size: 2.35rem;
+    line-height: 1.12;
+  }
+
+  .p3-story-hero {
+    grid-template-rows: auto auto 3.5rem;
+  }
+
+  .p3-story-copy {
+    gap: 1rem;
+    padding: 1.75rem 1.25rem 2rem;
+  }
+
+  .p3-story-copy p {
+    font-size: 0.96rem;
+    line-height: 1.8;
+  }
+
+  .p3-story-tagline {
+    min-height: 3.5rem;
+    padding: 0 1.25rem;
+    overflow-wrap: anywhere;
+  }
+
+  .p3-console-window {
+    padding: 1.2rem;
+    font-size: 0.78rem;
+  }
+
+  .p3-console-row {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .p3-cr-k { flex-basis: auto; }
+
+  .p3-page-body > .p3-footer-banner {
+    align-items: flex-start;
+    padding: 1.7rem 1.25rem !important;
+  }
+
+  .p3-fb-left h2 { font-size: 1.5rem; }
+  .p3-fb-btn { width: 100%; justify-content: space-between; padding: 1rem 1.2rem; }
+
+  .p3-marquee-strip {
+    margin-block: 2.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .p3-marquee-track {
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p3-pulse-dot,
+  .p3-w-bar,
+  .p3-marquee-track {
+    animation: none !important;
+  }
+
+  .p3-creed-card,
+  .p3-eco-badge,
+  .p3-fb-btn {
+    transition: none !important;
+  }
+}

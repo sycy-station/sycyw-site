@@ -1,0 +1,84 @@
+{
+  "source": "https://www.syciyuan.cn/team.html",
+  "retrieved": "2026-10-14",
+  "leaders": [
+    {
+      "name": "冬月",
+      "role": "创始人 & CEO",
+      "bio": "资深Vup爱好者，拥有6年管理经验，曾在多家知名科技公司担任高管职位。2018年创立梦幻科技，致力于将二次元文化与科技融合，为用户带来独特的产品体验。",
+      "image": "assets/reference/team/dongyue.png",
+      "sourceImage": "https://www.syciyuan.cn/img/dongyue.png"
+    },
+    {
+      "name": "苏以北",
+      "role": "合伙人&线下总监",
+      "bio": "AI与AR技术专家，热爱动漫游戏，曾在多家知名科技公司担任技术领导职位。负责梦幻科技的技术研发和产品创新，带领团队攻克多项技术难关，推动公司产品不断升级迭代。",
+      "image": "assets/reference/team/cy01.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/cy01.jpg"
+    },
+    {
+      "name": "PTYPJ",
+      "role": "常驻运维",
+      "bio": "资深插画师和UI设计师，擅长将二次元元素融入产品设计，打造独特用户体验。负责梦幻科技的产品视觉设计和用户体验，为公司产品注入独特的二次元美学风格。",
+      "image": "assets/reference/team/cy00.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/cy00.jpg"
+    },
+    {
+      "name": "永恒之蓝",
+      "role": "全栈统筹",
+      "bio": "深度二次元文化研究者，擅长洞察用户需求，将创意转化为可行的产品方案。负责梦幻科技的产品规划和市场策略，推动公司产品不断满足用户需求，获得市场认可。",
+      "image": "assets/reference/team/cy02.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/cy02.jpg"
+    }
+  ],
+  "core": [
+    {
+      "name": "小鱼儿",
+      "role": "高级UI设计师",
+      "image": "assets/reference/team/s01.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s01.jpg"
+    },
+    {
+      "name": "晓伟",
+      "role": "前端开发工程师",
+      "image": "assets/reference/team/s02.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s02.jpg"
+    },
+    {
+      "name": "Allen",
+      "role": "前端开发工程师",
+      "image": "assets/reference/team/s03.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s03.jpg"
+    },
+    {
+      "name": "Moon",
+      "role": "后端开发工程师",
+      "image": "assets/reference/team/s04.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s04.jpg"
+    },
+    {
+      "name": "NyanCatda",
+      "role": "后端开发工程师",
+      "image": "assets/reference/team/s05.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s05.jpg"
+    },
+    {
+      "name": "DK",
+      "role": "合作运维",
+      "image": "assets/reference/team/s06.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s06.jpg"
+    },
+    {
+      "name": "kevin",
+      "role": "Java后端开发工程师",
+      "image": "assets/reference/team/s07.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s07.jpg"
+    },
+    {
+      "name": "KeiShi",
+      "role": "想法协助",
+      "image": "assets/reference/team/s08.jpg",
+      "sourceImage": "https://www.syciyuan.cn/img/s/s08.jpg"
+    }
+  ]
+}

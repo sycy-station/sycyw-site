@@ -1,0 +1,92 @@
+    <section class="stage" id="stage">
+
+      <div class="deco" aria-hidden="true">
+        <div class="splash-grid"></div>
+        <div class="splash-frame">
+          <span class="fr fr-tl"></span><span class="fr fr-tr"></span>
+          <span class="fr fr-bl"></span><span class="fr fr-br"></span>
+        </div>
+
+        <div class="wide">
+{{> wide }}
+        </div>
+      </div>
+
+      <nav class="stage-orbit" aria-label="六个分区"{{ orbitAttrs }}>
+
+        <svg class="orbit-ring" focusable="false" aria-hidden="true">
+          <circle class="orbit-ring-path" pathLength="1"/>
+        </svg>
+        <span class="orbit-ticks" aria-hidden="true"></span>
+
+        <span class="orbit-planet-ring" aria-hidden="true"></span>
+
+        <span class="orbit-planet" aria-hidden="true">
+          <svg viewBox="0 0 7 7" width="16" height="16" focusable="false" aria-hidden="true">
+            <g fill="var(--planet-1)">
+              <rect x="2" y="0" width="2" height="1"/>
+              <rect x="1" y="1" width="2" height="1"/>
+              <rect x="0" y="2" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-2)">
+              <rect x="4" y="0" width="1" height="1"/>
+              <rect x="3" y="1" width="2" height="1"/>
+              <rect x="2" y="2" width="3" height="1"/>
+              <rect x="1" y="3" width="3" height="1"/>
+              <rect x="1" y="4" width="2" height="1"/>
+              <rect x="2" y="5" width="1" height="1"/>
+            </g>
+            <g fill="var(--planet-3)">
+              <rect x="5" y="1" width="1" height="1"/>
+              <rect x="5" y="2" width="2" height="1"/>
+              <rect x="4" y="3" width="3" height="1"/>
+              <rect x="3" y="4" width="3" height="1"/>
+              <rect x="3" y="5" width="2" height="1"/>
+              <rect x="2" y="6" width="3" height="1"/>
+            </g>
+          </svg>
+        </span>
+
+        <button class="stage-logo-wrap" type="button" data-logo-trigger aria-label="森韵次元坞，点击体验 Logo 动效">
+          <span class="stage-logo-motion" data-logo-motion>
+            <img class="stage-logo" src="assets/logo.png" alt="" width="1000" height="1000" draggable="false">
+          </span>
+          <span class="stage-logo-shadow" aria-hidden="true"></span>
+          <span class="stage-logo-name">森韵次元坞</span>
+        </button>
+
+{{ orbitItems }}
+
+      </nav>
+
+      <h1 class="stage-about" id="stageAbout"{{ homeHeadingAttrs }} data-canon="{{ aboutCanon }}">
+        <button class="stage-narrator" type="button" data-narrator-trigger>
+          <span class="sa-real">{{ aboutCanon }}</span>
+          <span class="sa-type" aria-hidden="true"></span>
+          <span class="sa-dialogue" data-narrator-dialogue aria-live="polite" aria-atomic="true"></span>
+        </button>
+      </h1>
+
+      <a class="room-return" href="index.html" data-route><span aria-hidden="true">↙</span> 返回主空间</a>
+      <div class="room-content" id="roomContent" tabindex="-1" aria-label="分区内容"{{ roomAttrs }}>
+{{ roomContent }}
+      </div>
+      <p class="room-status" id="roomStatus" role="status" aria-live="polite"></p>
+
+      <script type="application/json" id="aboutData">
+{{ aboutData }}</script>
+
+      <div class="stage-foot" aria-hidden="true">
+        <i class="sf-line"></i>
+        <span class="sf-text">
+          <span class="sf-seg">SYCYW</span>
+          <span class="sf-dot">·</span>
+
+          <span class="sf-seg sf-clock clock">--:--:--</span>
+          <span class="sf-dot">·</span>
+          <span class="sf-seg">CULTURE&nbsp;×&nbsp;TECHNOLOGY</span>
+        </span>
+        <i class="sf-line"></i>
+      </div>
+    </section>

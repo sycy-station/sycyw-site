@@ -172,11 +172,79 @@
     if (hudSeq) hudSeq.textContent = "0xFFFF";
   };
 
+  const splashReadouts = (() => {
+    const bar = hasSplash && splash.querySelector(".statusbar");
+    if (!bar) return { start() {}, destroy() {} };
+
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const readings = Array.from(bar.querySelectorAll(".sb-col em"), (element) => ({
+      element,
+      format: element.textContent
+    }));
+    const pending = new Set();
+    let running = false;
+    let pageHidden = false;
+
+    const stop = () => {
+      running = false;
+      pending.forEach(clearTimeout);
+      pending.clear();
+      bar.classList.remove("is-running");
+    };
+    const schedule = (reading) => {
+      // Each channel has its own jitter and occasional hold, never a shared beat.
+      const delay = 95 + Math.random() * 225 + (Math.random() < 0.18 ? 240 : 0);
+      const id = setTimeout(() => {
+        pending.delete(id);
+        if (!running) return;
+        let next = reading.format.replace(/\d/g, () => String(Math.floor(Math.random() * 10)));
+        if (next === reading.element.textContent) {
+          next = next.replace(/\d(?=\D*$)/, (digit) => String((Number(digit) + 1) % 10));
+        }
+        reading.element.textContent = next;
+        schedule(reading);
+      }, delay);
+      pending.add(id);
+    };
+    const refresh = () => {
+      const active = !splashDone && !pageHidden && !document.hidden &&
+        !motion.matches && splash.classList.contains("phase-expand") &&
+        !splash.classList.contains("skip");
+      if (!active) {
+        stop();
+        if (motion.matches) readings.forEach(({ element, format }) => { element.textContent = format; });
+        return;
+      }
+      if (running) return;
+      running = true;
+      bar.classList.add("is-running");
+      readings.forEach(schedule);
+    };
+    const hide = () => { pageHidden = true; stop(); };
+    const show = () => { pageHidden = false; refresh(); };
+
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("pagehide", hide);
+    window.addEventListener("pageshow", show);
+    motion.addEventListener("change", refresh);
+    return {
+      start: refresh,
+      destroy() {
+        stop();
+        document.removeEventListener("visibilitychange", refresh);
+        window.removeEventListener("pagehide", hide);
+        window.removeEventListener("pageshow", show);
+        motion.removeEventListener("change", refresh);
+      }
+    };
+  })();
+
   const expandLogo = () => {
     if (splashDone) return;
     setPhase("expand");
     lockSeq();
     setHud("READY", 100);
+    splashReadouts.start();
     later(leaveSplash, TIMING.holdExpanded);
   };
   let typeAboutNow = null;
@@ -197,6 +265,7 @@
     splashDone = true;
     clearTimers();
     lockSeq();
+    splashReadouts.destroy();
     document.body.classList.remove("loading");
 
     if (prefersReducedMotion) {
@@ -326,7 +395,7 @@
       requestAnimationFrame(followCursor);
     };
     requestAnimationFrame(followCursor);
-    const hoverTargets = document.querySelectorAll("a, button, .index-item");
+    const hoverTargets = document.querySelectorAll("a, button, summary, .index-item");
     hoverTargets.forEach((el) => {
       el.addEventListener("mouseenter", () => cursor.classList.add("hovering"));
       el.addEventListener("mouseleave", () => cursor.classList.remove("hovering"));
@@ -334,7 +403,7 @@
 
     if (carried) {
       const under = document.elementFromPoint(carried.x, carried.y);
-      if (under && under.closest("a, button, .index-item")) {
+      if (under && under.closest("a, button, summary, .index-item")) {
         cursor.classList.add("hovering");
       }
     }
@@ -839,6 +908,7 @@
 
   const initLeave = () => {
     const root = document.documentElement;
+    if (root.dataset.experience === "orbit") return;
     if (root.getAttribute("data-page") !== "stage") return;
     const items = [...document.querySelectorAll(".orbit-item")];
     if (!items.length) return;
@@ -1044,6 +1114,7 @@
 
   const initBackArrive = () => {
     const root = document.documentElement;
+    if (root.dataset.experience === "orbit") return;
     if (!root.classList.contains("nav-back")) return;
     const no = root.getAttribute("data-back-no");
     const items = [...document.querySelectorAll(".orbit-item")];
@@ -1182,24 +1253,40 @@
     };
 
     const kick = () => {
-      if (raf || narrow.matches) return;
+      if (raf || narrow.matches || document.documentElement.hasAttribute("data-home-locked")) return;
       last = performance.now();
       raf = requestAnimationFrame(frame);
     };
 
     const aim = (el, i) => {
-      if (narrow.matches) return;
+      if (narrow.matches || document.documentElement.hasAttribute("data-home-locked")) return;
       measure();
       if (!r) return;
       from = angle;
       to = shortest(angle, itemAngle(el, i));
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        angle = to;
+        mode = "hold";
+        place();
+        return;
+      }
       snapT = 0;
       mode = "snap";
       kick();
     };
 
     const release = () => {
-      if (narrow.matches) return;
+      if (narrow.matches || document.documentElement.hasAttribute("data-home-locked")) return;
+
+      if (document.documentElement.dataset.page === "room") {
+        const active = items.findIndex((item) => item.getAttribute("aria-current") === "page");
+        if (active >= 0) {
+          aim(items[active], active);
+          return;
+        }
+      }
 
       if (prefersReducedMotion) {
         mode = "hold";
@@ -1236,15 +1323,106 @@
       measure();
       place();
     });
+    window.addEventListener("ces:home-collapse", () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      mode = "hold";
+    });
+    if (document.documentElement.dataset.experience === "orbit" && "ResizeObserver" in window) {
+      new ResizeObserver(() => { measure(); place(); }).observe(ring);
+    }
     measure();
     place();
     if (!prefersReducedMotion) kick();
   };
+  /* ----------------------------------------------------------------
+     归档页：状态筛选与逐条展开
+     筛选条默认 hidden，脚本跑起来才出现，没有脚本时整表照常可读、可展开。
+     ---------------------------------------------------------------- */
+
+  const initArchive = () => {
+    const list = document.querySelector(".ar-list");
+    if (!list) return;
+
+    const filterBar = document.querySelector(".ar-filter");
+    const chips = [...document.querySelectorAll(".ar-chip")];
+    const items = [...list.querySelectorAll(".ar-item")];
+    const count = document.querySelector(".ar-count");
+    const expandAll = document.querySelector(".ar-expand");
+    let active = "all";
+
+    const apply = () => {
+      let shown = 0;
+      items.forEach((item) => {
+        const hit = active === "all" || item.getAttribute("data-s") === active;
+        item.classList.toggle("is-hidden", !hit);
+        if (hit) shown += 1;
+      });
+
+      if (count) count.textContent = `${shown} / ${items.length}`;
+
+      document.querySelectorAll(".ar-plot .ar-mark").forEach((mark) => {
+        mark.classList.toggle(
+          "is-dim",
+          active !== "all" && mark.getAttribute("data-s") !== active
+        );
+      });
+    };
+
+    const setActive = (name) => {
+      active = name;
+      chips.forEach((c) =>
+        c.setAttribute("aria-pressed", String(c.getAttribute("data-filter") === name))
+      );
+      apply();
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const name = chip.getAttribute("data-filter");
+        setActive(name === active && name !== "all" ? "all" : name);
+      });
+    });
+
+    if (filterBar) filterBar.hidden = false;
+
+    if (expandAll) {
+      let expanded = false;
+      expandAll.addEventListener("click", () => {
+        expanded = !expanded;
+        list.querySelectorAll(".ar-row").forEach((row) => {
+          row.open = expanded;
+        });
+        expandAll.textContent = expanded ? "全部收起" : "全部展开";
+      });
+    }
+
+    // 从图表点进来的条目：打开它、退掉筛选，并把装饰高亮交给 :target
+    const reveal = (id) => {
+      const item = id && list.querySelector(`#${id}`);
+      if (!item) return false;
+      const hit = active === "all" || item.getAttribute("data-s") === active;
+      if (!hit) setActive("all");
+      const row = item.querySelector(".ar-row");
+      if (row) row.open = true;
+      return true;
+    };
+
+    const fromHash = () => reveal(decodeURIComponent(location.hash.slice(1)));
+
+    window.addEventListener("hashchange", fromHash);
+    fromHash();
+
+    apply();
+  };
+
   initPlanet();
   initPageEnter();
-  initBarPlanet();
-  initBarMarker();
-  initBarScale();
+  if (document.documentElement.dataset.experience !== "orbit") {
+    initBarPlanet();
+    initBarMarker();
+    initBarScale();
+  }
   initBarScroll();
   initLeaveBack();
   initLeaveSub();
@@ -1252,5 +1430,9 @@
   initAboutType(visitStat);
   initLeave();
   initBackArrive();
-  if (!hasSplash) initReveal();
+  initArchive();
+  if (!hasSplash) {
+    initReveal();
+    if (document.documentElement.dataset.experience === "orbit" && typeAboutNow) typeAboutNow();
+  }
 })();

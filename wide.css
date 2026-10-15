@@ -185,6 +185,38 @@ html[data-wide="off"] .wide {
   text-align: right;
 }
 
+/* Two equal tapes wrap without resetting during navigation speed changes. */
+.wide-edge.is-rolling .we-rail {
+  overflow: hidden;
+}
+.wide-edge.is-rolling .we-rail i {
+  flex: none;
+  height: calc(100% + 13px);
+}
+.wide-edge.is-rolling .we-marks {
+  position: relative;
+  display: block;
+  width: calc(4ch + 0.4em);
+  height: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, #000 7px, #000 calc(100% - 7px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7px, #000 calc(100% - 7px), transparent);
+}
+.we-mark-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.we-mark-loop {
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  height: var(--edge-loop);
+}
+.we-mark-loop > span {
+  align-self: start;
+}
+
 .we-vtext {
   flex: none;
   writing-mode: vertical-rl;

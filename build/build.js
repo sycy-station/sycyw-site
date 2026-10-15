@@ -12,6 +12,7 @@ const {
   ABOUT_RULES,
   SITE_URL
 } = require("./pages.js");
+const { renderRoom } = require("./rooms.js");
 const ROOT = path.join(__dirname, "..");
 const PARTIALS = path.join(__dirname, "partials");
 const SRC = path.join(__dirname, "src");
@@ -57,8 +58,8 @@ const metaAbs = (file) =>
       }
     : { canonical: "", ogUrl: "", ogImage: "" };
 
-const orbitItems = () =>
-  PAGES.map((p, i) => `        <a class="orbit-item pos-${i + 1}" href="${p.slug}.html" data-no="${p.no}">
+const orbitItems = (currentSlug = "") =>
+  PAGES.map((p, i) => `        <a class="orbit-item pos-${i + 1}" href="${p.slug}.html" data-no="${p.no}"${p.slug === currentSlug ? ' aria-current="page"' : ""}>
           <span class="orbit-inner">
             <span class="orbit-no">${p.no}</span>
             <span class="orbit-title">${p.title}</span>
@@ -72,20 +73,20 @@ const overlayItems = () =>
       `      <li><a href="${p.slug}.html" data-index="${p.no}">${p.title}</a></li>`
   ).join("\n");
 
-const indexBar = (currentSlug) =>
-  PAGES.map((p) => {
-    const cur = p.slug === currentSlug;
-    return `      <a class="ib-item${cur ? " is-current" : ""}" href="${p.slug}.html"${cur ? ' aria-current="page"' : ""} data-freq="${p.freq}">
-        <span class="ib-no">${p.no}</span>
-        <span class="ib-title">${p.title}</span>
-        <span class="ib-freq" aria-hidden="true">${p.freq}</span>
-      </a>`;
-  }).join("\n");
+const indexBar = (currentSlug = "") => PAGES.map((p) => {
+  const current = p.slug === currentSlug;
+  return `        <a class="ib-item${current ? " is-current" : ""}" href="${p.slug}.html" data-route data-freq="${p.freq}"${current ? ' aria-current="page"' : ""}>
+          <span class="ib-no">${p.no}</span><span class="ib-title">${p.title}</span>
+          <span class="ib-freq" aria-hidden="true">${p.freq}</span>
+        </a>`;
+}).join("\n");
+
 const onlyArg = process.argv.indexOf("--only");
 const ONLY = onlyArg > -1 ? process.argv[onlyArg + 1] : null;
 
 const build = () => {
   const written = [];
+  if (ONLY && ONLY !== "index" && !PAGES.some((p) => p.slug === ONLY)) throw new Error(`未知页面: ${ONLY}`);
 
   const side = (slug) => {
     const p = PAGES.find((x) => x.slug === slug);
@@ -105,50 +106,46 @@ const build = () => {
     sideRightSub: sideR.sub.replace(/ /g, "&nbsp;"),
     splashCaption: SPLASH_CAPTION.replace(/ /g, "&nbsp;"),
     overlayItems: overlayItems(),
+    indexBar: indexBar(),
+    sectionNavAttrs: ' inert aria-hidden="true"',
+    orbitAttrs: "",
     aboutDesc: ABOUT_DESC,
     aboutCanon: ABOUT_CANON,
 
     aboutData: JSON.stringify({ lines: ABOUT_LINES, rules: ABOUT_RULES }),
-    pageTitle: "森韵次元坞 — 极简系统实验室",
-    pageDesc: "森韵次元坞，一个专注于极简系统与界面的实验室。",
+    pageTitle: "森韵次元坞 — 文化、创作与技术",
+    pageDesc: ABOUT_DESC,
 
-    extraCss: "",
+    extraCss: '<link rel="stylesheet" href="orbit-room.css?v=20261015-title-alignment">\n<link rel="stylesheet" href="about-room.css?v=20261015-eight-milestones">\n<link rel="stylesheet" href="team-room.css?v=20261015-spacing&title=20261015-aligned">\n<link rel="stylesheet" href="contact-room.css?v=20261015-title-alignment">\n<link rel="stylesheet" href="ecosystem-room.css?v=20261015-title-alignment">\n<link rel="stylesheet" href="join-room.css?v=20261015-direction-emblems">\n<link rel="stylesheet" href="products-room.css?v=20261015-six-views2">',
+    homeHeadingAttrs: "",
+    roomAttrs: " inert",
+    roomContent: "",
 
-    wideCss: '<link rel="stylesheet" href="wide.css">',
+    wideCss: '<link rel="stylesheet" href="wide.css?v=20261015-edge-motion">',
     ...metaAbs("index.html")
   };
   const home = expand(fs.readFileSync(path.join(SRC, "index.html"), "utf8"), homeVars);
-  fs.writeFileSync(path.join(ROOT, "index.html"), home);
-  written.push("index.html");
+  if (!ONLY || ONLY === "index") {
+    fs.writeFileSync(path.join(ROOT, "index.html"), home);
+    written.push("index.html");
+  }
   const subTpl = fs.readFileSync(path.join(SRC, "page.html"), "utf8");
   PAGES.forEach((p) => {
     if (ONLY && p.slug !== ONLY) return;
 
-    const base = {
+    const vars = {
+      ...homeVars,
       slug: p.slug,
-      no: p.no,
-      title: p.title,
-      sub: p.sub,
-      subNbsp: p.sub.replace(/ /g, "&nbsp;"),
-      desc: p.desc,
-      year: p.year,
+      orbitItems: orbitItems(p.slug),
       indexBar: indexBar(p.slug),
-      overlayItems: overlayItems(),
+      sectionNavAttrs: "",
+      orbitAttrs: ' inert aria-hidden="true"',
       pageTitle: `${p.title} — 森韵次元坞`,
       pageDesc: p.desc,
-      extraCss: '<link rel="stylesheet" href="page.css">',
-
-      wideCss: "",
+      homeHeadingAttrs: " hidden",
+      roomAttrs: "",
+      roomContent: renderRoom(p, PAGES),
       ...metaAbs(p.slug + ".html")
-    };
-
-    const bodyName = fs.existsSync(path.join(PARTIALS, `body-${p.slug}.html`))
-      ? `body-${p.slug}`
-      : "body-default";
-
-    const vars = {
-      ...base,
-      pageBody: expand(readPartial(bodyName), base).replace(/\n$/, "")
     };
     const out = expand(subTpl, vars);
     fs.writeFileSync(path.join(ROOT, p.slug + ".html"), out);
@@ -156,6 +153,13 @@ const build = () => {
   });
 
   if (!ONLY) {
+    const legacy = { "system-design": "products", interaction: "ecosystem", brand: "team", motion: "join", archive: "contact" };
+    Object.entries(legacy).forEach(([oldSlug, target]) => {
+      const targetPage = PAGES.find((p) => p.slug === target);
+      const redirect = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0;url=${target}.html"><title>${targetPage.title} — 森韵次元坞</title></head><body><p>此分区已更新，请前往<a href="${target}.html">${targetPage.title}</a>。</p></body></html>\n`;
+      fs.writeFileSync(path.join(ROOT, oldSlug + ".html"), redirect);
+      written.push(oldSlug + ".html");
+    });
     const robots =
       "User-agent: *\nAllow: /\n" +
       (BASE ? `\nSitemap: ${BASE}/sitemap.xml\n` : "");

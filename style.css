@@ -946,6 +946,7 @@ body.deco-on .deco .fr {
 .sb-col em {
   font-style: normal;
   font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
   color: var(--ink);
 }
@@ -953,19 +954,32 @@ body.deco-on .deco .fr {
 .sb-ticks {
   width: min(100%, 560px);
   height: 6px;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
   opacity: 0;
   transition: opacity 0.6s var(--ease);
 }
 .sb-ticks i {
   display: block;
-  width: 100%;
+  width: calc(100% + 60px);
   height: 100%;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--ink) 0 1px,
-    transparent 1px 12px
-  );
-  opacity: 0.28;
+  background-image:
+    repeating-linear-gradient(to right, var(--ink) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(to right, var(--ink) 0 1px, transparent 1px 12px);
+  background-size: 60px 6px, 12px 3px;
+  background-position: left bottom;
+  background-repeat: repeat-x;
+  animation: splashTicksRoll 1.35s linear infinite paused;
+  opacity: 0.36;
+}
+.statusbar.is-running .sb-ticks i {
+  animation-play-state: running;
+}
+@keyframes splashTicksRoll {
+  to { transform: translateX(-60px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-ticks i { animation: none; }
 }
 
 #splash.phase-expand .statusbar { opacity: 1; }
@@ -1067,11 +1081,23 @@ html[data-page="stage"] .mark {
 }
 
 .mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--blend-src);
 }
+.mark-logo {
+  display: block;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+html[data-page="room"] .mark-logo { filter: var(--grid-invert); }
 .mark-dot { color: var(--blend-src); }
 
 .header-actions {

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-wide="on" data-page="stage">
+<html lang="zh-CN" data-wide="on" data-page="stage" data-experience="orbit">
 <head>
 {{> head }}
-{{> nav-signal-home }}
 {{> noscript-home }}
 </head>
 <body>
@@ -39,7 +38,7 @@
       </div>
       <div class="hud-bl">
         <span class="hud-k">NODE</span>
-        <span class="hud-v">SYCYW<span class="hud-coord">&nbsp;/&nbsp;31.23N&nbsp;121.47E</span></span>
+        <span class="hud-v">SYCYW<span class="hud-coord">&nbsp;/&nbsp;CULTURE&nbsp;×&nbsp;TECH</span></span>
       </div>
       <div class="hud-br">
         <span class="hud-v" id="hudPct">000</span>
@@ -164,90 +163,20 @@
 
   <main id="top">
 
-    <section class="stage" id="stage">
-
-      <div class="deco" aria-hidden="true">
-        <div class="splash-grid"></div>
-        <div class="splash-frame">
-          <span class="fr fr-tl"></span><span class="fr fr-tr"></span>
-          <span class="fr fr-bl"></span><span class="fr fr-br"></span>
-        </div>
-
-        <div class="wide">
-{{> wide }}
-        </div>
-      </div>
-
-      <div class="stage-orbit">
-
-        <svg class="orbit-ring" focusable="false" aria-hidden="true">
-          <circle class="orbit-ring-path" pathLength="1"/>
-        </svg>
-        <span class="orbit-ticks" aria-hidden="true"></span>
-
-        <span class="orbit-planet-ring" aria-hidden="true"></span>
-
-        <span class="orbit-planet" aria-hidden="true">
-          <svg viewBox="0 0 7 7" width="16" height="16" focusable="false" aria-hidden="true">
-            <g fill="var(--planet-1)">
-              <rect x="2" y="0" width="2" height="1"/>
-              <rect x="1" y="1" width="2" height="1"/>
-              <rect x="0" y="2" width="2" height="1"/>
-              <rect x="0" y="3" width="1" height="1"/>
-            </g>
-            <g fill="var(--planet-2)">
-              <rect x="4" y="0" width="1" height="1"/>
-              <rect x="3" y="1" width="2" height="1"/>
-              <rect x="2" y="2" width="3" height="1"/>
-              <rect x="1" y="3" width="3" height="1"/>
-              <rect x="1" y="4" width="2" height="1"/>
-              <rect x="2" y="5" width="1" height="1"/>
-            </g>
-            <g fill="var(--planet-3)">
-              <rect x="5" y="1" width="1" height="1"/>
-              <rect x="5" y="2" width="2" height="1"/>
-              <rect x="4" y="3" width="3" height="1"/>
-              <rect x="3" y="4" width="3" height="1"/>
-              <rect x="3" y="5" width="2" height="1"/>
-              <rect x="2" y="6" width="3" height="1"/>
-            </g>
-          </svg>
-        </span>
-
-        <div class="stage-logo-wrap">
-          <img class="stage-logo" src="assets/logo.png" alt="森韵次元坞" width="1000" height="1000">
-          <span class="stage-logo-name">森韵次元坞</span>
-        </div>
-
-{{ orbitItems }}
-
-      </div>
-
-      <h1 class="stage-about" id="stageAbout" data-canon="{{ aboutCanon }}">
-        <span class="sa-real">{{ aboutCanon }}</span>
-        <span class="sa-type" aria-hidden="true"></span>
-      </h1>
-
-      <script type="application/json" id="aboutData">
-{{ aboutData }}</script>
-
-      <div class="stage-foot" aria-hidden="true">
-        <i class="sf-line"></i>
-        <span class="sf-text">
-          <span class="sf-seg">SYCYW</span>
-          <span class="sf-dot">·</span>
-
-          <span class="sf-seg sf-clock clock">--:--:--</span>
-          <span class="sf-dot">·</span>
-          <span class="sf-seg">31.23N&nbsp;121.47E</span>
-        </span>
-        <i class="sf-line"></i>
-      </div>
-    </section>
+{{> orbit-stage }}
 
   </main>
 
-  <script src="script.js">
-</script>
+  <script src="script.js?v=20261015-splash-readouts"></script>
+  <script src="home-logo.js?v=20261015-idle-reset"></script>
+  <script src="home-narrator.js?v=20261015-idle-reset"></script>
+  <script src="about-room.js"></script>
+  <script src="team-room.js?v=20261015-spacing"></script>
+  <script src="contact-room.js"></script>
+  <script src="ecosystem-room.js"></script>
+  <script src="join-room.js?v=20261015-direction-emblems"></script>
+  <script src="products-room.js?v=20261015-shadow-reveal"></script>
+  <script src="wide-motion.js?v=20261015-home-lock"></script>
+  <script src="orbit-room.js?v=20261015-home-lock"></script>
 </body>
 </html>

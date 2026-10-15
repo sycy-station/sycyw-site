@@ -1,0 +1,970 @@
+/* The home orbit gives way to full-width rooms and the original frequency dial. */
+html[data-experience="orbit"] {
+  --room-motion: 620ms;
+  /* All room titles use the contact page's shared anchors and typography. */
+  --room-top: clamp(100px, 11.5vh, 166px);
+  --room-side: 6%;
+  --room-pad: clamp(0px, 1.6vw, 26px);
+  --room-title-size: clamp(27px, 2.4vw, 38px);
+}
+
+html[data-experience="orbit"] .stage-orbit {
+  transition: left var(--room-motion) var(--ease), top var(--room-motion) var(--ease),
+    width var(--room-motion) var(--ease), height var(--room-motion) var(--ease),
+    transform var(--room-motion) var(--ease), opacity 340ms var(--ease),
+    visibility 0s linear;
+}
+
+html[data-experience="orbit"] .stage-logo-wrap {
+  transition: width var(--room-motion) var(--ease);
+}
+
+html[data-experience="orbit"] .orbit-item {
+  transition: transform var(--room-motion) var(--ease), width var(--room-motion) var(--ease);
+}
+
+html[data-experience="orbit"] .orbit-title {
+  transition: font-size var(--room-motion) var(--ease), letter-spacing var(--room-motion) var(--ease);
+}
+
+html[data-experience="orbit"] .orbit-ring,
+html[data-experience="orbit"] .orbit-ticks,
+html[data-experience="orbit"] .orbit-planet-ring {
+  transition: width var(--room-motion) var(--ease), height var(--room-motion) var(--ease),
+    opacity 700ms var(--ease);
+}
+
+html[data-experience="orbit"] .orbit-ring-path {
+  transition: r var(--room-motion) var(--ease), cx var(--room-motion) var(--ease),
+    cy var(--room-motion) var(--ease), stroke-dashoffset var(--sweep) linear var(--sweep-start);
+}
+
+html[data-experience="orbit"] .room-content,
+html[data-experience="orbit"] .room-return {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html[data-experience="orbit"] .room-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+html[data-experience="orbit"] .room-content {
+  position: absolute;
+  z-index: 2;
+  top: var(--room-top);
+  right: var(--room-side);
+  bottom: clamp(86px, 11vh, 132px);
+  left: var(--room-side);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 var(--room-pad);
+  transform: translateY(22px);
+  transition: opacity 420ms var(--ease), transform 600ms var(--ease),
+    visibility 0s linear 600ms;
+}
+
+html[data-experience="orbit"] .room-content::before,
+html[data-experience="orbit"] .room-content::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  border-color: var(--line-strong);
+  border-style: solid;
+}
+
+html[data-experience="orbit"] .room-content::before {
+  top: 0;
+  left: 0;
+  border-width: 1px 0 0 1px;
+}
+
+html[data-experience="orbit"] .room-content::after {
+  right: 0;
+  bottom: 0;
+  border-width: 0 1px 1px 0;
+}
+
+html[data-experience="orbit"][data-page="room"] .room-content,
+html[data-experience="orbit"][data-page="room"] .room-return {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+html[data-experience="orbit"][data-page="room"] .room-content {
+  transform: translateY(0);
+  transition-delay: 180ms, 120ms, 0s;
+}
+
+html[data-experience="orbit"].room-changing .room-content {
+  opacity: 0;
+  transform: translateY(9px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+}
+
+/* Fly the original three orbit labels into their real title positions. */
+html[data-experience="orbit"].room-flying .room-content {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+html[data-experience="orbit"].room-flying #roomTitle,
+html[data-experience="orbit"].room-flying .room-topline > :first-child {
+  visibility: hidden;
+}
+.room-title-flight.travel {
+  inset: 0;
+  width: auto;
+  transform: none;
+  transition: none;
+}
+.room-title-flight .flight-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: max-content;
+  white-space: pre;
+  transform-origin: 0 0;
+}
+
+html[data-experience="orbit"][data-page="room"] .stage-about {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+html[data-experience="orbit"] .room-return { display: none; }
+
+html[data-experience="orbit"][data-page="room"] .stage-foot {
+  width: calc(100% - 2 * var(--shell-pad));
+  bottom: 28px;
+}
+
+html[data-experience="orbit"] .room-topline {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  min-height: 16px;
+  margin-bottom: 8px;
+  color: var(--grey-strong);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0.15em;
+}
+
+html[data-experience="orbit"] .room-topline > :first-child { color: var(--ink); }
+html[data-experience="orbit"] .room-topline > :last-child { margin-left: auto; }
+
+html[data-experience="orbit"] .room-heading {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 28px;
+}
+html[data-experience="orbit"] .room-heading h1 {
+  font-family: var(--font-display);
+  font-size: var(--room-title-size);
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: 0.065em;
+}
+
+html[data-experience="orbit"] .room-heading > p {
+  max-width: 48em;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+html[data-experience="orbit"] .room-tabs {
+  display: flex;
+  flex: none;
+  gap: clamp(18px, 2.5vw, 36px);
+  margin-top: clamp(20px, 3.2vh, 36px);
+  border-bottom: 1px solid var(--line);
+}
+
+html[data-experience="orbit"] .room-tabs button {
+  position: relative;
+  appearance: none;
+  min-height: 45px;
+  padding: 10px 0 13px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--grey-strong);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+html[data-experience="orbit"] .room-tabs button::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 250ms var(--ease);
+}
+
+html[data-experience="orbit"] .room-tabs button[aria-selected="true"],
+html[data-experience="orbit"] .room-tabs button:hover { color: var(--ink); }
+html[data-experience="orbit"] .room-tabs button[aria-selected="true"]::after { transform: scaleX(1); }
+html[data-experience="orbit"] .room-tabs button span {
+  margin-right: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+html[data-experience="orbit"] .room-panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  scroll-padding-block: 24px;
+}
+
+html[data-experience="orbit"] .room-panels::-webkit-scrollbar { width: 3px; }
+html[data-experience="orbit"] .room-panels::-webkit-scrollbar-thumb { background: var(--line-strong); }
+
+html[data-experience="orbit"] .room-panel {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(23px, 3.1vh, 36px) 12px 28px 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+
+html[data-experience="orbit"] .room-panel[hidden] { display: none; }
+html[data-experience="orbit"] .room-panel > :last-child { margin-bottom: 0; }
+html[data-experience="orbit"] .room-panel h2,
+html[data-experience="orbit"] .room-panel h3 { color: var(--ink); }
+html[data-experience="orbit"] .room-panel h3 { font-size: 18px; font-weight: 500; line-height: 1.6; }
+
+html[data-experience="orbit"] .room-eyebrow {
+  margin-bottom: 12px;
+  color: var(--grey-strong);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+}
+
+html[data-experience="orbit"] .room-display {
+  margin-bottom: 23px;
+}
+
+html[data-experience="orbit"] .room-display h2,
+html[data-experience="orbit"] h2.room-display {
+  max-width: 22em;
+  font-size: clamp(25px, 2.4vw, 38px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+html[data-experience="orbit"] .room-lead {
+  max-width: 40em;
+  margin-bottom: 20px;
+  font-size: clamp(17px, 1.35vw, 20px);
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+html[data-experience="orbit"] .room-copy { max-width: 44em; }
+html[data-experience="orbit"] .room-copy p + p { margin-top: 16px; }
+html[data-experience="orbit"] p.room-copy + p.room-copy { margin-top: 16px; }
+
+html[data-experience="orbit"] .room-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px clamp(24px, 3vw, 48px);
+}
+
+html[data-experience="orbit"] .room-columns > * { min-width: 0; }
+html[data-experience="orbit"] .room-columns h3 { margin-bottom: 10px; }
+html[data-experience="orbit"] .room-list { list-style: none; }
+
+html[data-experience="orbit"] .room-row {
+  display: grid;
+  grid-template-columns: minmax(94px, 0.34fr) minmax(0, 1fr);
+  gap: 10px 26px;
+  padding: 17px 0;
+  border-top: 1px solid var(--line);
+}
+
+html[data-experience="orbit"] .room-row:last-child { border-bottom: 1px solid var(--line); }
+html[data-experience="orbit"] .room-row h3 { font-size: 16px; }
+html[data-experience="orbit"] .room-row > :first-child { color: var(--ink); font-weight: 500; }
+html[data-experience="orbit"] .room-row p { color: var(--text-soft); }
+
+html[data-experience="orbit"] .room-timeline { list-style: none; padding-left: 1px; }
+html[data-experience="orbit"] .timeline-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 22px;
+  padding: 0 0 26px 19px;
+  border-left: 1px solid var(--line);
+}
+
+html[data-experience="orbit"] .timeline-node::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -3px;
+  width: 5px;
+  height: 5px;
+  background: var(--ink);
+}
+
+html[data-experience="orbit"] .timeline-node > :first-child {
+  color: var(--grey-strong);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 2.4;
+}
+
+html[data-experience="orbit"] .timeline-node h3 { margin-bottom: 6px; }
+html[data-experience="orbit"] .timeline-node p { color: var(--text-soft); }
+
+html[data-experience="orbit"] .team-core {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 27px;
+}
+
+html[data-experience="orbit"] .member { min-width: 0; }
+html[data-experience="orbit"] .member-photo {
+  display: block;
+  width: clamp(76px, 7vw, 104px);
+  height: auto;
+  aspect-ratio: 1;
+  margin-bottom: 13px;
+  object-fit: contain;
+  object-position: center;
+  background: var(--tint);
+}
+
+html[data-experience="orbit"] .member h3 { margin-bottom: 2px; }
+html[data-experience="orbit"] .member-role {
+  margin-bottom: 10px;
+  color: var(--grey-strong);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+html[data-experience="orbit"] .member p:not(.member-role) {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+html[data-experience="orbit"] .partner-lockup {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.32fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 20px 28px;
+  padding: 0 0 16px;
+}
+
+html[data-experience="orbit"] .partner-lockup:first-child { padding-top: 0; border-top: 0; }
+html[data-experience="orbit"] .partner-logo {
+  display: block;
+  width: 100%;
+  max-width: 174px;
+  height: 66px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+html[data-experience="orbit"] .partner-lockup h3 { margin-bottom: 7px; }
+html[data-experience="orbit"] .partner-lockup h2.room-display { margin: 0; }
+html[data-experience="orbit"] .partner-lockup p { color: var(--text-soft); }
+html[data-experience="orbit"] .partner-lockup .room-link { margin-top: 10px; }
+
+html[data-experience="orbit"] .room-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 3px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  transition: border-color 180ms ease;
+}
+
+html[data-experience="orbit"] .room-link:hover { border-color: var(--ink); }
+html[data-experience="orbit"] .contact-primary {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 11px 0 28px;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 10px;
+  color: var(--ink);
+  font-size: clamp(23px, 2.4vw, 38px);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+
+html[data-experience="orbit"] .contact-details {
+  display: block;
+}
+
+html[data-experience="orbit"] .contact-details dt { color: var(--grey-strong); }
+html[data-experience="orbit"] .contact-details dd { margin: 0; overflow-wrap: anywhere; }
+html[data-experience="orbit"] .room-note {
+  margin-top: 22px;
+  color: var(--grey-strong);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+html[data-experience="orbit"] .feature-word {
+  margin: 4px 0 20px;
+  color: var(--ink);
+  font-size: clamp(28px, 3.2vw, 46px);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+}
+
+html[data-experience="orbit"] .room-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 24px;
+  margin-top: 20px;
+  color: var(--grey-strong);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+html[data-experience="orbit"] .room-tags > * { border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+html[data-experience="orbit"] .room-tags + .room-link { margin-top: 25px; }
+html[data-experience="orbit"] .room-columns .room-row {
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+html[data-experience="orbit"] .room-columns .room-row > :last-child { color: var(--grey-strong); font-size: 14px; }
+
+html[data-experience="orbit"] .room-footer {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 15px;
+  min-height: 55px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  color: var(--grey-strong);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+html[data-experience="orbit"] .room-chapter {
+  margin-right: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+html[data-experience="orbit"] .room-footer button {
+  appearance: none;
+  min-height: 38px;
+  border: 0;
+  border-radius: 0;
+  padding: 6px 0;
+  background: none;
+  color: var(--text-soft);
+  font: inherit;
+  cursor: pointer;
+}
+
+html[data-experience="orbit"] .room-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  border-left: 1px solid var(--line);
+  padding: 6px 0 6px 15px;
+  color: var(--ink);
+}
+
+html[data-experience="orbit"] .room-footer button:hover,
+html[data-experience="orbit"] .room-next:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Original centered dial: dimensions and marker, planet, and frequency effects. */
+.section-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  padding: var(--header-h) 0 0;
+  pointer-events: none;
+}
+
+.ib-scroll {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--shell-pad);
+  pointer-events: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: var(--scale-h);
+}
+.ib-scroll::-webkit-scrollbar { display: none; }
+
+.ib-track {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.1rem, 2.6vw, 2.4rem);
+  min-width: 100%;
+  width: max-content;
+  padding-bottom: var(--bar-pad-b);
+  border-bottom: var(--bar-rule) solid var(--line);
+  padding-left: var(--planet-slot);
+  justify-content: safe center;
+  position: relative;
+}
+
+.ib-item {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+  white-space: nowrap;
+  color: var(--grey-strong);
+  transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
+  position: relative;
+}
+.ib-no {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+.ib-title {
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+}
+.ib-item:hover { color: var(--ink); }
+
+.ib-item.is-current {
+  color: var(--ink);
+}
+
+.ib-marker {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  width: var(--mw, 0px);
+  background: var(--ink);
+  transform: translateX(var(--mx, 0px));
+  opacity: 0;
+  pointer-events: none;
+  clip-path: inset(0 var(--clip, 100%) 0 0);
+  transition: clip-path var(--reveal) var(--ease-out);
+}
+.ib-marker.is-ready { opacity: 1; }
+
+.ib-planet {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  line-height: 0;
+  transform: translateX(var(--px, 0px));
+  opacity: 0;
+  pointer-events: none;
+}
+.ib-planet svg { display: block; }
+
+.ib-planet.is-ready { opacity: 1; }
+
+body.bar-slide .ib-planet {
+  transition: transform var(--travel) var(--ease);
+}
+
+.ib-scale {
+  position: absolute;
+  top: calc(100% + var(--scale-gap));
+  left: 0;
+  right: 0;
+  height: calc(var(--scale-h) - var(--scale-gap));
+  pointer-events: none;
+}
+
+.ib-scale::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.ib-scale::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-image:
+
+    repeating-linear-gradient(to right,
+      var(--line-strong) 0 1px,
+      transparent 1px calc(var(--tick-step) * 5)),
+
+    repeating-linear-gradient(to right,
+      var(--line-strong) 0 1px,
+      transparent 1px var(--tick-step));
+  background-size: 100% 6px, 100% 3px;
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat;
+}
+
+.ib-freq {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + var(--bar-pad-b) + var(--bar-rule)
+            + var(--scale-gap) + var(--freq-top));
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--grey-strong);
+  opacity: 0.32;
+  transition: opacity 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.ib-item.is-current .ib-freq {
+  opacity: 1;
+  color: var(--ink);
+}
+
+body.leaving-sub .ib-item.is-current .ib-freq {
+  opacity: 0.32;
+  color: var(--grey-strong);
+}
+body.leaving-sub .ib-item.is-target .ib-freq {
+  opacity: 1;
+  color: var(--ink);
+}
+
+.ib-scale-dense {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 5px;
+  width: var(--dw, 0px);
+  transform: translateX(var(--dx, 0px));
+  background-image: repeating-linear-gradient(to right,
+    var(--ink) 0 1px,
+    transparent 1px calc(var(--tick-step) / 2));
+  opacity: 0.6;
+}
+body.bar-slide .ib-scale-dense {
+  transition: transform var(--travel) var(--ease), width var(--travel) var(--ease);
+}
+
+
+html[data-experience="orbit"] .section-nav {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease), visibility 0s linear 600ms;
+}
+html[data-experience="orbit"][data-page="room"] .section-nav {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 60ms, 60ms, 0s;
+}
+html[data-experience="orbit"] body:has(.overlay-nav.open) .section-nav {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+html[data-experience="orbit"] body.bar-hidden .section-nav {
+  opacity: 0;
+  transform: translateY(calc(-100% - 4px));
+}
+body.bar-slide .ib-item.is-current .ib-freq { opacity: 0.32; color: var(--grey-strong); }
+body.bar-slide .ib-item.is-target .ib-freq { opacity: 1; color: var(--ink); }
+@media (min-width: 1000px) {
+  .section-nav { padding-top: 0; }
+  .ib-scroll { height: calc(var(--header-h) + var(--scale-h)); display: flex; align-items: center; }
+  .ib-track { margin-top: calc(var(--bar-pad-b) + var(--bar-rule)); }
+}
+@media (max-width: 999px) {
+  .section-nav { background: var(--paper); }
+}
+@media (max-width: 600px) {
+  .ib-scale, .ib-freq, .ib-planet { display: none; }
+  .ib-scroll { padding-bottom: 0; }
+  .ib-track { padding-left: 0; }
+}
+
+html[data-experience="orbit"][data-page="room"] .site-header {
+  mix-blend-mode: normal;
+  background: transparent;
+}
+
+html[data-experience="orbit"][data-page="room"] .mark,
+html[data-experience="orbit"][data-page="room"] .mark-dot { color: var(--ink); }
+html[data-experience="orbit"][data-page="room"] .menu-toggle span,
+html[data-experience="orbit"][data-page="room"] .menu-toggle span::before,
+html[data-experience="orbit"][data-page="room"] .menu-toggle span::after,
+html[data-experience="orbit"][data-page="room"] .theme-toggle i::after { background: var(--ink); }
+html[data-experience="orbit"][data-page="room"] .menu-toggle[aria-expanded="true"] span { background: transparent; }
+html[data-experience="orbit"][data-page="room"] .theme-toggle i { border-color: var(--ink); }
+html[data-experience="orbit"][data-page="room"] .site-header :focus-visible { outline-color: var(--ink); }
+
+@media (min-width: 901px) {
+  html[data-experience="orbit"] .stage {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  html[data-experience="orbit"] .stage-orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% - var(--view-shift)));
+  }
+
+  html[data-experience="orbit"][data-page="room"] .stage-orbit {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, calc(-50% - var(--view-shift) + 24px));
+    transition: opacity 300ms var(--ease), transform 500ms var(--ease), visibility 0s linear 320ms;
+  }
+
+  html[data-experience="orbit"] .room-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap: clamp(45px, 6vw, 110px);
+    align-content: start;
+    align-items: start;
+  }
+
+  html[data-experience="orbit"] .room-panel > * { min-width: 0; grid-column: 2; }
+  html[data-experience="orbit"] .room-panel > .room-eyebrow { grid-column: 1 / -1; }
+  html[data-experience="orbit"] .room-panel > h2.room-display,
+  html[data-experience="orbit"] .room-panel > .partner-lockup { grid-column: 1; }
+  html[data-experience="orbit"] .room-display h2,
+  html[data-experience="orbit"] h2.room-display { font-size: clamp(28px, 2.6vw, 41px); }
+  html[data-experience="orbit"] .room-panel > .room-tags { margin-top: 0; }
+  html[data-experience="orbit"] .room-panel > .room-list,
+  html[data-experience="orbit"] .room-panel > .room-columns,
+  html[data-experience="orbit"] .room-panel > .room-timeline,
+  html[data-experience="orbit"] .room-panel > .contact-details { grid-row: 2 / span 4; }
+  html[data-experience="orbit"] .room-panel > .team-core { grid-row: 2 / span 3; }
+  html[data-experience="orbit"] .room-panel > .room-lead + .room-list { grid-row: auto; }
+  html[data-experience="orbit"] .team-core { gap: 27px; }
+  html[data-experience="orbit"] .member-photo { width: clamp(96px, 8vw, 128px); }
+  html[data-experience="orbit"] .member-role { font-size: 14px; }
+  html[data-experience="orbit"] .contact-primary { margin-top: 2px; }
+}
+
+@media (min-width: 901px) and (max-width: 1150px) {
+  html[data-experience="orbit"] .room-panel { column-gap: 36px; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+  html[data-experience="orbit"] .room-columns { gap: 22px; }
+  html[data-experience="orbit"] .team-core { gap: 18px; }
+  html[data-experience="orbit"] .member-photo { width: 88px; }
+}
+
+@media (max-width: 900px) {
+  html[data-experience="orbit"][data-page="room"] .stage {
+    display: block;
+    height: auto;
+    min-height: 100dvh;
+    padding: var(--room-top) var(--room-side) 24px;
+    overflow: hidden;
+  }
+
+  html[data-experience="orbit"][data-page="room"] .stage-orbit {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 180ms ease, visibility 0s linear 180ms;
+  }
+
+
+
+  html[data-experience="orbit"][data-page="room"] .room-content {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0 var(--room-pad);
+  }
+
+  html[data-experience="orbit"][data-page="room"] .room-content::before,
+  html[data-experience="orbit"][data-page="room"] .room-content::after { display: none; }
+  html[data-experience="orbit"] .room-tabs { gap: 24px; margin-top: 20px; }
+  html[data-experience="orbit"] .room-tabs button { font-size: 14px; }
+  html[data-experience="orbit"] .room-panels { overflow: visible; }
+  html[data-experience="orbit"] .room-panel { padding: 25px 0 30px; font-size: 16px; }
+  html[data-experience="orbit"] .room-display h2,
+  html[data-experience="orbit"] h2.room-display { font-size: 27px; }
+  html[data-experience="orbit"] .room-lead { font-size: 18px; }
+  html[data-experience="orbit"] .room-footer { flex-wrap: wrap; gap: 5px 15px; padding-top: 13px; }
+  html[data-experience="orbit"] .room-chapter { font-size: 9px; }
+  html[data-experience="orbit"][data-page="room"] .stage-about { display: none; }
+  html[data-experience="orbit"][data-page="room"] .stage-foot {
+    position: relative;
+    display: flex;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    margin: 35px auto 0;
+    transform: none;
+  }
+  html[data-experience="orbit"][data-page="room"] .sf-text { font-size: 9px; letter-spacing: 0.1em; gap: 6px; }
+}
+
+@media (max-width: 480px) {
+  html[data-experience="orbit"] .room-columns { grid-template-columns: 1fr; gap: 24px; }
+  html[data-experience="orbit"] .room-row { grid-template-columns: 82px minmax(0, 1fr); gap: 17px; }
+  html[data-experience="orbit"] .room-row h3 { font-size: 15px; }
+  html[data-experience="orbit"] .room-tabs { gap: 19px; }
+  html[data-experience="orbit"] .room-tabs button { font-size: 13px; }
+  html[data-experience="orbit"] .room-tabs button span { margin-right: 5px; font-size: 9px; }
+  html[data-experience="orbit"] .room-topline { gap: 9px; letter-spacing: 0.09em; }
+  html[data-experience="orbit"] .room-topline > :last-child { font-size: 8px; }
+  html[data-experience="orbit"] .team-core { gap: 24px 15px; }
+  html[data-experience="orbit"] .member h3 { font-size: 17px; }
+  html[data-experience="orbit"] .member-role { font-size: 12px; }
+  html[data-experience="orbit"] .member-photo { width: 76px; }
+  html[data-experience="orbit"] .member p:not(.member-role) { font-size: 15px; }
+  html[data-experience="orbit"] .partner-lockup { grid-template-columns: 95px minmax(0, 1fr); gap: 16px; }
+  html[data-experience="orbit"] .partner-logo { height: 50px; }
+  html[data-experience="orbit"] .partner-lockup h3 { font-size: 17px; }
+  html[data-experience="orbit"] .timeline-node { grid-template-columns: 66px minmax(0, 1fr); gap: 12px; }
+  html[data-experience="orbit"] .contact-primary { font-size: 24px; }
+  html[data-experience="orbit"] .room-footer { font-size: 11px; gap: 5px 10px; }
+  html[data-experience="orbit"] .room-next { padding-left: 10px; }
+}
+
+@media (max-width: 370px) {
+  html[data-experience="orbit"] .room-tabs { gap: 13px; }
+  html[data-experience="orbit"] .team-core { grid-template-columns: 1fr; }
+}
+
+/* Short windows remain normal documents, with every chapter reachable. */
+@media (min-width: 901px) and (max-height: 699px) {
+  html[data-experience="orbit"][data-page="room"] .stage {
+    height: auto;
+    min-height: 100dvh;
+    padding: var(--room-top) var(--room-side) 90px;
+  }
+  html[data-experience="orbit"][data-page="room"] .room-content {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    margin: 0;
+    min-height: 400px;
+  }
+  html[data-experience="orbit"] .room-panels { overflow: visible; }
+  html[data-experience="orbit"][data-page="room"] .stage-foot { display: flex; bottom: 26px; }
+}
+
+/* Keep the masthead clear of the two-row navigation on tablet widths. */
+@media (max-height: 800px) and (min-width: 761px) {
+  html[data-experience="orbit"] { --room-top: 100px; }
+}
+@media (min-width: 761px) and (max-width: 999px) {
+  html[data-experience="orbit"] {
+    --room-top: max(clamp(100px, 11.5vh, 166px), calc(var(--header-h) + var(--bar-h) + var(--scale-h) + 4px));
+  }
+}
+@media (max-width: 760px) {
+  html[data-experience="orbit"] {
+    --room-top: 146px;
+    --room-side: 5%;
+    --room-pad: 0px;
+    --room-title-size: 26px;
+  }
+  html[data-experience="orbit"] .room-topline { margin-bottom: 5px; font-size: 8px; }
+  html[data-experience="orbit"] .room-heading { display: block; }
+  html[data-experience="orbit"] .room-heading > p { margin-top: 6px; font-size: 11px; line-height: 1.5; }
+}
+@media (max-width: 760px) and (max-height: 740px) {
+  html[data-experience="orbit"] { --room-top: 132px; --room-title-size: 23px; }
+  html[data-experience="orbit"] .room-heading > p { margin-top: 3px; font-size: 10px; line-height: 1.4; }
+}
+
+html[data-experience="orbit"]:not(.room-enhanced)[data-page="room"] .stage {
+  height: auto;
+  min-height: 100dvh;
+}
+
+html[data-experience="orbit"]:not(.room-enhanced) .room-panel[hidden] { display: block; }
+html[data-experience="orbit"]:not(.room-enhanced) .room-panel + .room-panel { border-top: 1px solid var(--line); }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-experience="orbit"] .stage-orbit,
+  html[data-experience="orbit"] .stage-logo-wrap,
+  html[data-experience="orbit"] .orbit-item,
+  html[data-experience="orbit"] .orbit-title,
+  html[data-experience="orbit"] .room-content,
+  html[data-experience="orbit"] .room-return,
+  html[data-experience="orbit"] .section-nav { transition: none; }
+  .ib-marker { transition: none !important; clip-path: none !important; }
+  .ib-planet, .ib-scale-dense { transition: none !important; }
+}
+

@@ -273,15 +273,16 @@ body.stage-in .orbit-planet {
 .pos-4::after, .pos-5::after, .pos-6::after { left: 0; }
 .orbit-item:hover::after { width: 100%; }
 
-.pos-1:hover .orbit-inner,
-.pos-2:hover .orbit-inner,
-.pos-3:hover .orbit-inner { transform: translateX(0.55rem); }
-.pos-4:hover .orbit-inner,
-.pos-5:hover .orbit-inner,
-.pos-6:hover .orbit-inner { transform: translateX(-0.55rem); }
+.pos-1, .pos-2, .pos-3 { --orbit-hover-x: 0.55rem; }
+.pos-4, .pos-5, .pos-6 { --orbit-hover-x: -0.55rem; }
+@media (min-width: 721px) {
+  .orbit-item:is(:hover, :focus-visible) .orbit-inner {
+    transform: translateX(var(--orbit-hover-x));
+  }
+}
 
 .stage-orbit:hover .orbit-inner { opacity: 0.42; }
-.stage-orbit .orbit-item:hover .orbit-inner { opacity: 1; }
+.stage-orbit .orbit-item:is(:hover, :focus-visible) .orbit-inner { opacity: 1; }
 
 .stage-about {
   position: absolute;
@@ -472,10 +473,10 @@ body.stage-in .sf-line {
   transform: none;
 }
 
-.pos-1 .orbit-inner { transform: translate(-6px, -4px); }
-.pos-3 .orbit-inner { transform: translate(-6px, 4px); }
-.pos-4 .orbit-inner { transform: translate(6px, -4px); }
-.pos-6 .orbit-inner { transform: translate(6px, 4px); }
+.pos-1 .orbit-inner { --orbit-enter-x: -6px; --orbit-enter-y: -4px; transform: translate(-6px, -4px); }
+.pos-3 .orbit-inner { --orbit-enter-x: -6px; --orbit-enter-y: 4px; transform: translate(-6px, 4px); }
+.pos-4 .orbit-inner { --orbit-enter-x: 6px; --orbit-enter-y: -4px; transform: translate(6px, -4px); }
+.pos-6 .orbit-inner { --orbit-enter-x: 6px; --orbit-enter-y: 4px; transform: translate(6px, 4px); }
 .stage-logo-name {
   opacity: 0;
   transition: opacity 0.8s var(--ease);
@@ -484,16 +485,23 @@ body.stage-in .sf-line {
 body.stage-in .orbit-inner {
   opacity: 1;
   transform: none;
+  /* Stagger only the entrance; hover and focus transitions always start immediately. */
+  animation: orbitLabelEnter 550ms var(--ease) backwards;
+}
+
+@keyframes orbitLabelEnter {
+  from { opacity: 0; transform: translate(var(--orbit-enter-x, 0px), var(--orbit-enter-y, 0px)); }
+  to { opacity: 1; transform: none; }
 }
 body.stage-in .stage-logo-name { opacity: 1; }
 body.stage-in .stage-scroll { opacity: 1; }
 
 body.stage-in .pos-2 .orbit-inner,
-body.stage-in .pos-5 .orbit-inner { transition-delay: 0s; }
-body.stage-in .pos-4 .orbit-inner { transition-delay: 0.26s; }
-body.stage-in .pos-6 .orbit-inner { transition-delay: 0.49s; }
-body.stage-in .pos-3 .orbit-inner { transition-delay: 0.81s; }
-body.stage-in .pos-1 .orbit-inner { transition-delay: 1.04s; }
+body.stage-in .pos-5 .orbit-inner { animation-delay: 0s; }
+body.stage-in .pos-4 .orbit-inner { animation-delay: 0.26s; }
+body.stage-in .pos-6 .orbit-inner { animation-delay: 0.49s; }
+body.stage-in .pos-3 .orbit-inner { animation-delay: 0.81s; }
+body.stage-in .pos-1 .orbit-inner { animation-delay: 1.04s; }
 
 body.stage-in .stage-logo-name { transition-delay: 0.54s; }
 body.stage-in .stage-scroll { transition-delay: 0.5s; }
@@ -612,12 +620,12 @@ body.stage-back .sf-line {
   .pos-4 .orbit-inner, .pos-5 .orbit-inner, .pos-6 .orbit-inner {
     transform: none;
   }
-  body.stage-in .pos-1 .orbit-inner { transition-delay: 0.06s; }
-  body.stage-in .pos-2 .orbit-inner { transition-delay: 0.12s; }
-  body.stage-in .pos-3 .orbit-inner { transition-delay: 0.18s; }
-  body.stage-in .pos-4 .orbit-inner { transition-delay: 0.24s; }
-  body.stage-in .pos-5 .orbit-inner { transition-delay: 0.3s; }
-  body.stage-in .pos-6 .orbit-inner { transition-delay: 0.36s; }
+  body.stage-in .pos-1 .orbit-inner { animation-delay: 0.06s; }
+  body.stage-in .pos-2 .orbit-inner { animation-delay: 0.12s; }
+  body.stage-in .pos-3 .orbit-inner { animation-delay: 0.18s; }
+  body.stage-in .pos-4 .orbit-inner { animation-delay: 0.24s; }
+  body.stage-in .pos-5 .orbit-inner { animation-delay: 0.3s; }
+  body.stage-in .pos-6 .orbit-inner { animation-delay: 0.36s; }
   body.stage-in .stage-foot { transition-delay: 0.42s; }
 
   .stage {
@@ -707,6 +715,8 @@ body.stage-back .sf-line {
     opacity: 1 !important;
     transition: none !important;
   }
+
+  .orbit-inner { animation: none !important; }
 
   .sa-caret { animation: none !important; }
   .orbit-ring { opacity: 0.15 !important; transition: none !important; }
