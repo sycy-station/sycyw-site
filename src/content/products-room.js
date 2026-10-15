@@ -81,6 +81,7 @@ const PRODUCTS_SCENE = `<div class="product-scene" data-product-scene>
 </div>
 <dialog class="product-preview" aria-labelledby="productPreviewTitle">
   <header class="product-preview-head"><div><p>森韵音乐 / 界面预览</p><h2 id="productPreviewTitle">${esc(PRODUCT_VIEWS[0].label)}</h2></div><button type="button" data-product-close aria-label="关闭界面预览">×</button></header>
+  <div class="product-preview-zoom" role="group" aria-label="图片缩放"><button type="button" data-product-zoom-out aria-label="缩小图片">−</button><button type="button" data-product-zoom-reset aria-label="重置图片缩放">100%</button><button type="button" data-product-zoom-in aria-label="放大图片">＋</button><span>双指缩放 · 拖动查看</span></div>
   <div class="product-preview-image"><img data-product-preview-image alt=""></div>
   <footer class="product-preview-foot"><p data-product-preview-caption></p><div><button type="button" data-product-previous aria-label="上一张界面">←</button><span data-product-preview-count>01 / ${total}</span><button type="button" data-product-next aria-label="下一张界面">→</button></div></footer>
 </dialog>`;

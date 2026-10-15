@@ -438,7 +438,8 @@
   content.addEventListener("click", async (event) => {
     const button = event.target.closest?.("[data-copy-email]");
     if (!button) return;
-    const email = "3896148508@qq.com";
+    const email = content.querySelector('.contact-email[href^="mailto:"]')?.getAttribute("href").slice(7);
+    if (!email) return;
     const feedback = content.querySelector("[data-copy-status]");
     try {
       await navigator.clipboard.writeText(email);

@@ -5,7 +5,7 @@ const esc = (value) => String(value)
   .replace(/"/g, "&quot;");
 
 const mail = (subject, label = "聊聊你的想法") =>
-  `<a class="room-link" href="mailto:3896148508@qq.com?subject=${encodeURIComponent(subject)}">${esc(label)} <span aria-hidden="true">↗</span></a>`;
+  `<a class="room-link" href="mailto:d2143704352@gmail.com?subject=${encodeURIComponent(subject)}">${esc(label)} <span aria-hidden="true">↗</span></a>`;
 
 const row = (title, copy) =>
   `<li class="room-row"><strong>${esc(title)}</strong><span>${esc(copy)}</span></li>`;

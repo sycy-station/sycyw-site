@@ -6,6 +6,7 @@
     const data = JSON.parse(content.querySelector("#joinData").textContent);
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const compact = matchMedia("(max-width: 900px)");
+    const mobileSheet = matchMedia("(max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse)");
     const dialog = content.querySelector(".join-application");
     const form = dialog.querySelector("form");
     const status = dialog.querySelector("[data-join-form-status]");
@@ -73,14 +74,22 @@
       });
     };
     const syncOrientation = () => {
-      scene.querySelector(".join-tabs").setAttribute("aria-orientation", compact.matches ? "horizontal" : "vertical");
-      scene.querySelector(".join-job-index").setAttribute("aria-orientation", compact.matches ? "horizontal" : "vertical");
+      scene.querySelector(".join-tabs").setAttribute("aria-orientation", compact.matches || mobileSheet.matches ? "horizontal" : "vertical");
+      scene.querySelector(".join-job-index").setAttribute("aria-orientation", compact.matches || mobileSheet.matches ? "horizontal" : "vertical");
     };
     const layoutList = (panel) => {
       const list = panel?.querySelector("[data-join-list]");
       if (!list || panel.hidden) return;
       const items = [...list.querySelectorAll("[data-join-item]")];
       const process = list.dataset.joinList === "process";
+      // Phone chapters scroll as a whole, so no step is squeezed into a tiny pager.
+      if (mobileSheet.matches) {
+        list.style.setProperty("--join-columns", list.clientWidth >= 600 && !process ? 2 : 1);
+        items.forEach((item) => { item.hidden = false; });
+        pages.set(list, { start: 0, capacity: items.length });
+        panel.querySelector(".join-pager").hidden = true;
+        return;
+      }
       const width = list.clientWidth;
       const columns = process ? 1 : width >= 1100 ? 3 : width >= 510 ? 2 : 1;
       const rowHeight = process ? (width < 510 ? 108 : width >= 1100 ? 74 : 82) : (width < 510 ? 116 : 140);
@@ -110,7 +119,7 @@
       scene.querySelector("[data-join-job-count]").textContent = `${label} · ${filteredJobs.length}`;
       if (!empty) {
         const minRow = parseFloat(getComputedStyle(jobButtons[0]).minHeight) || 84;
-        jobCapacity = compact.matches ? Math.max(1, Math.floor(jobIndex.clientWidth / 136)) : Math.max(1, Math.floor(jobIndex.clientHeight / minRow));
+        jobCapacity = compact.matches || mobileSheet.matches ? Math.max(1, Math.floor(jobIndex.clientWidth / 136)) : Math.max(1, Math.floor(jobIndex.clientHeight / minRow));
         const selected = Math.max(0, filteredJobs.findIndex((job) => job.id === selectedJob?.id));
         jobPage = Math.floor(selected / jobCapacity);
       }
@@ -157,6 +166,7 @@
     const activate = (panel) => {
       if (!scene.contains(panel)) return;
       activePanel = panel;
+      if (mobileSheet.matches) panel.parentElement.scrollTop = 0;
       scene.dataset.active = panel.id.split("-").pop();
       if (panel.classList.contains("join-panel--jobs")) layoutJobs();
       layoutList(panel);
@@ -202,7 +212,7 @@
       const button = event.target.closest("[data-join-job]");
       if (!button) return;
       const i = filteredJobs.findIndex((job) => job.id === button.dataset.joinJob);
-      const arrows = compact.matches ? {ArrowLeft:i-1,ArrowRight:i+1} : {ArrowUp:i-1,ArrowDown:i+1};
+      const arrows = compact.matches || mobileSheet.matches ? {ArrowLeft:i-1,ArrowRight:i+1} : {ArrowUp:i-1,ArrowDown:i+1};
       const index = {...arrows,Home:0,End:filteredJobs.length-1}[event.key];
       if (index === undefined) return;
       event.preventDefault(); selectJob(index,true);

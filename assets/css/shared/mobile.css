@@ -1,0 +1,189 @@
+/* Phone-only repairs. Desktop geometry and motion remain in the original sheets.
+   Coarse-pointer landscape includes phones whose rotated width exceeds 760px. */
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse) {
+  .ib-scroll { padding-top: 0; }
+  .ib-track { align-items: center; }
+  .ib-item { align-items: center; min-height: 44px; }
+  .ib-title { font-size: 13px; }
+  .menu-toggle, .theme-toggle { min-width: 44px; min-height: 44px; }
+  html[data-experience="orbit"] { --room-top: 146px; }
+  html.room-enhanced[data-page="room"] .room-content { top: var(--room-top); bottom: max(38px, env(safe-area-inset-bottom)); }
+  html[data-page="room"] .room-heading { flex: none; }
+  html[data-page="room"] .room-heading > p { display: none; }
+  html[data-page="room"] .room-tabs button { min-height: 44px; }
+  html[data-page="room"] .room-panels { overscroll-behavior-y: contain; scrollbar-width: thin; }
+  .room-return { min-width: 44px; min-height: 44px; }
+
+  /* Keep the frame in one viewport, with one useful reading area per chapter. */
+  html[data-slug="join"] .join-panels { overflow-x: hidden; overflow-y: auto; display: block; }
+  html[data-slug="join"] .join-panel { height: auto; min-height: 100%; overflow: visible; padding: 16px; }
+  .join-scene { display: flex; flex-direction: column; min-height: 0; }
+  .join-index { flex: none; padding: 0 13px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .join-index-heading, .join-emblem, .join-team-link { display: none; }
+  html[data-slug="join"] .join-tabs { flex-direction: row; gap: 12px; margin: 0; }
+  html[data-slug="join"] .join-tabs .join-chapter { flex: 1; min-height: 48px; padding: 10px 0; border: 0; }
+  html[data-slug="join"] .join-tabs .join-chapter:last-child { border: 0; }
+  html[data-slug="join"] .join-chapter .join-chapter-number, .join-chapter > i, .join-chapter-name small { display: none; }
+  html[data-slug="join"] .join-chapter .join-chapter-name { font-size: 13px; white-space: nowrap; }
+  .join-intro, .join-job-copy, .join-requirements li, .join-feature p, .join-step p { font-size: 14px; line-height: 1.85; }
+  .join-example { font-size: 12px; line-height: 1.8; margin-top: 8px; padding-block: 10px; }
+  .join-job-filters { gap: 12px; justify-content: flex-start; }
+  .join-job-filter { align-items: center; min-height: 44px; font-size: 12px; padding: 8px 3px; }
+  .join-job-filter small { font-size: 10px; }
+  .join-jobs { flex: none; display: flex; flex-direction: column; height: auto; overflow: visible; }
+  .join-job-sidebar { flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; border: 0; }
+  .join-job-list-head { min-height: 48px; font-size: 11px; padding: 2px 0; }
+  .join-job-list-head > [data-join-job-count] { display: inline; }
+  .join-job-pagination { gap: 6px; }
+  .join-job-pagination button { width: 44px; height: 44px; }
+  .join-job-pagination > span { font-size: 11px; }
+  .join-job-index { flex: none; grid-template-columns: repeat(var(--join-job-visible,2),minmax(0,1fr)); grid-template-rows: auto; gap: 10px; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .join-job-choice { min-height: 58px; }
+  .join-job-name { font-size: 13px; }
+  .join-job-details { flex: none; padding: 18px 0 0; }
+  .join-job-detail { height: auto; overflow: visible; }
+  .join-job-body { flex: none; height: auto; overflow: visible; }
+  .join-job-meta, .join-requirements h4 { font-size: 12px; }
+  .join-job-foot { padding-top: 20px; }
+  .join-action { min-height: 44px; font-size: 13px; padding: 10px 14px; }
+  .join-feature-list, .join-process { flex: none; height: auto; grid-auto-rows: auto; overflow: visible; margin-top: 20px; }
+  .join-feature { padding-block: 20px; }
+  .join-step { padding-block: 10px; gap: 16px; }
+  .join-step > div { display: block; padding-block: 10px; }
+  .join-step p { margin-top: 6px; }
+  .join-process-foot { flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 16px; margin-top: 24px; padding-top: 18px; }
+  .join-process-foot p { font-size: 12px; line-height: 1.8; }
+  html[data-slug="join"] .join-process-foot h3 { font-size: 16px; }
+  .join-application { max-height: calc(100dvh - 24px - env(safe-area-inset-bottom)); }
+  .join-application input, .join-application textarea { font-size: 16px; }
+  .join-application input::placeholder, .join-application textarea::placeholder { font-size: 14px; }
+  .join-close { width: 44px; height: 44px; }
+  .join-file-control { min-height: 48px; }
+
+  html.room-enhanced[data-slug="products"] .product-views { display: block; overflow-x: hidden; overflow-y: auto; }
+  html[data-slug="products"] .product-view { height: auto; min-height: 100%; grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; gap: 20px; padding: 20px 16px; }
+  .product-copy { display: block; }
+  html[data-slug="products"] .product-copy h2 { margin: 0; font-size: clamp(23px, 6vw, 32px); line-height: 1.45; }
+  .product-copy h2 > span { display: inline; white-space: normal; }
+  .product-description { margin-top: 12px; max-width: none; font-size: 14px; line-height: 1.85; }
+  .product-features { font-size: 11px; margin-top: 12px; }
+  .product-showcase { flex: none; }
+  .product-image-area { flex: none; min-height: 0; padding: 8px 0 18px; }
+  .product-image-button { width: 100%; }
+  .product-image-button img { width: 100%; height: auto; max-height: none; }
+  .product-showcase figcaption { font-size: 11px; }
+  html[data-slug="products"] .product-tabs { flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  html[data-slug="products"] .product-tabs .product-tab { min-height: 48px; padding: 10px 8px; }
+
+  html.room-enhanced[data-slug="team"] .room-panels { overflow-x: hidden; overflow-y: auto; }
+  html.room-enhanced[data-slug="team"] .room-panel { height: auto; min-height: 100%; padding-top: 18px; }
+  .team-scene { height: auto; min-height: 100%; }
+  .team-roster { flex: none; height: clamp(270px, calc(100dvh - 410px), 520px); min-height: 270px; }
+  .team-details-button { min-height: 44px; align-items: center; padding-block: 10px; }
+  .team-pager button, [data-team-prev], [data-team-next], [data-team-close] { min-width: 44px; min-height: 44px; }
+
+  .contact-scene { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; }
+  .contact-hero { flex: none; grid-template-columns: 1fr; padding-block: 20px 24px; }
+  .contact-art { display: none; }
+  .contact-intro { font-size: 14px; line-height: 1.8; }
+  .contact-email-row { flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .contact-email { max-width: 100%; min-height: 44px; font-size: clamp(18px, 4.8vw, 26px); }
+  .contact-copy { min-height: 44px; min-width: 92px; font-size: 12px; padding: 10px; }
+  .contact-copy-status { position: static; margin-top: 8px; font-size: 12px; }
+  .contact-information { flex: none; min-height: auto; overflow: visible; padding-block: 20px; }
+  .contact-information dd, .contact-address dd, .contact-identity-list dd { font-size: 14px; line-height: 1.8; }
+  .contact-information dt { font-size: 12px; }
+  .contact-information a { display: inline-flex; align-items: center; min-height: 44px; }
+  .contact-channel-list { row-gap: 8px; }
+
+  html.room-enhanced[data-slug="about"] .about-values-grid { overflow-y: auto; padding-bottom: 18px; }
+  .about-subtabs button, .about-value-tabs button { min-height: 44px; }
+  .about-history-rail { overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; }
+  .about-history-stops { width: max(100%, 352px); grid-template-columns: repeat(var(--history-count), minmax(44px, 1fr)); margin: 0; }
+  .about-history-rail::before, .about-history-rail::after, .about-history-scale { left: 22px; right: auto; }
+  .about-history-rail::before, .about-history-scale { width: calc(max(100%, 352px) - 44px); }
+  .about-history-rail::after { width: calc((max(100%, 352px) - 44px) * var(--history-progress, 0)); }
+  .about-history-rail button { min-width: 44px; min-height: 62px; }
+
+  /* The original six-entry orbit becomes a compact two-column phone index. */
+  html[data-page="stage"] .stage { display: flex; flex-direction: column; justify-content: center; min-height: 100dvh; height: auto; padding: 100px 6% max(18px, env(safe-area-inset-bottom)); }
+  html[data-page="stage"] .stage-orbit { --logo-final: clamp(80px, 18dvh, 154px); position: relative; inset: auto; display: grid; width: 100%; height: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "logo logo" "i1 i4" "i2 i5" "i3 i6"; gap: clamp(12px, 2.2dvh, 22px) 18px; transform: none; }
+  html[data-page="stage"] .stage-logo-wrap { grid-area: logo; position: static; width: var(--logo-final); margin: 0 auto 10px; transform: none; }
+  html[data-page="stage"] .pos-1 { grid-area: i1; }
+  html[data-page="stage"] .pos-2 { grid-area: i2; }
+  html[data-page="stage"] .pos-3 { grid-area: i3; }
+  html[data-page="stage"] .pos-4 { grid-area: i4; }
+  html[data-page="stage"] .pos-5 { grid-area: i5; }
+  html[data-page="stage"] .pos-6 { grid-area: i6; }
+  html[data-page="stage"] .stage-logo-name { font-size: 12px; margin-top: 10px; }
+  html[data-page="stage"] .orbit-item { position: static; width: 100%; min-height: 48px; justify-self: stretch; text-align: center; }
+  html[data-page="stage"] .orbit-title { font-size: clamp(17px, 4.5vw, 22px); }
+  html[data-page="stage"] .orbit-sub { display: block; font-size: 10px; }
+  html[data-page="stage"] .orbit-item::after { left: 50%; right: auto; transform: translateX(-50%); }
+  html[data-page="stage"] .stage-about { position: static; width: 100%; height: auto; min-height: 44px; margin: 20px auto 0; transform: none; overflow: visible; clip-path: none; white-space: normal; }
+  html[data-page="stage"]:not([data-home-collapsed]) .stage-narrator { visibility: visible; }
+  html[data-page="stage"] .stage-foot { position: static; display: flex; width: 100%; margin: 16px auto 0; transform: none; }
+
+  .splash-skip { display: block; position: absolute; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); z-index: 20; transform: translateX(-50%); border: 1px solid var(--line-strong); padding: 10px 18px; min-height: 44px; background: var(--paper); color: var(--ink); font: 12px/1.8 var(--font-sans); white-space: nowrap; cursor: pointer; }
+  .product-preview-zoom { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 12px; }
+  .product-preview-zoom button { min-height: 44px; min-width: 44px; padding: 6px 10px; border: 1px solid var(--line); color: var(--ink); background: transparent; font: 12px/1.5 var(--font-sans); }
+  .product-preview-zoom span { margin-left: auto; font-size: 11px; color: var(--grey-strong); }
+  .product-preview { width: calc(100vw - 20px); height: calc(100dvh - 24px); padding: 16px; }
+  .product-preview-image { position: relative; overflow: hidden; touch-action: none; padding: 0; margin-block: 12px; }
+  .product-preview-image img { flex: none; max-width: none; max-height: none; user-select: none; -webkit-user-drag: none; transform-origin: center; }
+  .product-preview-head > button, .product-preview-foot button { width: 44px; height: 44px; }
+  .product-preview-foot { flex-direction: column; gap: 8px; }
+  .product-preview-foot > div { width: 100%; justify-content: space-between; }
+}
+
+/* These added controls are absent visually on the desktop experience. */
+.splash-skip, .product-preview-zoom { display: none; }
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse) {
+  .splash-skip { display: block; }
+  .product-preview-zoom { display: flex; }
+}
+@media (max-width: 760px) and (max-height: 740px) {
+  html[data-experience="orbit"] { --room-top: 132px; }
+  html[data-page="stage"] .stage { padding-top: 80px; }
+  html[data-page="stage"] .stage-orbit { --logo-final: 80px; row-gap: 8px; }
+  html[data-page="stage"] .stage-logo-wrap { margin-bottom: 4px; }
+  html[data-page="stage"] .stage-about { margin-top: 12px; font-size: 14px; }
+  html[data-page="stage"] .stage-foot { margin-top: 8px; }
+}
+@media (max-width: 1000px) and (max-height: 500px) and (pointer: coarse) {
+  html[data-experience="orbit"] { --room-top: 164px; --room-title-size: 23px; }
+  html.room-enhanced[data-page="room"] .room-content { display: block; left: 5%; right: 5%; padding-inline: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; }
+  html.room-enhanced[data-page="room"] .room-panels { height: auto; min-height: 320px; overflow: visible; }
+  html.room-enhanced[data-slug="products"] .product-views { min-height: 0; }
+  html[data-slug="products"] .product-view { min-height: 0; grid-template-columns: minmax(0,.4fr) minmax(0,.6fr); grid-template-rows: auto; align-items: center; padding: 24px; }
+  .product-identity { display: none; }
+  .product-copy-foot { display: none; }
+  html[data-slug="products"] .product-copy h2 { font-size: 25px; }
+  html[data-slug="products"] .product-tabs { grid-template-columns: repeat(6,minmax(0,1fr)); }
+  html[data-slug="products"] .product-tab:nth-child(n) { border-top: 0; }
+  html[data-slug="products"] .product-tab:nth-child(n + 2) { border-left: 1px solid var(--line); }
+  .product-tab-copy strong { font-size: 12px; }
+  .product-tab-copy small, html[data-slug="products"] .product-tabs .product-tab-arrow { display: none; }
+  .join-panels { flex: none; }
+  .contact-scene { height: auto; overflow: visible; }
+  html.room-enhanced[data-slug="join"] .join-panels { min-height: 0; overflow: visible; }
+  html.room-enhanced[data-slug="ecosystem"] .eco-panels { min-height: 0; }
+  html[data-slug="ecosystem"] .eco-panel { min-height: 300px; height: auto; overflow: visible; }
+  .eco-scene { margin-top: 8px; }
+  html[data-page="room"] .room-tabs { margin-top: 4px; }
+  .join-scene, .contact-scene, .product-scene { margin-top: 8px; }
+  .contact-information { grid-template-columns: 1fr 1fr; }
+  .product-preview-foot > p { display: none; }
+  .product-preview { padding: 10px 16px; }
+  .product-preview-head p { display: none; }
+  .product-preview-head h2 { font-size: 18px; }
+  .product-preview-zoom { padding-top: 4px; }
+  html[data-page="stage"] .stage { padding-top: 98px; }
+  html[data-page="stage"] .stage-orbit { --logo-final: 80px; grid-template-columns: 140px repeat(3,minmax(0,1fr)); grid-template-areas: "logo i1 i2 i3" "logo i4 i5 i6"; gap: 12px; align-items: center; }
+  html[data-page="stage"] .stage-about { margin-top: 12px; }
+  html[data-page="stage"] .orbit-item { transform: none !important; }
+  html[data-page="stage"] .orbit-inner { transform: none; }
+  html[data-page="stage"] .orbit-ring, html[data-page="stage"] .orbit-ticks, html[data-page="stage"] .orbit-planet-ring, html[data-page="stage"] .orbit-planet { display: none; }
+  html[data-page="stage"] .stage-logo-name { position: static; display: block; transform: none; }
+  .ib-scale, .ib-freq, .ib-planet { display: none; }
+}

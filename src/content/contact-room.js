@@ -9,7 +9,7 @@ const CONTACT_SCENE = `
         <h2 class="contact-title"><span data-contact-line>新的连接，</span><span data-contact-line>从一句你好开始。</span></h2>
         <p class="contact-intro" data-contact-reveal>介绍一下你自己、正在做的事，以及希望与森韵一起探索的方向。想法不必完整，我们愿意从交流开始。</p>
         <div class="contact-email-row" data-contact-reveal>
-          <a class="contact-email" href="mailto:3896148508@qq.com"><span>3896148508@qq.com</span><span class="contact-email-arrow" aria-hidden="true">↗</span></a>
+          <a class="contact-email" href="mailto:d2143704352@gmail.com"><span>d2143704352@gmail.com</span><span class="contact-email-arrow" aria-hidden="true">↗</span></a>
           <button class="contact-copy" type="button" data-copy-email><span data-copy-label>复制邮箱</span><span aria-hidden="true">＋</span></button>
         </div>
         <p class="contact-copy-status" role="status" aria-live="polite" data-copy-status></p>
@@ -43,8 +43,8 @@ const CONTACT_SCENE = `
       <section class="contact-channels" aria-labelledby="contactChannelsTitle">
         <div class="contact-section-head" data-contact-reveal><span class="contact-kicker">保持联系</span><h3 id="contactChannelsTitle">找到我们。</h3><span class="contact-section-mark" aria-hidden="true">↗</span></div>
         <dl class="contact-channel-list">
-          <div data-contact-reveal><dt>电话</dt><dd><a href="tel:+8616690599967">+86 166-9059-9967 <span aria-hidden="true">↗</span></a></dd></div>
-          <div data-contact-reveal><dt>QQ</dt><dd><a href="https://wpa.qq.com/msgrd?v=3&amp;uin=3896148508&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener noreferrer">3896148508 <span aria-hidden="true">↗</span></a></dd></div>
+          <div data-contact-reveal><dt>电话</dt><dd><a href="tel:+8616690596902">＋86 16690596902 <span aria-hidden="true">↗</span></a></dd></div>
+          <div data-contact-reveal><dt>QQ</dt><dd><a href="https://wpa.qq.com/msgrd?v=3&amp;uin=2143704352&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener noreferrer">2143704352 <span aria-hidden="true">↗</span></a></dd></div>
           <div class="contact-address" data-contact-reveal><dt>联系地址</dt><dd><span>中国（河北）自由贸易试验区</span><span>曹妃甸片区金岛大厦 B 座 3613 室</span></dd></div>
         </dl>
       </section>

@@ -61,6 +61,8 @@
     handoffOverlap: 290,
     dissolve: 620
   };
+  const phoneSplash = matchMedia("(max-width: 760px), (max-width: 1000px) and (max-height: 600px) and (pointer: coarse)").matches;
+  if (phoneSplash) Object.assign(TIMING, { nameDelay: 320, codeDelay: 360, charSpeed: 9, lineGap: 70, expandDelay: 180, holdExpanded: 700 });
   const SP_PHASES = ["sp-logo", "sp-name", "sp-code", "sp-expand", "sp-leave"];
   const setPhase = (name) => {
     if (name) splash.classList.add("phase-" + name);
@@ -305,6 +307,12 @@
   };
 
   if (hasSplash) {
+    if (phoneSplash) {
+      const skip = document.createElement("button");
+      skip.type = "button"; skip.className = "splash-skip"; skip.textContent = "轻触跳过开场";
+      splash.removeAttribute("aria-hidden");
+      splash.appendChild(skip);
+    }
     splash.addEventListener("click", leaveSplash);
     window.addEventListener("keydown", (e) => {
       if (!splashDone && (e.key === "Escape" || e.key === "Enter")) {
