@@ -61,6 +61,7 @@
   },
   "recruitment": {
     "intro": "我们正在寻找热爱二次元文化和科技创新的人才 （此处招聘不为真实信息，不要贸然填写，更新信息后此条信息消失）",
+    "notice": "站点注明：当前所有岗位皆为公益性质 不会下发对应资金 详情具体福利可参照员工福利进行判断",
     "isExample": true,
     "jobs": [
       {
@@ -68,7 +69,7 @@
         "direction": "development",
         "category": "软件测试 / 测试工程",
         "title": "软件测试/测试工程师（初级）",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "负责对项目主程序（包含PC、web）进行功能、性能测试工作",
           "根据产品需求进行对应测试，执行测试并撰写对应测试流程报告",
@@ -86,7 +87,7 @@
         "direction": "design",
         "category": "二次元视觉设计",
         "title": "二次元形象设计师",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "负责目前森韵次元坞的看板娘的形象设计",
           "绘制人像、小卡绘画，设计对应表情包"
@@ -101,7 +102,7 @@
         "direction": "design",
         "category": "界面体验设计",
         "title": "UI/UX 设计师",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "负责森韵次元坞WEB端、PC端等操作系统的视觉设计",
           "负责参与设计体验 流程的制定和规范",
@@ -118,7 +119,7 @@
         "direction": "operation",
         "category": "数据运营",
         "title": "AI数据收集专员",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "根据模型的开发需要，根据现有需求收集对应高品质数据",
           "对数据进行归纳整理 做好日常数据表格规整。",
@@ -134,7 +135,7 @@
         "direction": "operation",
         "category": "后台运营",
         "title": "后台操作员",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "负责公司后台系统的日常操作与维护，确保审核快速与数据准确性",
           "根据对应业务需求完成信息录入与流程处理",
@@ -151,7 +152,7 @@
         "direction": "operation",
         "category": "内容运营",
         "title": "BiliBili账号运营",
-        "location": "",
+        "location": "线上",
         "responsibilities": [
           "负责整体账号日常活跃，内容更新、粉丝互动、留言回复、舆情维护等。",
           "根据对应名单/对应规则 招揽对应P主进行加入。"

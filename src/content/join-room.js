@@ -26,7 +26,7 @@ const pager = `<div class="join-pager"><span data-join-page-status aria-live="po
 const featureList = (items, kind) => `<div class="join-feature-list" data-join-list="${kind}">${items.map((item, i) => `<article class="join-feature" data-join-item data-join-reveal><span class="join-feature-number" aria-hidden="true">${num(i)}</span><div><h3>${esc(item.title)}</h3><p>${esc(item.description)}</p></div></article>`).join("\n")}</div>${pager}`;
 const jobList = (title, items, kind) => `<div class="join-requirements${kind === "responsibilities" ? " join-responsibilities" : ""}" data-join-reveal><h4>${title}</h4><ol>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ol></div>`;
 const jobs = `${head("01 / OPPORTUNITIES", "找到与你同频的方向。", "我们正在寻找热爱二次元文化和科技创新的人才")}
-  <p class="join-example" data-join-reveal><i aria-hidden="true"></i>${data.recruitment.isExample ? "参考站注明：当前岗位并非真实招聘信息，请勿贸然投递。" : "请选择岗位，查看职责与申请要求。"}</p>
+  <p class="join-example" data-join-reveal><i aria-hidden="true"></i>${esc(data.recruitment.notice)}</p>
   <div class="join-job-toolbar" data-join-reveal><span class="join-filter-label" id="joinFilterLabel">岗位方向</span><div class="join-job-filters" role="group" aria-labelledby="joinFilterLabel">${jobFilters.map((category, i) => `<button type="button" class="join-job-filter" data-join-filter="${category.id}" aria-pressed="${i === 0}" aria-controls="joinJobResults"><span>${category.label}</span><small>${category.id === "all" ? recruitmentJobs.length : recruitmentJobs.filter((job) => job.direction === category.id).length}</small></button>`).join("")}</div></div>
   <p class="join-filter-status" data-join-filter-status role="status" aria-live="polite"></p>
   <div class="join-jobs" id="joinJobResults">
@@ -37,7 +37,7 @@ const jobs = `${head("01 / OPPORTUNITIES", "找到与你同频的方向。", "�
       <h3 data-join-reveal>${esc(job.title)}</h3>${job.description ? `<p class="join-job-copy" data-join-reveal>${esc(job.description)}</p>` : ""}
       ${job.responsibilities?.length ? jobList("岗位职责", job.responsibilities, "responsibilities") : ""}
       ${jobList("任职要求", job.requirements, "requirements")}</div>
-      <div class="join-job-foot" data-join-reveal><span>${data.recruitment.isExample ? "示例岗位 · 可预览申请流程" : "让我们认识你的热爱与专长"}</span><button type="button" class="join-action" data-join-apply="${job.id}">岗位申请 <span aria-hidden="true">↗</span></button></div>
+      <div class="join-job-foot" data-join-reveal><button type="button" class="join-action" data-join-apply="${job.id}">岗位申请 <span aria-hidden="true">↗</span></button></div>
     </section>`).join("\n")}</div>
     <div class="join-job-empty" hidden><span class="join-empty-mark" aria-hidden="true"></span><h3 data-join-empty-title>暂无岗位</h3><p>可以切换其他岗位分类，看看与你同频的方向。</p><button type="button" data-join-filter="all" class="join-empty-reset">查看全部岗位 <span aria-hidden="true">↗</span></button></div>
   </div>`;

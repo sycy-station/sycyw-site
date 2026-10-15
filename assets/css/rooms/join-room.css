@@ -94,8 +94,9 @@ html[data-slug="join"] .join-panel-head h2 { margin: 12px 0 11px; font: 400 clam
 .join-job-details { min-height: 0; min-width: 0; padding-left: clamp(24px, 3vw, 66px); }
 .join-job-detail { display: flex; flex-direction: column; min-height: 0; height: 100%; margin: 0; padding: 0; overflow: hidden; }
 .join-job-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
-.join-job-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--grey-strong); font-size: clamp(10px, .75vw, 14px); line-height: 1.6; }
-.join-job-meta > span:first-child { color: var(--join-accent); }
+.join-job-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: var(--grey-strong); font-size: clamp(10px, .75vw, 14px); line-height: 1.6; }
+.join-job-meta > span:first-child { min-width: 0; overflow-wrap: anywhere; color: var(--join-accent); }
+.join-job-meta > span + span { flex: none; white-space: nowrap; }
 html[data-slug="join"] .join-job-body > h3 { margin: clamp(12px, 2vh, 24px) 0 12px; font: 400 clamp(26px, 2.1vw, 50px)/1.4 var(--font-display); letter-spacing: .02em; }
 .join-job-copy { color: var(--text-soft); font-size: clamp(12px, .92vw, 17px); line-height: 1.95; text-wrap: pretty; }
 .join-requirements { margin-top: clamp(20px, 3.8vh, 55px); }
@@ -106,8 +107,7 @@ html[data-slug="join"] .join-job-body > h3 { margin: clamp(12px, 2vh, 24px) 0 12
 .join-job-body:has(.join-responsibilities) .join-requirements { margin-top: clamp(16px, 2.2vh, 30px); }
 .join-job-body:has(.join-responsibilities) .join-requirements ol { margin-top: 8px; }
 .join-job-body:has(.join-responsibilities) .join-requirements li { margin-top: clamp(5px, .7vh, 10px); }
-.join-job-foot { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: clamp(20px, 3vh, 40px); }
-.join-job-foot > span { color: var(--grey-strong); font-size: clamp(9px, .65vw, 12px); line-height: 1.6; }
+.join-job-foot { display: flex; flex: none; align-items: center; justify-content: flex-end; gap: 12px; margin-top: auto; padding-top: clamp(20px, 3vh, 40px); }
 .join-jobs[data-empty="true"] { grid-template-columns: minmax(0,1fr); }
 .join-job-empty { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; text-align: center; }
 .join-empty-mark { position: relative; width: 42px; height: 42px; margin-bottom: 24px; border: 1px solid var(--line-strong); border-radius: 50%; }
@@ -223,7 +223,6 @@ html[data-slug="join"] body:has(.join-application[open]) .cursor { visibility: h
   .join-job-sidebar { padding-right: 18px; }
   .join-job-details { padding-left: 22px; }
   .join-job-name { font-size: 13px; }
-  .join-job-foot > span { max-width: 10em; }
   .join-step > div { grid-template-columns: minmax(110px,.3fr) minmax(0,.7fr); }
 }
 @media (max-width: 900px) {
@@ -265,7 +264,6 @@ html[data-slug="join"] body:has(.join-application[open]) .cursor { visibility: h
   .join-requirements li { margin-top: 7px; font-size: 12px; line-height: 1.75; }
   .join-job-foot { padding-top: 14px; }
   .join-job-empty { flex: 1; }
-  .join-job-foot > span { font-size: 9px; }
   .join-action { padding: 9px 14px; font-size: 11px; gap: 12px; }
   .join-feature-list { margin-top: 20px; gap: 0 24px; }
   .join-feature { padding-block: 16px; gap: 14px; }
@@ -313,7 +311,6 @@ html[data-slug="join"] body:has(.join-application[open]) .cursor { visibility: h
   .join-requirements ol { margin-top: 6px; }
   .join-requirements li { font-size: 11px; line-height: 1.7; gap: 9px; margin-top: 6px; }
   .join-job-foot { padding-top: 13px; }
-  .join-job-foot > span { font-size: 8px; max-width: 12em; }
   .join-action { padding: 8px 11px; font-size: 10px; gap: 10px; }
   .join-feature-list { margin-top: 16px; }
   .join-feature { padding-block: 14px; }
