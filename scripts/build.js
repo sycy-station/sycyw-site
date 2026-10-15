@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const {
   PAGES,
   SPLASH_SIDES,
@@ -16,6 +17,15 @@ const { renderRoom } = require("../src/content/rooms.js");
 const ROOT = path.join(__dirname, "..");
 const SRC = path.join(ROOT, "src", "templates");
 const PARTIALS = path.join(SRC, "partials");
+const assetUrl = (reference) => {
+  let file = reference.split(/[?#]/)[0];
+  const webp = file.replace(/\.png$/i, ".webp");
+  if (webp !== file && fs.existsSync(path.join(ROOT, webp))) file = webp;
+  const digest = crypto.createHash("sha256").update(fs.readFileSync(path.join(ROOT, file))).digest("hex").slice(0, 12);
+  return `${file}?v=${digest}`;
+};
+const versionAssets = (html) => html.replace(/\b(src|href)="(assets\/[^"?#]+)(?:\?[^"#]*)?"/g,
+  (_, attribute, file) => `${attribute}="${assetUrl(file)}"`);
 
 const readPartial = (name) => {
   const f = path.join(PARTIALS, name + ".html");
@@ -120,11 +130,13 @@ const build = () => {
     homeHeadingAttrs: "",
     roomAttrs: " inert",
     roomContent: "",
+    roomScript: "",
+    roomResources: JSON.stringify(Object.fromEntries(PAGES.map(p => [p.slug, assetUrl(`assets/js/rooms/${p.slug}-room.js`)]))),
 
     wideCss: '<link rel="stylesheet" href="assets/css/shared/wide.css?v=20261015-edge-motion">',
     ...metaAbs("index.html")
   };
-  const home = expand(fs.readFileSync(path.join(SRC, "index.html"), "utf8"), homeVars);
+  const home = versionAssets(expand(fs.readFileSync(path.join(SRC, "index.html"), "utf8"), homeVars));
   if (!ONLY || ONLY === "index") {
     fs.writeFileSync(path.join(ROOT, "index.html"), home);
     written.push("index.html");
@@ -145,9 +157,10 @@ const build = () => {
       homeHeadingAttrs: " hidden",
       roomAttrs: "",
       roomContent: renderRoom(p, PAGES),
+      roomScript: `<script src="assets/js/rooms/${p.slug}-room.js" data-room-script="${p.slug}"></script>`,
       ...metaAbs(p.slug + ".html")
     };
-    const out = expand(subTpl, vars);
+    const out = versionAssets(expand(subTpl, vars));
     fs.writeFileSync(path.join(ROOT, p.slug + ".html"), out);
     written.push(p.slug + ".html");
   });
@@ -197,7 +210,9 @@ const build = () => {
 };
 
 try {
+  if (process.argv.includes("--production") && ONLY) throw new Error("--production requires a full build; omit --only");
   build();
+  if (process.argv.includes("--production")) require("./package-site.js");
 } catch (e) {
   console.error("构建失败:", e.message);
   process.exit(1);

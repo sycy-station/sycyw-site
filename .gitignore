@@ -10,3 +10,4 @@ Desktop.ini
 *.tmp
 .playwright-mcp/
 __pycache__/
+dist/

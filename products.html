@@ -7,9 +7,9 @@
 <meta name="description" content="为 Vup、术曲与二次元创作，构想一个相遇的空间。">
 
 <link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png?v=40205316d910">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png?v=dd56d40a25e9">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=a5a4f7f8bb49">
 
 <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)">
@@ -23,24 +23,30 @@
 <meta name="twitter:title" content="次元坞 — 森韵次元坞">
 <meta name="twitter:description" content="为 Vup、术曲与二次元创作，构想一个相遇的空间。">
 
-<link rel="stylesheet" href="assets/css/shared/style.css?v=20261015-header-brand">
-<link rel="stylesheet" href="assets/css/home/stage.css?v=20261015-instant-orbit">
-<link rel="stylesheet" href="assets/css/home/home-logo.css?v=20261015-flip-drop">
-<link rel="stylesheet" href="assets/css/shared/wide.css?v=20261015-edge-motion">
+<link rel="stylesheet" href="assets/css/shared/style.css?v=0ee04ca0d421">
+<link rel="stylesheet" href="assets/css/home/stage.css?v=cfeabfe59695">
+<link rel="stylesheet" href="assets/css/home/home-logo.css?v=849fb33e4d68">
+<link rel="stylesheet" href="assets/css/shared/wide.css?v=e632efbb970b">
 
-<link rel="stylesheet" href="assets/css/shared/theme.css">
-<link rel="stylesheet" href="assets/css/shared/orbit-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/about-room.css?v=20261015-eight-milestones">
-<link rel="stylesheet" href="assets/css/rooms/team-room.css?v=20261015-spacing&title=20261015-aligned">
-<link rel="stylesheet" href="assets/css/rooms/contact-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/ecosystem-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/join-room.css?v=20261015-volunteer-locations">
-<link rel="stylesheet" href="assets/css/rooms/products-room.css?v=20261015-six-views2">
-<link rel="stylesheet" href="assets/css/home/home-narrator.css?v=20261015-seven-clicks">
-<link rel="stylesheet" href="assets/css/shared/mobile.css?v=20261015-mobile-repairs">
+<link rel="stylesheet" href="assets/css/shared/theme.css?v=db2bdb52c5a5">
+<link rel="stylesheet" href="assets/css/shared/orbit-room.css?v=786b41d60afc">
+<link rel="stylesheet" href="assets/css/rooms/about-room.css?v=bc500d1b020e">
+<link rel="stylesheet" href="assets/css/rooms/team-room.css?v=dc57d4e2617b">
+<link rel="stylesheet" href="assets/css/rooms/contact-room.css?v=8a6b0893cc41">
+<link rel="stylesheet" href="assets/css/rooms/ecosystem-room.css?v=dae7d2ed8f78">
+<link rel="stylesheet" href="assets/css/rooms/join-room.css?v=89e9d1ece919">
+<link rel="stylesheet" href="assets/css/rooms/products-room.css?v=818ea9dd4603">
+<link rel="stylesheet" href="assets/css/home/home-narrator.css?v=3b0de87305b5">
+<link rel="stylesheet" href="assets/css/shared/mobile.css?v=15b7f386ff54">
+<script type="application/json" id="roomResources">{"products":"assets/js/rooms/products-room.js?v=096d511c8232","ecosystem":"assets/js/rooms/ecosystem-room.js?v=44c0efac39e8","team":"assets/js/rooms/team-room.js?v=3ff84cde0e92","about":"assets/js/rooms/about-room.js?v=099b0fcc6784","join":"assets/js/rooms/join-room.js?v=c9506a2f83b6","contact":"assets/js/rooms/contact-room.js?v=61f8e750af67"}</script>
 
 <script>
   (function () {
+    // Use the existing enhanced layout before hidden product images are parsed.
+    // With JavaScript disabled, the original full-content fallback still applies.
+    if (document.documentElement.dataset.slug === "products") {
+      document.documentElement.classList.add("room-enhanced");
+    }
     try {
       var t = localStorage.getItem("ces-theme");
       if (t === "dark" || t === "light") {
@@ -94,7 +100,7 @@
   <div class="noise" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.png" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
+    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.webp?v=9707326e711a" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
         <i aria-hidden="true"></i>
@@ -221,7 +227,7 @@
 
         <button class="stage-logo-wrap" type="button" data-logo-trigger aria-label="森韵次元坞，点击体验 Logo 动效">
           <span class="stage-logo-motion" data-logo-motion>
-            <img class="stage-logo" src="assets/logo.png" alt="" width="1000" height="1000" draggable="false">
+            <img class="stage-logo" src="assets/logo.webp?v=9707326e711a" alt="" width="1000" height="1000" draggable="false">
           </span>
           <span class="stage-logo-shadow" aria-hidden="true"></span>
           <span class="stage-logo-name">森韵次元坞</span>
@@ -287,7 +293,7 @@
   <i class="product-corner product-corner--start" aria-hidden="true"></i><i class="product-corner product-corner--end" aria-hidden="true"></i>
   <div class="room-panels product-views"><section class="room-panel product-view" id="panel-products-0" role="tabpanel" aria-labelledby="tab-products-0" tabindex="0" data-product-view="0">
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>让热爱，</span><span>有自己的</span><span class="product-title-last">回响。</span></h2>
       <p class="product-description" data-product-reveal>从每日推荐到精选活动，在熟悉的歌单与新的旋律之间，找到今天想听的声音。</p>
       <ul class="product-features" data-product-reveal><li>每日推荐</li><li>精选活动</li><li>音乐搜索</li></ul>
@@ -297,7 +303,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="0" aria-label="放大查看首页界面" data-product-image>
-          <img src="assets/products/home.png" width="1920" height="1032" alt="森韵音乐桌面端首页，包含歌单、精选活动、侧边导航和底部播放控制栏" decoding="async">
+          <img src="assets/products/home.webp?v=56d8373ff1b6" width="1920" height="1032" alt="森韵音乐桌面端首页，包含歌单、精选活动、侧边导航和底部播放控制栏" decoding="async" loading="eager" fetchpriority="high">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / HOME</span>
       </div>
@@ -306,7 +312,7 @@
   </section>
 <section class="room-panel product-view" id="panel-products-1" role="tabpanel" aria-labelledby="tab-products-1" tabindex="0" data-product-view="1" hidden>
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>循着榜单，</span><span>遇见下一首</span><span class="product-title-last">心动。</span></h2>
       <p class="product-description" data-product-reveal>Bilibili 术曲、Niconico 术曲、新歌、原创与飙升榜，让不同的旋律在这里相遇。</p>
       <ul class="product-features" data-product-reveal><li>术曲榜单</li><li>新歌原创</li><li>飙升排行</li></ul>
@@ -316,7 +322,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="1" aria-label="放大查看排行榜界面" data-product-image>
-          <img src="assets/products/rankings.png" width="1920" height="1032" alt="森韵音乐排行榜界面，展示Bilibili术曲榜、Niconico术曲榜、新歌榜、原创榜与飙升榜" decoding="async">
+          <img src="assets/products/rankings.webp?v=6981ac644cd1" width="1920" height="1032" alt="森韵音乐排行榜界面，展示Bilibili术曲榜、Niconico术曲榜、新歌榜、原创榜与飙升榜" decoding="async" loading="lazy">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / CHARTS</span>
       </div>
@@ -325,7 +331,7 @@
   </section>
 <section class="room-panel product-view" id="panel-products-2" role="tabpanel" aria-labelledby="tab-products-2" tabindex="0" data-product-view="2" hidden>
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>一种心情，</span><span>一张刚好的</span><span class="product-title-last">歌单。</span></h2>
       <p class="product-description" data-product-reveal>从「雨落耳畔」到「星河来信」，跟着主题歌单，在日常与想象之间自由漫游。</p>
       <ul class="product-features" data-product-reveal><li>主题歌单</li><li>每日推荐</li><li>分类浏览</li></ul>
@@ -335,7 +341,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="2" aria-label="放大查看歌单界面" data-product-image>
-          <img src="assets/products/playlists.png" width="1920" height="1032" alt="森韵音乐歌单界面，展示雨落耳畔、月色独白、城市回声等十张主题歌单及分类导航" decoding="async">
+          <img src="assets/products/playlists.webp?v=61e6b5f9d59e" width="1920" height="1032" alt="森韵音乐歌单界面，展示雨落耳畔、月色独白、城市回声等十张主题歌单及分类导航" decoding="async" loading="lazy">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / PLAYLISTS</span>
       </div>
@@ -344,7 +350,7 @@
   </section>
 <section class="room-panel product-view" id="panel-products-3" role="tabpanel" aria-labelledby="tab-products-3" tabindex="0" data-product-view="3" hidden>
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>每次心动，</span><span>都值得好好</span><span class="product-title-last">收藏。</span></h2>
       <p class="product-description" data-product-reveal>把喜欢的音乐留在红心歌单里。一次收藏，让想要重听的旋律，有了随时回来的地方。</p>
       <ul class="product-features" data-product-reveal><li>红心收藏</li><li>播放全部</li><li>批量管理</li></ul>
@@ -354,7 +360,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="3" aria-label="放大查看红心歌单界面" data-product-image>
-          <img src="assets/products/favorites.png" width="1920" height="1032" alt="森韵音乐红心歌单界面，包含我喜欢的音乐、歌曲列表、播放全部与批量操作入口" decoding="async">
+          <img src="assets/products/favorites.webp?v=62e337c8e603" width="1920" height="1032" alt="森韵音乐红心歌单界面，包含我喜欢的音乐、歌曲列表、播放全部与批量操作入口" decoding="async" loading="lazy">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / FAVORITES</span>
       </div>
@@ -363,7 +369,7 @@
   </section>
 <section class="room-panel product-view" id="panel-products-4" role="tabpanel" aria-labelledby="tab-products-4" tabindex="0" data-product-view="4" hidden>
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>以音乐，</span><span>记录自己的</span><span class="product-title-last">模样。</span></h2>
       <p class="product-description" data-product-reveal>在个人主页整理创建与收藏的歌单，也让每一份音乐偏好，成为属于自己的表达。</p>
       <ul class="product-features" data-product-reveal><li>个人资料</li><li>创建歌单</li><li>收藏歌单</li></ul>
@@ -373,7 +379,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="4" aria-label="放大查看用户界面" data-product-image>
-          <img src="assets/products/profile.png" width="1920" height="1032" alt="森韵音乐用户主页，展示头像、个人资料、关注粉丝以及创建和收藏的歌单" decoding="async">
+          <img src="assets/products/profile.webp?v=63fd766830fe" width="1920" height="1032" alt="森韵音乐用户主页，展示头像、个人资料、关注粉丝以及创建和收藏的歌单" decoding="async" loading="lazy">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / PROFILE</span>
       </div>
@@ -382,7 +388,7 @@
   </section>
 <section class="room-panel product-view" id="panel-products-5" role="tabpanel" aria-labelledby="tab-products-5" tabindex="0" data-product-view="5" hidden>
     <div class="product-copy">
-      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.png" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
+      <div class="product-identity" data-product-reveal><img src="assets/products/music-wordmark.webp?v=4cac9087bb89" width="94" height="38" alt="森韵"><span>音乐，让热爱相遇</span></div>
       <h2 data-product-reveal><span>听过的歌，</span><span>让回忆替你</span><span class="product-title-last">记得。</span></h2>
       <p class="product-description" data-product-reveal>回到最近播放，找回刚刚听过的旋律。单曲、歌单与专辑分开查看，延续每一次聆听。</p>
       <ul class="product-features" data-product-reveal><li>播放记录</li><li>分类查看</li><li>收藏全部</li></ul>
@@ -392,7 +398,7 @@
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="5" aria-label="放大查看最近播放界面" data-product-image>
-          <img src="assets/products/recent.png" width="1920" height="1032" alt="森韵音乐最近播放界面，包含单曲、歌单、专辑分类以及播放全部、收藏全部和批量操作入口" decoding="async">
+          <img src="assets/products/recent.webp?v=f60deb6304f6" width="1920" height="1032" alt="森韵音乐最近播放界面，包含单曲、歌单、专辑分类以及播放全部、收藏全部和批量操作入口" decoding="async" loading="lazy">
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / RECENT</span>
       </div>
@@ -433,16 +439,11 @@
     </section>
 
   </main>
-  <script src="assets/js/shared/script.js?v=20261015-mobile-splash"></script>
-  <script src="assets/js/home/home-logo.js?v=20261015-idle-reset"></script>
-  <script src="assets/js/home/home-narrator.js?v=20261015-idle-reset"></script>
-  <script src="assets/js/rooms/about-room.js"></script>
-  <script src="assets/js/rooms/team-room.js?v=20261015-spacing"></script>
-  <script src="assets/js/rooms/contact-room.js"></script>
-  <script src="assets/js/rooms/ecosystem-room.js"></script>
-  <script src="assets/js/rooms/join-room.js?v=20261015-mobile-reading"></script>
-  <script src="assets/js/rooms/products-room.js?v=20261015-mobile-zoom"></script>
-  <script src="assets/js/shared/wide-motion.js?v=20261015-home-lock"></script>
-  <script src="assets/js/shared/orbit-room.js?v=20261015-contact-email"></script>
+  <script src="assets/js/shared/script.js?v=55e0a5fd466e"></script>
+  <script src="assets/js/home/home-logo.js?v=83ab140da052"></script>
+  <script src="assets/js/home/home-narrator.js?v=c01b1fb11a04"></script>
+<script src="assets/js/rooms/products-room.js?v=096d511c8232" data-room-script="products"></script>
+  <script src="assets/js/shared/wide-motion.js?v=361fc63e7a6a"></script>
+  <script src="assets/js/shared/orbit-room.js?v=27bdcc8387d2"></script>
 </body>
 </html>

@@ -7,9 +7,9 @@
 <meta name="description" content="因共同的热爱相遇，让不同的专长一起生长。">
 
 <link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png?v=40205316d910">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png?v=dd56d40a25e9">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=a5a4f7f8bb49">
 
 <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)">
@@ -23,24 +23,30 @@
 <meta name="twitter:title" content="核心团队 — 森韵次元坞">
 <meta name="twitter:description" content="因共同的热爱相遇，让不同的专长一起生长。">
 
-<link rel="stylesheet" href="assets/css/shared/style.css?v=20261015-header-brand">
-<link rel="stylesheet" href="assets/css/home/stage.css?v=20261015-instant-orbit">
-<link rel="stylesheet" href="assets/css/home/home-logo.css?v=20261015-flip-drop">
-<link rel="stylesheet" href="assets/css/shared/wide.css?v=20261015-edge-motion">
+<link rel="stylesheet" href="assets/css/shared/style.css?v=0ee04ca0d421">
+<link rel="stylesheet" href="assets/css/home/stage.css?v=cfeabfe59695">
+<link rel="stylesheet" href="assets/css/home/home-logo.css?v=849fb33e4d68">
+<link rel="stylesheet" href="assets/css/shared/wide.css?v=e632efbb970b">
 
-<link rel="stylesheet" href="assets/css/shared/theme.css">
-<link rel="stylesheet" href="assets/css/shared/orbit-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/about-room.css?v=20261015-eight-milestones">
-<link rel="stylesheet" href="assets/css/rooms/team-room.css?v=20261015-spacing&title=20261015-aligned">
-<link rel="stylesheet" href="assets/css/rooms/contact-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/ecosystem-room.css?v=20261015-title-alignment">
-<link rel="stylesheet" href="assets/css/rooms/join-room.css?v=20261015-volunteer-locations">
-<link rel="stylesheet" href="assets/css/rooms/products-room.css?v=20261015-six-views2">
-<link rel="stylesheet" href="assets/css/home/home-narrator.css?v=20261015-seven-clicks">
-<link rel="stylesheet" href="assets/css/shared/mobile.css?v=20261015-mobile-repairs">
+<link rel="stylesheet" href="assets/css/shared/theme.css?v=db2bdb52c5a5">
+<link rel="stylesheet" href="assets/css/shared/orbit-room.css?v=786b41d60afc">
+<link rel="stylesheet" href="assets/css/rooms/about-room.css?v=bc500d1b020e">
+<link rel="stylesheet" href="assets/css/rooms/team-room.css?v=dc57d4e2617b">
+<link rel="stylesheet" href="assets/css/rooms/contact-room.css?v=8a6b0893cc41">
+<link rel="stylesheet" href="assets/css/rooms/ecosystem-room.css?v=dae7d2ed8f78">
+<link rel="stylesheet" href="assets/css/rooms/join-room.css?v=89e9d1ece919">
+<link rel="stylesheet" href="assets/css/rooms/products-room.css?v=818ea9dd4603">
+<link rel="stylesheet" href="assets/css/home/home-narrator.css?v=3b0de87305b5">
+<link rel="stylesheet" href="assets/css/shared/mobile.css?v=15b7f386ff54">
+<script type="application/json" id="roomResources">{"products":"assets/js/rooms/products-room.js?v=096d511c8232","ecosystem":"assets/js/rooms/ecosystem-room.js?v=44c0efac39e8","team":"assets/js/rooms/team-room.js?v=3ff84cde0e92","about":"assets/js/rooms/about-room.js?v=099b0fcc6784","join":"assets/js/rooms/join-room.js?v=c9506a2f83b6","contact":"assets/js/rooms/contact-room.js?v=61f8e750af67"}</script>
 
 <script>
   (function () {
+    // Use the existing enhanced layout before hidden product images are parsed.
+    // With JavaScript disabled, the original full-content fallback still applies.
+    if (document.documentElement.dataset.slug === "products") {
+      document.documentElement.classList.add("room-enhanced");
+    }
     try {
       var t = localStorage.getItem("ces-theme");
       if (t === "dark" || t === "light") {
@@ -94,7 +100,7 @@
   <div class="noise" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.png" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
+    <a class="mark" href="index.html"><img class="mark-logo" src="assets/logo.webp?v=9707326e711a" alt="" width="32" height="32"><span>森韵次元坞<span class="mark-dot">·</span></span></a>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式" aria-pressed="false">
         <i aria-hidden="true"></i>
@@ -221,7 +227,7 @@
 
         <button class="stage-logo-wrap" type="button" data-logo-trigger aria-label="森韵次元坞，点击体验 Logo 动效">
           <span class="stage-logo-motion" data-logo-motion>
-            <img class="stage-logo" src="assets/logo.png" alt="" width="1000" height="1000" draggable="false">
+            <img class="stage-logo" src="assets/logo.webp?v=9707326e711a" alt="" width="1000" height="1000" draggable="false">
           </span>
           <span class="stage-logo-shadow" aria-hidden="true"></span>
           <span class="stage-logo-name">森韵次元坞</span>
@@ -292,7 +298,7 @@
   <div class="team-roster"><svg class="team-network" viewBox="0 0 1200 480" preserveAspectRatio="none" fill="none" aria-hidden="true"><g class="team-network-guides"><path d="M0 115H1200M0 365H1200"/><path d="M150 25V455M450 25V455M750 25V455M1050 25V455"/><ellipse cx="600" cy="240" rx="520" ry="200"/><path d="M60 385C290 485 835 45 1140 125"/></g><g class="team-network-marks"><path d="M0 100V130M1185 115H1200M0 365H15M1200 350V380"/><path d="M580 240H620M600 220V260"/><rect x="147" y="112" width="6" height="6"/><rect x="1047" y="362" width="6" height="6"/></g></svg><ul class="team-list" aria-label="领导团队名录"><li class="team-cell" data-team-cell>
     <article class="team-profile team-profile--leader" aria-labelledby="team-leader-0-name">
       <span class="team-profile-index" aria-hidden="true">01</span>
-      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/dongyue.png" alt="冬月的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/dongyue.png?v=dcecf2159b44" alt="冬月的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
       <div class="team-profile-body"><h3 id="team-leader-0-name">冬月</h3><p class="team-role">创始人 &amp; CEO</p>
         <p class="team-profile-summary">资深Vup爱好者，拥有6年管理经验，曾在多家知名科技公司担任高管职位。</p>
         <button class="team-details-button" type="button" data-team-details="team-leader-0-dialog" aria-haspopup="dialog" aria-label="查看冬月的完整介绍">成员介绍 <span aria-hidden="true">↗</span></button>
@@ -300,7 +306,7 @@
     </article>
     <dialog class="team-member-dialog" id="team-leader-0-dialog" aria-labelledby="team-leader-0-detail-name" aria-describedby="team-leader-0-bio">
       <button class="team-dialog-close" type="button" data-team-close aria-label="关闭成员介绍" autofocus><span aria-hidden="true">×</span></button>
-      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/dongyue.png" alt="冬月的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/dongyue.png?v=dcecf2159b44" alt="冬月的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
         <div class="team-dialog-copy"><p class="team-kicker">领导团队 / 01</p><h2 id="team-leader-0-detail-name">冬月</h2><p class="team-role">创始人 &amp; CEO</p><p class="team-full-bio" id="team-leader-0-bio">资深Vup爱好者，拥有6年管理经验，曾在多家知名科技公司担任高管职位。2018年创立梦幻科技，致力于将二次元文化与科技融合，为用户带来独特的产品体验。</p></div>
       </div>
     </dialog>
@@ -309,7 +315,7 @@
 <li class="team-cell" data-team-cell>
     <article class="team-profile team-profile--leader" aria-labelledby="team-leader-1-name">
       <span class="team-profile-index" aria-hidden="true">02</span>
-      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy01.jpg" alt="苏以北的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy01.jpg?v=13fd57da0e87" alt="苏以北的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
       <div class="team-profile-body"><h3 id="team-leader-1-name">苏以北</h3><p class="team-role">合伙人&amp;线下总监</p>
         <p class="team-profile-summary">AI与AR技术专家，热爱动漫游戏，曾在多家知名科技公司担任技术领导职位。</p>
         <button class="team-details-button" type="button" data-team-details="team-leader-1-dialog" aria-haspopup="dialog" aria-label="查看苏以北的完整介绍">成员介绍 <span aria-hidden="true">↗</span></button>
@@ -317,7 +323,7 @@
     </article>
     <dialog class="team-member-dialog" id="team-leader-1-dialog" aria-labelledby="team-leader-1-detail-name" aria-describedby="team-leader-1-bio">
       <button class="team-dialog-close" type="button" data-team-close aria-label="关闭成员介绍" autofocus><span aria-hidden="true">×</span></button>
-      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy01.jpg" alt="苏以北的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy01.jpg?v=13fd57da0e87" alt="苏以北的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
         <div class="team-dialog-copy"><p class="team-kicker">领导团队 / 02</p><h2 id="team-leader-1-detail-name">苏以北</h2><p class="team-role">合伙人&amp;线下总监</p><p class="team-full-bio" id="team-leader-1-bio">AI与AR技术专家，热爱动漫游戏，曾在多家知名科技公司担任技术领导职位。负责梦幻科技的技术研发和产品创新，带领团队攻克多项技术难关，推动公司产品不断升级迭代。</p></div>
       </div>
     </dialog>
@@ -326,7 +332,7 @@
 <li class="team-cell" data-team-cell>
     <article class="team-profile team-profile--leader" aria-labelledby="team-leader-2-name">
       <span class="team-profile-index" aria-hidden="true">03</span>
-      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy00.jpg" alt="PTYPJ的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy00.jpg?v=2221b39ad5ac" alt="PTYPJ的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
       <div class="team-profile-body"><h3 id="team-leader-2-name">PTYPJ</h3><p class="team-role">常驻运维</p>
         <p class="team-profile-summary">资深插画师和UI设计师，擅长将二次元元素融入产品设计，打造独特用户体验。</p>
         <button class="team-details-button" type="button" data-team-details="team-leader-2-dialog" aria-haspopup="dialog" aria-label="查看PTYPJ的完整介绍">成员介绍 <span aria-hidden="true">↗</span></button>
@@ -334,7 +340,7 @@
     </article>
     <dialog class="team-member-dialog" id="team-leader-2-dialog" aria-labelledby="team-leader-2-detail-name" aria-describedby="team-leader-2-bio">
       <button class="team-dialog-close" type="button" data-team-close aria-label="关闭成员介绍" autofocus><span aria-hidden="true">×</span></button>
-      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy00.jpg" alt="PTYPJ的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy00.jpg?v=2221b39ad5ac" alt="PTYPJ的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
         <div class="team-dialog-copy"><p class="team-kicker">领导团队 / 03</p><h2 id="team-leader-2-detail-name">PTYPJ</h2><p class="team-role">常驻运维</p><p class="team-full-bio" id="team-leader-2-bio">资深插画师和UI设计师，擅长将二次元元素融入产品设计，打造独特用户体验。负责梦幻科技的产品视觉设计和用户体验，为公司产品注入独特的二次元美学风格。</p></div>
       </div>
     </dialog>
@@ -343,7 +349,7 @@
 <li class="team-cell" data-team-cell>
     <article class="team-profile team-profile--leader" aria-labelledby="team-leader-3-name">
       <span class="team-profile-index" aria-hidden="true">04</span>
-      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy02.jpg" alt="永恒之蓝的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy02.jpg?v=acc98e82cb9d" alt="永恒之蓝的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
       <div class="team-profile-body"><h3 id="team-leader-3-name">永恒之蓝</h3><p class="team-role">全栈统筹</p>
         <p class="team-profile-summary">深度二次元文化研究者，擅长洞察用户需求，将创意转化为可行的产品方案。</p>
         <button class="team-details-button" type="button" data-team-details="team-leader-3-dialog" aria-haspopup="dialog" aria-label="查看永恒之蓝的完整介绍">成员介绍 <span aria-hidden="true">↗</span></button>
@@ -351,7 +357,7 @@
     </article>
     <dialog class="team-member-dialog" id="team-leader-3-dialog" aria-labelledby="team-leader-3-detail-name" aria-describedby="team-leader-3-bio">
       <button class="team-dialog-close" type="button" data-team-close aria-label="关闭成员介绍" autofocus><span aria-hidden="true">×</span></button>
-      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy02.jpg" alt="永恒之蓝的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+      <div class="team-dialog-layout"><div class="team-dialog-portrait"><div class="team-portrait-image"><img src="assets/reference/team/cy02.jpg?v=acc98e82cb9d" alt="永恒之蓝的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
         <div class="team-dialog-copy"><p class="team-kicker">领导团队 / 04</p><h2 id="team-leader-3-detail-name">永恒之蓝</h2><p class="team-role">全栈统筹</p><p class="team-full-bio" id="team-leader-3-bio">深度二次元文化研究者，擅长洞察用户需求，将创意转化为可行的产品方案。负责梦幻科技的产品规划和市场策略，推动公司产品不断满足用户需求，获得市场认可。</p></div>
       </div>
     </dialog>
@@ -365,42 +371,42 @@
 <section class="room-panel" id="panel-team-1" role="tabpanel" aria-labelledby="tab-team-1" tabindex="0" hidden><div class="team-scene team-scene--core" data-team-kind="core">
   <div class="team-scene-heading"><h2>把想法，一起做出来。</h2><span class="team-kicker">08 位成员</span></div>
   <div class="team-roster"><svg class="team-network" viewBox="0 0 1200 480" preserveAspectRatio="none" fill="none" aria-hidden="true"><g class="team-network-guides"><path d="M0 115H1200M0 365H1200"/><path d="M150 25V455M450 25V455M750 25V455M1050 25V455"/><ellipse cx="600" cy="240" rx="520" ry="200"/><path d="M60 385C290 485 835 45 1140 125"/></g><g class="team-network-marks"><path d="M0 100V130M1185 115H1200M0 365H15M1200 350V380"/><path d="M580 240H620M600 220V260"/><rect x="147" y="112" width="6" height="6"/><rect x="1047" y="362" width="6" height="6"/></g></svg><div class="team-core-guides" aria-hidden="true"></div><ul class="team-list" aria-label="核心成员名录"><li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">01</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s01.jpg" alt="小鱼儿的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">01</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s01.jpg?v=f2e8296a71bc" alt="小鱼儿的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>小鱼儿</h3><p class="team-role">高级UI设计师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">02</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s02.jpg" alt="晓伟的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">02</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s02.jpg?v=555b87f57063" alt="晓伟的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>晓伟</h3><p class="team-role">前端开发工程师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">03</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s03.jpg" alt="Allen的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">03</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s03.jpg?v=21754da4b36f" alt="Allen的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>Allen</h3><p class="team-role">前端开发工程师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">04</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s04.jpg" alt="Moon的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">04</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s04.jpg?v=f670218fa2db" alt="Moon的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>Moon</h3><p class="team-role">后端开发工程师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">05</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s05.jpg" alt="NyanCatda的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">05</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s05.jpg?v=5c1d792580d3" alt="NyanCatda的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>NyanCatda</h3><p class="team-role">后端开发工程师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">06</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s06.jpg" alt="DK的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">06</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s06.jpg?v=3640a529ee10" alt="DK的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>DK</h3><p class="team-role">合作运维</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">07</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s07.jpg" alt="kevin的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">07</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s07.jpg?v=abf62013bdb6" alt="kevin的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>kevin</h3><p class="team-role">Java后端开发工程师</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li>
 <li class="team-cell" data-team-cell>
-  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">08</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s08.jpg" alt="KeiShi的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
+  <article class="team-profile team-profile--core"><span class="team-profile-index" aria-hidden="true">08</span><div class="team-portrait"><div class="team-portrait-image"><img src="assets/reference/team/s08.jpg?v=066973111802" alt="KeiShi的头像" width="500" height="500" decoding="async"></div><i class="team-portrait-orbit" aria-hidden="true"></i></div>
     <div class="team-profile-body"><h3>KeiShi</h3><p class="team-role">想法协助</p><i class="team-profile-rule" aria-hidden="true"></i></div>
   </article>
 </li></ul></div><div class="team-pager" data-team-pager aria-label="成员名录翻页">
@@ -437,16 +443,11 @@
     </section>
 
   </main>
-  <script src="assets/js/shared/script.js?v=20261015-mobile-splash"></script>
-  <script src="assets/js/home/home-logo.js?v=20261015-idle-reset"></script>
-  <script src="assets/js/home/home-narrator.js?v=20261015-idle-reset"></script>
-  <script src="assets/js/rooms/about-room.js"></script>
-  <script src="assets/js/rooms/team-room.js?v=20261015-spacing"></script>
-  <script src="assets/js/rooms/contact-room.js"></script>
-  <script src="assets/js/rooms/ecosystem-room.js"></script>
-  <script src="assets/js/rooms/join-room.js?v=20261015-mobile-reading"></script>
-  <script src="assets/js/rooms/products-room.js?v=20261015-mobile-zoom"></script>
-  <script src="assets/js/shared/wide-motion.js?v=20261015-home-lock"></script>
-  <script src="assets/js/shared/orbit-room.js?v=20261015-contact-email"></script>
+  <script src="assets/js/shared/script.js?v=55e0a5fd466e"></script>
+  <script src="assets/js/home/home-logo.js?v=83ab140da052"></script>
+  <script src="assets/js/home/home-narrator.js?v=c01b1fb11a04"></script>
+<script src="assets/js/rooms/team-room.js?v=3ff84cde0e92" data-room-script="team"></script>
+  <script src="assets/js/shared/wide-motion.js?v=361fc63e7a6a"></script>
+  <script src="assets/js/shared/orbit-room.js?v=27bdcc8387d2"></script>
 </body>
 </html>

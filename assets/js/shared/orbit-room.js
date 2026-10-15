@@ -14,6 +14,25 @@
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   const cache = new Map();
   const pending = new Map();
+  const roomResources = JSON.parse(document.getElementById("roomResources")?.textContent || "{}");
+  const modules = new Map();
+  const loadRoomScript = (slug) => {
+    if (!slug) return Promise.resolve();
+    if (modules.has(slug)) return modules.get(slug);
+    if (document.querySelector(`script[data-room-script="${slug}"]`)) return Promise.resolve();
+    if (!roomResources[slug]) return Promise.reject(new Error("Unknown room module"));
+    const script = document.createElement("script");
+    script.src = roomResources[slug];
+    script.async = true;
+    script.dataset.roomScript = slug;
+    const request = new Promise((resolve, reject) => {
+      script.onload = resolve;
+      script.onerror = () => { modules.delete(slug); script.remove(); reject(new Error("Room module failed")); };
+    });
+    modules.set(slug, request);
+    document.head.appendChild(script);
+    return request;
+  };
   let sequence = 0;
   let controller = null;
   let settleTimer = 0;
@@ -344,7 +363,10 @@
     content.setAttribute("aria-busy", "true");
     announce("正在打开…");
     try {
-      const data = cache.get(route.key) || await (pending.get(route.key) || fetchRoom(route, controller.signal));
+      const [data] = await Promise.all([
+        cache.get(route.key) || pending.get(route.key) || fetchRoom(route, controller.signal),
+        loadRoomScript(route.slug)
+      ]);
       if (token !== sequence || root.hasAttribute("data-home-locked")) return;
       if (previous && route.slug && !reduced.matches) {
         root.classList.add("room-changing");
@@ -421,7 +443,8 @@
     const link = event.target.closest?.(routeSelector);
     const route = link && routeFor(link.getAttribute("href"));
     if (!route || cache.has(route.key) || pending.has(route.key)) return;
-    const request = fetchRoom(route).finally(() => pending.delete(route.key));
+    const request = Promise.all([fetchRoom(route), loadRoomScript(route.slug)])
+      .then(([data]) => data).finally(() => pending.delete(route.key));
     pending.set(route.key, request);
     request.catch(() => {});
   };

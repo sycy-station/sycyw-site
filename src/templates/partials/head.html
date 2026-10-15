@@ -32,9 +32,15 @@
 {{ extraCss }}
 <link rel="stylesheet" href="assets/css/home/home-narrator.css?v=20261015-seven-clicks">
 <link rel="stylesheet" href="assets/css/shared/mobile.css?v=20261015-mobile-repairs">
+<script type="application/json" id="roomResources">{{ roomResources }}</script>
 
 <script>
   (function () {
+    // Use the existing enhanced layout before hidden product images are parsed.
+    // With JavaScript disabled, the original full-content fallback still applies.
+    if (document.documentElement.dataset.slug === "products") {
+      document.documentElement.classList.add("room-enhanced");
+    }
     try {
       var t = localStorage.getItem("ces-theme");
       if (t === "dark" || t === "light") {

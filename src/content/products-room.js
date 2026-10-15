@@ -70,7 +70,7 @@ const PRODUCTS_SCENE = `<div class="product-scene" data-product-scene>
       <div class="product-image-area">
         <div class="product-orbit" aria-hidden="true"><i></i><b></b></div>
         <button type="button" class="product-image-button" data-product-open="${i}" aria-label="放大查看${esc(view.label)}界面" data-product-image>
-          <img src="assets/products/${view.image}" width="${view.width}" height="${view.height}" alt="${esc(view.alt)}" decoding="async">
+          <img src="assets/products/${view.image}" width="${view.width}" height="${view.height}" alt="${esc(view.alt)}" decoding="async" loading="${i ? "lazy" : "eager"}"${i ? "" : ' fetchpriority="high"'}>
         </button>
         <span class="product-image-note" aria-hidden="true">森韵音乐 / ${esc(view.en)}</span>
       </div>

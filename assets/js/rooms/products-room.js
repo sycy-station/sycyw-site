@@ -18,6 +18,18 @@
     let scale = 1, panX = 0, panY = 0, baseWidth = 0, baseHeight = 0;
     let gesture, lastTap = 0;
     const pointers = new Map();
+    let preloadTimer;
+    const prepareImage = (panel) => {
+      const source = panel?.querySelector(".product-image-button img");
+      if (!source || navigator.connection?.saveData || /(^|-)2g$/.test(navigator.connection?.effectiveType || "")) return;
+      const preload = new Image();
+      preload.decoding = "async";
+      preload.src = source.currentSrc || source.src;
+    };
+    ["pointerover", "focusin"].forEach(type => scene.addEventListener(type, event => {
+      const tab = event.target.closest("[data-room-tab]");
+      if (tab) prepareImage(panels[tabs.indexOf(tab)]);
+    }, { signal: events.signal }));
     const paintZoom = () => {
       if (!mobilePreview.matches || !dialog.open) return;
       const maxX = Math.max(0, (baseWidth * scale - imageArea.clientWidth) / 2);
@@ -91,6 +103,9 @@
     const clear = () => animations.splice(0).forEach((animation) => animation.cancel());
     const activate = (panel) => {
       if (!panels.includes(panel)) return;
+      panel.querySelector(".product-image-button img").loading = "eager";
+      clearTimeout(preloadTimer);
+      preloadTimer = setTimeout(() => prepareImage(panels[(panels.indexOf(panel) + 1) % panels.length]), 1800);
       clear();
       // Pause decorative movement in hidden chapters as well as off-page rooms.
       panels.forEach((item) => item.querySelectorAll(".product-wave i, .product-wave b, .product-orbit i").forEach((el) => {
@@ -152,7 +167,7 @@
     reduced.addEventListener("change", () => { if (reduced.matches) { clear(); previewAnimation?.cancel(); } }, { signal: events.signal });
     return {
       activate,
-      destroy() { events.abort(); previewResize.disconnect(); clear(); previewAnimation?.cancel(); if (dialog.open) dialog.close(); }
+      destroy() { clearTimeout(preloadTimer); events.abort(); previewResize.disconnect(); clear(); previewAnimation?.cancel(); if (dialog.open) dialog.close(); }
     };
   };
 })();
